@@ -1,15 +1,2 @@
 go version go1.26.8 linux/amd64
-go: downloading github.com/andybalholm/brotli v1.2.4
-go: downloading github.com/klauspost/compress v1.20.0
-go: downloading github.com/elazarl/goproxy v1.9.1
-go: downloading github.com/chromedp/cdproto v0.0.0-20260714215040-dc233986426f
-go: downloading github.com/chromedp/chromedp v0.16.0
-go: downloading golang.org/x/sys v0.47.0
-go: downloading golang.org/x/net v0.50.0
-go: downloading github.com/chromedp/sysutil v1.1.0
-go: downloading github.com/go-json-experiment/json v0.0.0-20260623181947-01eb4420fa68
-go: downloading github.com/gobwas/ws v1.4.0
-go: downloading github.com/gobwas/httphead v0.1.0
-go: downloading github.com/gobwas/pool v0.2.1
-go: downloading golang.org/x/text v0.34.0
 built: app nm-host 

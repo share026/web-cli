@@ -1,314 +1,314 @@
-01:45:18.274 scripts/build.sh: built: app nm-host
-01:45:18.289 scripts/install-host.sh:
+01:48:08.963 scripts/build.sh: built: app nm-host
+01:48:08.976 scripts/install-host.sh:
 installed /home/runner/work/web-cli/web-cli/scripts/e2e/out-real/chrome-profile/NativeMessagingHosts/com.share026.webcli.json
 extension id: aghlljmggamhjpkcngogikkiohnaaiha
-01:45:18.297 dummy HTTPS site: https://127.0.0.1:39487
-01:45:18.301   app| 01:45:18.301403 [ipc] listening on /home/runner/work/web-cli/web-cli/scripts/e2e/out-real/ipc.sock
-01:45:18.302   app| 01:45:18.302105 [proxy] generated new root CA in /home/runner/work/web-cli/web-cli/scripts/e2e/out-real/ca
-01:45:18.310   app| 01:45:18.310925 [proxy] listening on 127.0.0.1:35573 (CA /home/runner/work/web-cli/web-cli/scripts/e2e/out-real/ca/ca.pem, SPKI Cno9ntl+RWPdEPM7SsfI/M7Vr1xar84fozGrqZHpjck=)
-01:45:18.311 [PASS] Phase 3: dynamic root CA generated — ca.pem created, SPKI Cno9ntl+RWPdEPM7SsfI/M7Vr1xar84fozGrqZHpjck=
-01:45:18.311 E2E mode: real (headed=true, chrome=/home/runner/work/_temp/cloak/chrome)
-01:45:19.373 browser: Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36
-01:45:19.411   app| 01:45:19.411222 [ipc] session #1 connected
-01:45:19.411   app| 01:45:19.411398 [ipc] session #1 hello origin=chrome-extension://aghlljmggamhjpkcngogikkiohnaaiha/ pid=13511
-01:45:19.411   app| 01:45:19.411438 [ipc] session #1 ping -> pong
-01:45:19.413   app| 01:45:19.412976 [ext#1] {"event":"pong_received","reply_to":"9f3b2965d3b347de83d7e89ee81eef88"}
-01:45:19.475 [PASS] Phase 1: real Chromium loaded extension/ (MV3 service worker running) — service worker "chrome-extension://aghlljmggamhjpkcngogikkiohnaaiha/background.js"
-01:45:19.475 [PASS] Phase 1: nm-host started by extension and connected to app — hello with origin chrome-extension://aghlljmggamhjpkcngogikkiohnaaiha/
-01:45:19.475 [PASS] Phase 1: extension {type:ping} answered by Go with {type:pong} — app log: ping -> pong
-01:45:19.475 [PASS] Phase 1: background.js received pong — extension reported pong_received back over the bridge
-01:45:19.475 > ping
-01:45:19.479   app| pong from extension in 3.493ms: {"from":"extension"}
-01:45:19.480 service worker console -> /home/runner/work/web-cli/web-cli/scripts/e2e/out-real/sw-console.log ("{\"perms\":[\"nativeMessaging\",\"tabs\",\"scripting\",\"cookies\",\"declarativeNetRequest\",\"storage\",\"debugger\"],\"native\":\"function\"}")
-01:45:19.579 [PASS] Phase 1: app -> extension ping round trip — pong from extension in 3.493ms: {"from":"extension"}
-01:45:19.595   app| 01:45:19.595427 [proxy] #1 GET https://127.0.0.1:39487/ -> 200 (2381 bytes, 3ms)
-01:45:19.623   app| 01:45:19.623204 [proxy] #2 GET https://127.0.0.1:39487/favicon.ico -> 404 (19 bytes, 0s)
-01:45:19.920 > hints Login
-01:45:19.927   app| collected 7 visible element(s) on https://127.0.0.1:39487/
-01:45:19.927   app|   1  [a]  Next page  https://127.0.0.1:39487/next
-01:45:19.927   app|   2  [button]  Login  
-01:45:19.927   app|   3  [button]  Who am I  
-01:45:19.927   app|   4  [input:text]  Search products  
-01:45:19.927   app|   5  [select]  English  
-01:45:19.927   app|   6  [div@button]  Role Button  
-01:45:19.927   app|   7  [span]  Onclick span  
-01:45:19.931   app| fzf selected hint 2
-01:45:19.934   app| click hint=2 <button> "Login" action_id=cb62120c-16ab-48d0-9310-61a23e1d7b0d
-01:45:19.937   app| 01:45:19.937356 [proxy] #3 POST https://127.0.0.1:39487/api/login -> 200 (27 bytes, 0s) action=cb62120c-16ab-48d0-9310-61a23e1d7b0d
-01:45:20.035 [PASS] Phase 2: hints Login -> fzf -> click — fzf selected hint 2 | click hint=2 <button> "Login" action_id=cb62120c-16ab-48d0-9310-61a23e1d7b0d
-01:45:20.035 [PASS] Phase 2: Vimium C visibility filter — visible=["Next page" "Login" "Who am I" "Search products" "English" "Role Button" "Onclick span"] missing=[] leaked-hidden=[]
-01:45:20.044 [PASS] Phase 2: click fired in page (fetch /api/login ran) — #status="logged in: alice"
-01:45:20.345 [PASS] Phase 4: X-Audit-Action-Id stripped before upstream — origin saw 1 POST /api/login, action header present=false, body={"user":"alice","password":"wonderland"}
-01:45:20.345 > log 50
-01:45:20.345   app| #1 GET https://127.0.0.1:39487/ -> 200 (2381 bytes, 3ms)
-01:45:20.345   app| #2 GET https://127.0.0.1:39487/favicon.ico -> 404 (19 bytes, 0s)
-01:45:20.345   app| #3 POST https://127.0.0.1:39487/api/login -> 200 (27 bytes, 0s) action=cb62120c-16ab-48d0-9310-61a23e1d7b0d
-01:45:20.445 [PASS] Phase 4: proxy linked POST /api/login to the click action — #3 POST https://127.0.0.1:39487/api/login -> 200 (27 bytes, 0s) action=cb62120c-16ab-48d0-9310-61a23e1d7b0d
-01:45:20.445 > rule add set-req-header url=/api/whoami name=X-Injected value=e2e-rule
-01:45:20.445   app| added rule #1 set-req-header url="/api/whoami" name="X-Injected" value="e2e-rule"
-01:45:20.545 [PASS] Phase 3: rule add set-req-header — added rule #1 set-req-header url="/api/whoami" name="X-Injected" value="e2e-rule"
-01:45:20.545 > rule add block url=/blocked status=451
-01:45:20.546   app| added rule #2 block url="/blocked" status=451
-01:45:20.647 [PASS] Phase 3: rule add block — added rule #2 block url="/blocked" status=451
-01:45:20.647 > rule add set-resp-header url=/api/whoami name=X-Audited value=web-cli
-01:45:20.647   app| added rule #3 set-resp-header url="/api/whoami" name="X-Audited" value="web-cli"
-01:45:20.747 [PASS] Phase 3: rule add set-resp-header — added rule #3 set-resp-header url="/api/whoami" name="X-Audited" value="web-cli"
-01:45:20.747 > cookies dump /home/runner/work/web-cli/web-cli/scripts/e2e/out-real/audit/cookies.json
-01:45:20.752   app| dumped 1 cookie(s) for https://127.0.0.1:39487/ to /home/runner/work/web-cli/web-cli/scripts/e2e/out-real/audit/cookies.json
-01:45:20.752   app|   session=abc123; domain=127.0.0.1; path=/; secure=true; httpOnly=true
-01:45:20.853 [PASS] Phase 4: cookies dump via chrome.cookies.getAll — dumped 1 cookie(s) for https://127.0.0.1:39487/ to /home/runner/work/web-cli/web-cli/scripts/e2e/out-real/audit/cookies.json; file has session=abc123 (HttpOnly,Secure)=true
-01:45:20.853 > cookies import /home/runner/work/web-cli/web-cli/scripts/e2e/out-real/audit/cookies-import.json
-01:45:20.855   app| imported 1/1 cookie(s) from /home/runner/work/web-cli/web-cli/scripts/e2e/out-real/audit/cookies-import.json
-01:45:20.955 [PASS] Phase 4: cookies import via chrome.cookies.set — imported 1/1 cookie(s) from /home/runner/work/web-cli/web-cli/scripts/e2e/out-real/audit/cookies-import.json
-01:45:20.955 > hints who am
-01:45:20.958   app| collected 7 visible element(s) on https://127.0.0.1:39487/
-01:45:20.958   app|   1  [a]  Next page  https://127.0.0.1:39487/next
-01:45:20.958   app|   2  [button]  Login  
-01:45:20.958   app|   3  [button]  Who am I  
-01:45:20.958   app|   4  [input:text]  Search products  
-01:45:20.958   app|   5  [select]  English  
-01:45:20.958   app|   6  [div@button]  Role Button  
-01:45:20.958   app|   7  [span]  Onclick span  
-01:45:20.961   app| fzf selected hint 3
-01:45:20.964   app| click hint=3 <button> "Who am I" action_id=bbc81f34-036e-44eb-a851-073a2e7b22f8
-01:45:20.966   app| 01:45:20.966533 [proxy] #4 GET https://127.0.0.1:39487/api/whoami -> 200 (74 bytes, 1ms) action=bbc81f34-036e-44eb-a851-073a2e7b22f8 intercepts=2
-01:45:20.970   app| 01:45:20.970630 [proxy] #5 GET https://127.0.0.1:39487/blocked -> 451 BLOCKED action=bbc81f34-036e-44eb-a851-073a2e7b22f8 intercepts=1
-01:45:21.065 [PASS] Phase 2: hints 'who am' -> click — click hint=3 <button> "Who am I" action_id=bbc81f34-036e-44eb-a851-073a2e7b22f8
-01:45:21.069 [PASS] Phase 4: imported cookie sent by the browser — origin received Cookie: "session=abc123; imported=from-json"; page shows "cookies: imported=from-json,session=abc123"
-01:45:21.069 [PASS] Phase 3: request header injected by rule — origin received X-Injected: "e2e-rule"
-01:45:21.069 [PASS] Phase 3: request blocked by rule (never reached origin) — page shows "blocked status: 451", origin saw 0 /blocked requests
-01:45:21.069 > log 50
-01:45:21.069   app| #1 GET https://127.0.0.1:39487/ -> 200 (2381 bytes, 3ms)
-01:45:21.069   app| #2 GET https://127.0.0.1:39487/favicon.ico -> 404 (19 bytes, 0s)
-01:45:21.069   app| #3 POST https://127.0.0.1:39487/api/login -> 200 (27 bytes, 0s) action=cb62120c-16ab-48d0-9310-61a23e1d7b0d
-01:45:21.069   app| #4 GET https://127.0.0.1:39487/api/whoami -> 200 (74 bytes, 1ms) action=bbc81f34-036e-44eb-a851-073a2e7b22f8 intercepts=2
-01:45:21.069   app| #5 GET https://127.0.0.1:39487/blocked -> 451 BLOCKED action=bbc81f34-036e-44eb-a851-073a2e7b22f8 intercepts=1
-01:45:21.169 [PASS] Phase 3: blocked + modified requests recorded with intercept notes — #4 GET https://127.0.0.1:39487/api/whoami -> 200 (74 bytes, 1ms) action=bbc81f34-036e-44eb-a851-073a2e7b22f8 intercepts=2 | #5 GET https://127.0.0.1:39487/blocked -> 451 BLOCKED action=bbc81f34-036e-44eb-a851-073a2e7b22f8 intercepts=1
-01:45:21.169 > hints next page
-01:45:21.172   app| collected 7 visible element(s) on https://127.0.0.1:39487/
-01:45:21.172   app|   1  [a]  Next page  https://127.0.0.1:39487/next
-01:45:21.172   app|   2  [button]  Login  
-01:45:21.172   app|   3  [button]  Who am I  
-01:45:21.172   app|   4  [input:text]  Search products  
-01:45:21.172   app|   5  [select]  English  
-01:45:21.172   app|   6  [div@button]  Role Button  
-01:45:21.172   app|   7  [span]  Onclick span  
-01:45:21.176   app| fzf selected hint 1
-01:45:21.178   app| click hint=1 <a> "Next page" action_id=26e9f8d0-2c83-4346-9a00-2e04fda9d95d
-01:45:21.189   app| 01:45:21.188945 [proxy] #6 GET https://127.0.0.1:39487/next -> 200 (179 bytes, 1ms) action=26e9f8d0-2c83-4346-9a00-2e04fda9d95d
-01:45:21.279 [PASS] Phase 2: hints 'next page' -> link click navigates — click hint=1 <a> "Next page" action_id=26e9f8d0-2c83-4346-9a00-2e04fda9d95d
-01:45:21.280 [PASS] Phase 2: navigation happened — document.title="Next"
-01:45:21.280 [PASS] Phase 4: main_frame navigation tagged, header stripped upstream — origin saw 1 GET /next without action header
-01:45:21.580 > hints press
-01:45:21.583   app| collected 2 visible element(s) on https://127.0.0.1:39487/next
-01:45:21.583   app|   1  [a]  Back home  https://127.0.0.1:39487/
-01:45:21.583   app|   2  [button]  Press me  
-01:45:21.587   app| fzf selected hint 2
-01:45:21.594   app| click hint=2 <button> "Press me" action_id=f27f93f4-fa75-4c32-b72e-b866d36156a0
-01:45:21.695 [PASS] Phase 2: content script re-injected after navigation; focus/click on new page — collected 2 visible element(s) on https://127.0.0.1:39487/next | click hint=2 <button> "Press me" action_id=f27f93f4-fa75-4c32-b72e-b866d36156a0
-01:45:21.702 [PASS] Phase 2: button on new page clicked — button text="clicked"
-01:45:21.702 > hints search
-01:45:21.705   app| collected 2 visible element(s) on https://127.0.0.1:39487/next
-01:45:21.705   app|   1  [a]  Back home  https://127.0.0.1:39487/
-01:45:21.705   app|   2  [button]  clicked  
-01:45:21.708   app| error: fzf: no element matches "search"
-01:45:21.708 [PASS] Phase 2: stale page: 'search' has no match on new page — error: fzf: no element matches "search"
-01:45:21.708 > export /home/runner/work/web-cli/web-cli/scripts/e2e/out-real/audit/requests.http
-01:45:21.708   app| wrote 6 request(s) to /home/runner/work/web-cli/web-cli/scripts/e2e/out-real/audit/requests.http
-01:45:21.809 [PASS] Phase 4: export all captured requests to .http — wrote 6 request(s) to /home/runner/work/web-cli/web-cli/scripts/e2e/out-real/audit/requests.http
-01:45:21.809 > export /home/runner/work/web-cli/web-cli/scripts/e2e/out-real/audit/login-action.http action=cb62120c-16ab-48d0-9310-61a23e1d7b0d
-01:45:21.809   app| wrote 1 request(s) to /home/runner/work/web-cli/web-cli/scripts/e2e/out-real/audit/login-action.http
-01:45:21.909 [PASS] Phase 4: export filtered by action ID — wrote 1 request(s) to /home/runner/work/web-cli/web-cli/scripts/e2e/out-real/audit/login-action.http
-01:45:21.910 > export /home/runner/work/web-cli/web-cli/scripts/e2e/out-real/audit/nav-action.http action=26e9f8d0-2c83-4346-9a00-2e04fda9d95d
-01:45:21.910   app| wrote 1 request(s) to /home/runner/work/web-cli/web-cli/scripts/e2e/out-real/audit/nav-action.http
-01:45:22.010 [PASS] Phase 4: navigation action has linked requests — wrote 1 request(s) to /home/runner/work/web-cli/web-cli/scripts/e2e/out-real/audit/nav-action.http
-01:45:22.010 > actions
-01:45:22.010   app| ACTION ID                             KIND   HINT  ELEMENT              REQUESTS  PAGE
-01:45:22.010   app| cb62120c-16ab-48d0-9310-61a23e1d7b0d  click  2     <button> "Login"     1         https://127.0.0.1:39487/
-01:45:22.010   app| bbc81f34-036e-44eb-a851-073a2e7b22f8  click  3     <button> "Who am I"  2         https://127.0.0.1:39487/
-01:45:22.010   app| 26e9f8d0-2c83-4346-9a00-2e04fda9d95d  click  1     <a> "Next page"      1         https://127.0.0.1:39487/
-01:45:22.010   app| f27f93f4-fa75-4c32-b72e-b866d36156a0  click  2     <button> "Press me"  0         https://127.0.0.1:39487/next
-01:45:22.311 actions table:
+01:48:08.983 dummy HTTPS site: https://127.0.0.1:35329
+01:48:08.987   app| 01:48:08.987485 [ipc] listening on /home/runner/work/web-cli/web-cli/scripts/e2e/out-real/ipc.sock
+01:48:08.988   app| 01:48:08.988222 [proxy] generated new root CA in /home/runner/work/web-cli/web-cli/scripts/e2e/out-real/ca
+01:48:08.996   app| 01:48:08.996863 [proxy] listening on 127.0.0.1:45771 (CA /home/runner/work/web-cli/web-cli/scripts/e2e/out-real/ca/ca.pem, SPKI sHQnJlv+Vmb987zx0R1NogfrWbLTFpd7i2FUVYgwM0Q=)
+01:48:08.996 [PASS] Phase 3: dynamic root CA generated — ca.pem created, SPKI sHQnJlv+Vmb987zx0R1NogfrWbLTFpd7i2FUVYgwM0Q=
+01:48:08.996 E2E mode: real (headed=true, chrome=/home/runner/work/_temp/cloak/chrome)
+01:48:13.949 browser: Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36
+01:48:13.978   app| 01:48:13.978348 [ipc] session #1 connected
+01:48:13.978   app| 01:48:13.978475 [ipc] session #1 hello origin=chrome-extension://aghlljmggamhjpkcngogikkiohnaaiha/ pid=4132
+01:48:13.978   app| 01:48:13.978813 [ipc] session #1 ping -> pong
+01:48:13.979   app| 01:48:13.979677 [ext#1] {"event":"pong_received","reply_to":"fe9d3911472e4b71b7198f4cd974d369"}
+01:48:14.049 [PASS] Phase 1: real Chromium loaded extension/ (MV3 service worker running) — service worker "chrome-extension://aghlljmggamhjpkcngogikkiohnaaiha/background.js"
+01:48:14.050 [PASS] Phase 1: nm-host started by extension and connected to app — hello with origin chrome-extension://aghlljmggamhjpkcngogikkiohnaaiha/
+01:48:14.050 [PASS] Phase 1: extension {type:ping} answered by Go with {type:pong} — app log: ping -> pong
+01:48:14.050 [PASS] Phase 1: background.js received pong — extension reported pong_received back over the bridge
+01:48:14.050 > ping
+01:48:14.053   app| pong from extension in 3.36ms: {"from":"extension"}
+01:48:14.054 service worker console -> /home/runner/work/web-cli/web-cli/scripts/e2e/out-real/sw-console.log ("{\"perms\":[\"nativeMessaging\",\"tabs\",\"scripting\",\"cookies\",\"declarativeNetRequest\",\"storage\",\"debugger\"],\"native\":\"function\"}")
+01:48:14.153 [PASS] Phase 1: app -> extension ping round trip — pong from extension in 3.36ms: {"from":"extension"}
+01:48:14.170   app| 01:48:14.170426 [proxy] #1 GET https://127.0.0.1:35329/ -> 200 (2381 bytes, 3ms)
+01:48:14.197   app| 01:48:14.197582 [proxy] #2 GET https://127.0.0.1:35329/favicon.ico -> 404 (19 bytes, 0s)
+01:48:14.495 > hints Login
+01:48:14.501   app| collected 7 visible element(s) on https://127.0.0.1:35329/
+01:48:14.501   app|   1  [a]  Next page  https://127.0.0.1:35329/next
+01:48:14.501   app|   2  [button]  Login  
+01:48:14.501   app|   3  [button]  Who am I  
+01:48:14.501   app|   4  [input:text]  Search products  
+01:48:14.501   app|   5  [select]  English  
+01:48:14.501   app|   6  [div@button]  Role Button  
+01:48:14.501   app|   7  [span]  Onclick span  
+01:48:14.504   app| fzf selected hint 2
+01:48:14.508   app| click hint=2 <button> "Login" action_id=d65358e1-3ba3-4f29-8242-275518226066
+01:48:14.510   app| 01:48:14.510828 [proxy] #3 POST https://127.0.0.1:35329/api/login -> 200 (27 bytes, 0s) action=d65358e1-3ba3-4f29-8242-275518226066
+01:48:14.608 [PASS] Phase 2: hints Login -> fzf -> click — fzf selected hint 2 | click hint=2 <button> "Login" action_id=d65358e1-3ba3-4f29-8242-275518226066
+01:48:14.608 [PASS] Phase 2: Vimium C visibility filter — visible=["Next page" "Login" "Who am I" "Search products" "English" "Role Button" "Onclick span"] missing=[] leaked-hidden=[]
+01:48:14.617 [PASS] Phase 2: click fired in page (fetch /api/login ran) — #status="logged in: alice"
+01:48:14.917 [PASS] Phase 4: X-Audit-Action-Id stripped before upstream — origin saw 1 POST /api/login, action header present=false, body={"user":"alice","password":"wonderland"}
+01:48:14.917 > log 50
+01:48:14.917   app| #1 GET https://127.0.0.1:35329/ -> 200 (2381 bytes, 3ms)
+01:48:14.917   app| #2 GET https://127.0.0.1:35329/favicon.ico -> 404 (19 bytes, 0s)
+01:48:14.917   app| #3 POST https://127.0.0.1:35329/api/login -> 200 (27 bytes, 0s) action=d65358e1-3ba3-4f29-8242-275518226066
+01:48:15.018 [PASS] Phase 4: proxy linked POST /api/login to the click action — #3 POST https://127.0.0.1:35329/api/login -> 200 (27 bytes, 0s) action=d65358e1-3ba3-4f29-8242-275518226066
+01:48:15.018 > rule add set-req-header url=/api/whoami name=X-Injected value=e2e-rule
+01:48:15.018   app| added rule #1 set-req-header url="/api/whoami" name="X-Injected" value="e2e-rule"
+01:48:15.118 [PASS] Phase 3: rule add set-req-header — added rule #1 set-req-header url="/api/whoami" name="X-Injected" value="e2e-rule"
+01:48:15.118 > rule add block url=/blocked status=451
+01:48:15.118   app| added rule #2 block url="/blocked" status=451
+01:48:15.219 [PASS] Phase 3: rule add block — added rule #2 block url="/blocked" status=451
+01:48:15.219 > rule add set-resp-header url=/api/whoami name=X-Audited value=web-cli
+01:48:15.219   app| added rule #3 set-resp-header url="/api/whoami" name="X-Audited" value="web-cli"
+01:48:15.319 [PASS] Phase 3: rule add set-resp-header — added rule #3 set-resp-header url="/api/whoami" name="X-Audited" value="web-cli"
+01:48:15.319 > cookies dump /home/runner/work/web-cli/web-cli/scripts/e2e/out-real/audit/cookies.json
+01:48:15.322   app| dumped 1 cookie(s) for https://127.0.0.1:35329/ to /home/runner/work/web-cli/web-cli/scripts/e2e/out-real/audit/cookies.json
+01:48:15.322   app|   session=abc123; domain=127.0.0.1; path=/; secure=true; httpOnly=true
+01:48:15.422 [PASS] Phase 4: cookies dump via chrome.cookies.getAll — dumped 1 cookie(s) for https://127.0.0.1:35329/ to /home/runner/work/web-cli/web-cli/scripts/e2e/out-real/audit/cookies.json; file has session=abc123 (HttpOnly,Secure)=true
+01:48:15.422 > cookies import /home/runner/work/web-cli/web-cli/scripts/e2e/out-real/audit/cookies-import.json
+01:48:15.424   app| imported 1/1 cookie(s) from /home/runner/work/web-cli/web-cli/scripts/e2e/out-real/audit/cookies-import.json
+01:48:15.524 [PASS] Phase 4: cookies import via chrome.cookies.set — imported 1/1 cookie(s) from /home/runner/work/web-cli/web-cli/scripts/e2e/out-real/audit/cookies-import.json
+01:48:15.524 > hints who am
+01:48:15.527   app| collected 7 visible element(s) on https://127.0.0.1:35329/
+01:48:15.527   app|   1  [a]  Next page  https://127.0.0.1:35329/next
+01:48:15.527   app|   2  [button]  Login  
+01:48:15.527   app|   3  [button]  Who am I  
+01:48:15.527   app|   4  [input:text]  Search products  
+01:48:15.527   app|   5  [select]  English  
+01:48:15.527   app|   6  [div@button]  Role Button  
+01:48:15.527   app|   7  [span]  Onclick span  
+01:48:15.530   app| fzf selected hint 3
+01:48:15.533   app| click hint=3 <button> "Who am I" action_id=868fca34-5c8c-4eb5-8b5a-6858bfca3398
+01:48:15.535   app| 01:48:15.535355 [proxy] #4 GET https://127.0.0.1:35329/api/whoami -> 200 (74 bytes, 0s) action=868fca34-5c8c-4eb5-8b5a-6858bfca3398 intercepts=2
+01:48:15.538   app| 01:48:15.538299 [proxy] #5 GET https://127.0.0.1:35329/blocked -> 451 BLOCKED action=868fca34-5c8c-4eb5-8b5a-6858bfca3398 intercepts=1
+01:48:15.634 [PASS] Phase 2: hints 'who am' -> click — click hint=3 <button> "Who am I" action_id=868fca34-5c8c-4eb5-8b5a-6858bfca3398
+01:48:15.638 [PASS] Phase 4: imported cookie sent by the browser — origin received Cookie: "session=abc123; imported=from-json"; page shows "cookies: imported=from-json,session=abc123"
+01:48:15.638 [PASS] Phase 3: request header injected by rule — origin received X-Injected: "e2e-rule"
+01:48:15.638 [PASS] Phase 3: request blocked by rule (never reached origin) — page shows "blocked status: 451", origin saw 0 /blocked requests
+01:48:15.638 > log 50
+01:48:15.638   app| #1 GET https://127.0.0.1:35329/ -> 200 (2381 bytes, 3ms)
+01:48:15.638   app| #2 GET https://127.0.0.1:35329/favicon.ico -> 404 (19 bytes, 0s)
+01:48:15.638   app| #3 POST https://127.0.0.1:35329/api/login -> 200 (27 bytes, 0s) action=d65358e1-3ba3-4f29-8242-275518226066
+01:48:15.638   app| #4 GET https://127.0.0.1:35329/api/whoami -> 200 (74 bytes, 0s) action=868fca34-5c8c-4eb5-8b5a-6858bfca3398 intercepts=2
+01:48:15.638   app| #5 GET https://127.0.0.1:35329/blocked -> 451 BLOCKED action=868fca34-5c8c-4eb5-8b5a-6858bfca3398 intercepts=1
+01:48:15.739 [PASS] Phase 3: blocked + modified requests recorded with intercept notes — #4 GET https://127.0.0.1:35329/api/whoami -> 200 (74 bytes, 0s) action=868fca34-5c8c-4eb5-8b5a-6858bfca3398 intercepts=2 | #5 GET https://127.0.0.1:35329/blocked -> 451 BLOCKED action=868fca34-5c8c-4eb5-8b5a-6858bfca3398 intercepts=1
+01:48:15.739 > hints next page
+01:48:15.742   app| collected 7 visible element(s) on https://127.0.0.1:35329/
+01:48:15.742   app|   1  [a]  Next page  https://127.0.0.1:35329/next
+01:48:15.742   app|   2  [button]  Login  
+01:48:15.742   app|   3  [button]  Who am I  
+01:48:15.742   app|   4  [input:text]  Search products  
+01:48:15.742   app|   5  [select]  English  
+01:48:15.742   app|   6  [div@button]  Role Button  
+01:48:15.742   app|   7  [span]  Onclick span  
+01:48:15.745   app| fzf selected hint 1
+01:48:15.749   app| click hint=1 <a> "Next page" action_id=dce4b02d-43a0-42f4-828e-83eee02ef52f
+01:48:15.755   app| 01:48:15.755533 [proxy] #6 GET https://127.0.0.1:35329/next -> 200 (179 bytes, 0s) action=dce4b02d-43a0-42f4-828e-83eee02ef52f
+01:48:15.849 [PASS] Phase 2: hints 'next page' -> link click navigates — click hint=1 <a> "Next page" action_id=dce4b02d-43a0-42f4-828e-83eee02ef52f
+01:48:15.851 [PASS] Phase 2: navigation happened — document.title="Next"
+01:48:15.851 [PASS] Phase 4: main_frame navigation tagged, header stripped upstream — origin saw 1 GET /next without action header
+01:48:16.151 > hints press
+01:48:16.155   app| collected 2 visible element(s) on https://127.0.0.1:35329/next
+01:48:16.155   app|   1  [a]  Back home  https://127.0.0.1:35329/
+01:48:16.155   app|   2  [button]  Press me  
+01:48:16.159   app| fzf selected hint 2
+01:48:16.709   app| click hint=2 <button> "Press me" action_id=08298076-9596-4f52-8736-3f2e6ba258d8
+01:48:16.810 [PASS] Phase 2: content script re-injected after navigation; focus/click on new page — collected 2 visible element(s) on https://127.0.0.1:35329/next | click hint=2 <button> "Press me" action_id=08298076-9596-4f52-8736-3f2e6ba258d8
+01:48:16.818 [PASS] Phase 2: button on new page clicked — button text="clicked"
+01:48:16.818 > hints search
+01:48:16.820   app| collected 2 visible element(s) on https://127.0.0.1:35329/next
+01:48:16.820   app|   1  [a]  Back home  https://127.0.0.1:35329/
+01:48:16.820   app|   2  [button]  clicked  
+01:48:16.823   app| error: fzf: no element matches "search"
+01:48:16.823 [PASS] Phase 2: stale page: 'search' has no match on new page — error: fzf: no element matches "search"
+01:48:16.823 > export /home/runner/work/web-cli/web-cli/scripts/e2e/out-real/audit/requests.http
+01:48:16.824   app| wrote 6 request(s) to /home/runner/work/web-cli/web-cli/scripts/e2e/out-real/audit/requests.http
+01:48:16.925 [PASS] Phase 4: export all captured requests to .http — wrote 6 request(s) to /home/runner/work/web-cli/web-cli/scripts/e2e/out-real/audit/requests.http
+01:48:16.925 > export /home/runner/work/web-cli/web-cli/scripts/e2e/out-real/audit/login-action.http action=d65358e1-3ba3-4f29-8242-275518226066
+01:48:16.925   app| wrote 1 request(s) to /home/runner/work/web-cli/web-cli/scripts/e2e/out-real/audit/login-action.http
+01:48:17.025 [PASS] Phase 4: export filtered by action ID — wrote 1 request(s) to /home/runner/work/web-cli/web-cli/scripts/e2e/out-real/audit/login-action.http
+01:48:17.025 > export /home/runner/work/web-cli/web-cli/scripts/e2e/out-real/audit/nav-action.http action=dce4b02d-43a0-42f4-828e-83eee02ef52f
+01:48:17.025   app| wrote 1 request(s) to /home/runner/work/web-cli/web-cli/scripts/e2e/out-real/audit/nav-action.http
+01:48:17.125 [PASS] Phase 4: navigation action has linked requests — wrote 1 request(s) to /home/runner/work/web-cli/web-cli/scripts/e2e/out-real/audit/nav-action.http
+01:48:17.125 > actions
+01:48:17.126   app| ACTION ID                             KIND   HINT  ELEMENT              REQUESTS  PAGE
+01:48:17.126   app| d65358e1-3ba3-4f29-8242-275518226066  click  2     <button> "Login"     1         https://127.0.0.1:35329/
+01:48:17.126   app| 868fca34-5c8c-4eb5-8b5a-6858bfca3398  click  3     <button> "Who am I"  2         https://127.0.0.1:35329/
+01:48:17.126   app| dce4b02d-43a0-42f4-828e-83eee02ef52f  click  1     <a> "Next page"      1         https://127.0.0.1:35329/
+01:48:17.126   app| 08298076-9596-4f52-8736-3f2e6ba258d8  click  2     <button> "Press me"  0         https://127.0.0.1:35329/next
+01:48:17.426 actions table:
 wrote 1 request(s) to /home/runner/work/web-cli/web-cli/scripts/e2e/out-real/audit/nav-action.http
 ACTION ID                             KIND   HINT  ELEMENT              REQUESTS  PAGE
-cb62120c-16ab-48d0-9310-61a23e1d7b0d  click  2     <button> "Login"     1         https://127.0.0.1:39487/
-bbc81f34-036e-44eb-a851-073a2e7b22f8  click  3     <button> "Who am I"  2         https://127.0.0.1:39487/
-26e9f8d0-2c83-4346-9a00-2e04fda9d95d  click  1     <a> "Next page"      1         https://127.0.0.1:39487/
-f27f93f4-fa75-4c32-b72e-b866d36156a0  click  2     <button> "Press me"  0         https://127.0.0.1:39487/next
-01:45:22.311 > status
-01:45:22.311   app| socket:   /home/runner/work/web-cli/web-cli/scripts/e2e/out-real/ipc.sock
-01:45:22.311   app| sessions: 1
-01:45:22.311   app|   #1 origin=chrome-extension://aghlljmggamhjpkcngogikkiohnaaiha/ nm-host pid=13511 since 2026-09-24T01:45:19Z
-01:45:22.311   app| proxy:    http://127.0.0.1:35573
-01:45:22.311   app| captured: 6 request(s), 4 action(s), 3 rule(s)
-01:45:22.412 [PASS] Phase 1: status reports session and captures — sessions: 1 | captured: 6 request(s), 4 action(s), 3 rule(s)
-01:45:22.423 curl replay of login-action.http: POST https://127.0.0.1:39487/api/login -> {"ok":true,"user":"alice"} (err=<nil>)
-01:45:22.423 [PASS] Phase 4: .http file replays with curl — see harness.log
-01:45:22.423 > open https://127.0.0.1:39487/login
-01:45:22.431   app| 01:45:22.431464 [proxy] #7 GET https://127.0.0.1:39487/login -> 200 (687 bytes, 0s) action=99b03020-8ac9-4941-938f-62d1346798e6
-01:45:22.453   app| opened https://127.0.0.1:39487/login "Login" tab=1286919450 action_id=99b03020-8ac9-4941-938f-62d1346798e6
-01:45:22.553 [PASS] Automation: open <url> waits for the load — opened https://127.0.0.1:39487/login "Login" tab=1286919450 action_id=99b03020-8ac9-4941-938f-62d1346798e6
-01:45:22.553 > type Email alice@example.com
-01:45:22.568   app| typed 17 char(s) into <input:email> "Email" selector=#email action_id=1a9cb255-c77e-40f4-a686-76b2668239d6
-01:45:22.668 [PASS] Automation: type <label text> <value> (target by <label>) — typed 17 char(s) into <input:email> "Email" selector=#email action_id=1a9cb255-c77e-40f4-a686-76b2668239d6
-01:45:22.668 > type Password $E2E_PASSWORD
-01:45:22.678   app| typed 13 char(s) into <input:password> "Password" selector=#password action_id=1cde4d30-1b27-4474-867a-a029b0cf905c
-01:45:22.778 [PASS] Automation: type password from $VAR, value never printed — typed 13 char(s) into <input:password> "Password" selector=#password action_id=1cde4d30-1b27-4474-867a-a029b0cf905c; value in app output=false
-01:45:22.778 > select Country Japan
-01:45:22.788   app| selected "Japan" in <select> "Country: Japan" selector=#country action_id=3eb587dc-9cf2-4726-b4f4-b30ec3645092
-01:45:22.888 [PASS] Automation: select <select> option by text — selected "Japan" in <select> "Country: Japan" selector=#country action_id=3eb587dc-9cf2-4726-b4f4-b30ec3645092
-01:45:22.888 > check "Remember me"
-01:45:22.897   app| checked <input:checkbox> "Remember me" checked=true selector=#remember action_id=046f38fa-f77d-4be2-b6c9-7d5bb1257fbe
-01:45:22.997 [PASS] Automation: check a checkbox (wrapping <label>) — checked <input:checkbox> "Remember me" checked=true selector=#remember action_id=046f38fa-f77d-4be2-b6c9-7d5bb1257fbe
-01:45:22.997 > press Enter Password
-01:45:23.007   app| pressed Enter on <input:password> "Password" action_id=15d187c0-b1da-46dd-8e25-56d164cb58d4
-01:45:23.016   app| 01:45:23.016142 [proxy] #8 POST https://127.0.0.1:39487/session -> 303 (0 bytes, 0s) action=15d187c0-b1da-46dd-8e25-56d164cb58d4
-01:45:23.020   app| 01:45:23.020871 [proxy] #9 GET https://127.0.0.1:39487/dashboard?user=alice%40example.com -> 200 (336 bytes, 0s) action=15d187c0-b1da-46dd-8e25-56d164cb58d4
-01:45:23.108 [PASS] Automation: press Enter in a field submits the form — pressed Enter on <input:password> "Password" action_id=15d187c0-b1da-46dd-8e25-56d164cb58d4
-01:45:23.108 > waitfor text=Welcome alice@example.com
-01:45:23.111   app| found text=Welcome alice@example.com after 3ms https://127.0.0.1:39487/dashboard?user=alice%40example.com
-01:45:23.211 [PASS] Automation: waitfor text=... (after navigation) — found text=Welcome alice@example.com after 3ms https://127.0.0.1:39487/dashboard?user=alice%40example.com
-01:45:23.512 [PASS] Automation: server received the filled form (POST /session) — body="email=alice%40example.com&password=E2E-s3cret-pw&country=jp&remember=on" action header upstream=""
-01:45:23.512 > log 100
-01:45:23.512   app| #1 GET https://127.0.0.1:39487/ -> 200 (2381 bytes, 3ms)
-01:45:23.512   app| #2 GET https://127.0.0.1:39487/favicon.ico -> 404 (19 bytes, 0s)
-01:45:23.512   app| #3 POST https://127.0.0.1:39487/api/login -> 200 (27 bytes, 0s) action=cb62120c-16ab-48d0-9310-61a23e1d7b0d
-01:45:23.512   app| #4 GET https://127.0.0.1:39487/api/whoami -> 200 (74 bytes, 1ms) action=bbc81f34-036e-44eb-a851-073a2e7b22f8 intercepts=2
-01:45:23.512   app| #5 GET https://127.0.0.1:39487/blocked -> 451 BLOCKED action=bbc81f34-036e-44eb-a851-073a2e7b22f8 intercepts=1
-01:45:23.512   app| #6 GET https://127.0.0.1:39487/next -> 200 (179 bytes, 1ms) action=26e9f8d0-2c83-4346-9a00-2e04fda9d95d
-01:45:23.512   app| #7 GET https://127.0.0.1:39487/login -> 200 (687 bytes, 0s) action=99b03020-8ac9-4941-938f-62d1346798e6
-01:45:23.512   app| #8 POST https://127.0.0.1:39487/session -> 303 (0 bytes, 0s) action=15d187c0-b1da-46dd-8e25-56d164cb58d4
-01:45:23.512   app| #9 GET https://127.0.0.1:39487/dashboard?user=alice%40example.com -> 200 (336 bytes, 0s) action=15d187c0-b1da-46dd-8e25-56d164cb58d4
-01:45:23.613 [PASS] Automation: form POST + redirect linked to the Enter action — #8 POST https://127.0.0.1:39487/session -> 303 (0 bytes, 0s) action=15d187c0-b1da-46dd-8e25-56d164cb58d4 | #9 GET https://127.0.0.1:39487/dashboard?user=alice%40example.com -> 200 (336 bytes, 0s) action=15d187c0-b1da-46dd-8e25-56d164cb58d4
-01:45:23.613 > show 8
-01:45:23.613   app| #8 POST https://127.0.0.1:39487/session HTTP/1.1
-01:45:23.613   app| action: 15d187c0-b1da-46dd-8e25-56d164cb58d4 press <input> "Enter on Password" on https://127.0.0.1:39487/login
-01:45:23.613   app| --- request headers
-01:45:23.613   app| Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7
-01:45:23.613   app| Accept-Encoding: gzip, deflate, br, zstd
-01:45:23.613   app| Accept-Language: en-US,en;q=0.9
-01:45:23.613   app| Cache-Control: max-age=0
-01:45:23.613   app| Connection: keep-alive
-01:45:23.613   app| Content-Length: 71
-01:45:23.613   app| Content-Type: application/x-www-form-urlencoded
-01:45:23.613   app| Cookie: session=abc123; imported=from-json
-01:45:23.613   app| Origin: https://127.0.0.1:39487
-01:45:23.613   app| Referer: https://127.0.0.1:39487/login
-01:45:23.613   app| Sec-Ch-Ua: "Chromium";v="146", "Not-A.Brand";v="24", "Google Chrome";v="146"
-01:45:23.613   app| Sec-Ch-Ua-Mobile: ?0
-01:45:23.613   app| Sec-Ch-Ua-Platform: "Linux"
-01:45:23.613   app| Sec-Fetch-Dest: document
-01:45:23.613   app| Sec-Fetch-Mode: navigate
-01:45:23.613   app| Sec-Fetch-Site: same-origin
-01:45:23.613   app| Upgrade-Insecure-Requests: 1
-01:45:23.613   app| User-Agent: Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36
-01:45:23.613   app| --- request body
-01:45:23.613   app| email=alice%40example.com&password=E2E-s3cret-pw&country=jp&remember=on
-01:45:23.613   app| --- response 303 (0s)
-01:45:23.613   app| Content-Length: 0
-01:45:23.613   app| Date: Thu, 24 Sep 2026 01:45:23 GMT
-01:45:23.613   app| Location: /dashboard?user=alice%40example.com
-01:45:23.613   app| Set-Cookie: auth=ok-jp; Path=/; HttpOnly; Secure
-01:45:23.613   app| --- end
-01:45:23.714 [PASS] Automation: show <id>: request headers + form body + response — #8 POST https://127.0.0.1:39487/session HTTP/1.1 | action: 15d187c0-b1da-46dd-8e25-56d164cb58d4 press <input> "Enter on Password" on https://127.0.0.1:39487/login | --- response 303 (0s) | Location: /dashboard?user=alice%40example.com
-01:45:23.714 > body 9 /home/runner/work/web-cli/web-cli/scripts/e2e/out-real/audit/dashboard-served.html
-01:45:23.714   app| wrote 336 byte(s) of the response body of #9 (text/html; charset=utf-8) to /home/runner/work/web-cli/web-cli/scripts/e2e/out-real/audit/dashboard-served.html
-01:45:23.815 [PASS] Automation: body <id> <file>: HTML as served (before JavaScript) — wrote 336 byte(s) of the response body of #9 (text/html; charset=utf-8) to /home/runner/work/web-cli/web-cli/scripts/e2e/out-real/audit/dashboard-served.html
-01:45:23.815 > text
-01:45:23.817   app| --- text of https://127.0.0.1:39487/dashboard?user=alice%40example.com (Dashboard)
-01:45:23.817   app| Welcome alice@example.com
-01:45:23.817   app| 
-01:45:23.817   app| rendered by js
-01:45:23.817   app| --- end of text
-01:45:23.917 [PASS] Automation: text: visible page text — Welcome alice@example.com | rendered by js
-01:45:23.917 > source /home/runner/work/web-cli/web-cli/scripts/e2e/out-real/audit/dashboard-rendered.html
-01:45:23.920   app| saved rendered DOM of https://127.0.0.1:39487/dashboard?user=alice%40example.com (345 bytes) to /home/runner/work/web-cli/web-cli/scripts/e2e/out-real/audit/dashboard-rendered.html
-01:45:23.920   app|   (the HTML as served by the server: 'log' to find the request, then 'body <id> <file>')
-01:45:24.020 [PASS] Automation: source <file>: rendered DOM (after JavaScript) — saved rendered DOM of https://127.0.0.1:39487/dashboard?user=alice%40example.com (345 bytes) to /home/runner/work/web-cli/web-cli/scripts/e2e/out-real/audit/dashboard-rendered.html
-01:45:24.020 > eval document.title
-01:45:24.023   app| => "Dashboard"  (string, via main-world)
-01:45:24.123 [PASS] Automation: eval <js> (page main world) — => "Dashboard"  (string, via main-world)
-01:45:24.123 > eval ({n: 1 + 1, path: location.pathname, theme: localStorage.theme})
-01:45:24.126   app| => {"n":2,"path":"/dashboard","theme":"dark"}  (object, via main-world)
-01:45:24.226 [PASS] Automation: eval returns JSON values — => {"n":2,"path":"/dashboard","theme":"dark"}  (object, via main-world)
-01:45:24.226 > storage dump /home/runner/work/web-cli/web-cli/scripts/e2e/out-real/audit/storage.json
-01:45:24.228   app| dumped 1 localStorage + 1 sessionStorage item(s) for https://127.0.0.1:39487 to /home/runner/work/web-cli/web-cli/scripts/e2e/out-real/audit/storage.json
-01:45:24.228   app|   local   theme=dark
-01:45:24.228   app|   session tab=home
-01:45:24.329 [PASS] Automation: storage dump (localStorage + sessionStorage) — dumped 1 localStorage + 1 sessionStorage item(s) for https://127.0.0.1:39487 to /home/runner/work/web-cli/web-cli/scripts/e2e/out-real/audit/storage.json | local   theme=dark | session tab=home
-01:45:24.329 > screenshot /home/runner/work/web-cli/web-cli/scripts/e2e/out-real/audit/dashboard.png
-01:45:24.365   app| saved screenshot of https://127.0.0.1:39487/dashboard?user=alice%40example.com (11775 bytes) to /home/runner/work/web-cli/web-cli/scripts/e2e/out-real/audit/dashboard.png
-01:45:24.466 [PASS] Automation: screenshot <file> (PNG) — saved screenshot of https://127.0.0.1:39487/dashboard?user=alice%40example.com (11775 bytes) to /home/runner/work/web-cli/web-cli/scripts/e2e/out-real/audit/dashboard.png
-01:45:24.466 > back
-01:45:24.494   app| back https://127.0.0.1:39487/login "Login" tab=1286919450 action_id=3a865960-4dd5-4378-98d9-968772f3f930
-01:45:24.595 [PASS] Automation: back — back https://127.0.0.1:39487/login "Login" tab=1286919450 action_id=3a865960-4dd5-4378-98d9-968772f3f930
-01:45:24.595 > forward
-01:45:24.623   app| forward https://127.0.0.1:39487/dashboard?user=alice%40example.com "Dashboard" tab=1286919450 action_id=94aee626-5d4d-486d-9a77-70f4fd5c0ef5
-01:45:24.724 [PASS] Automation: forward — forward https://127.0.0.1:39487/dashboard?user=alice%40example.com "Dashboard" tab=1286919450 action_id=94aee626-5d4d-486d-9a77-70f4fd5c0ef5
-01:45:24.724 > reload
-01:45:24.733   app| 01:45:24.733098 [proxy] #10 GET https://127.0.0.1:39487/dashboard?user=alice%40example.com -> 200 (336 bytes, 0s) action=40246465-e0c9-4047-8d95-451bceb6b314
-01:45:24.753   app| reloaded https://127.0.0.1:39487/dashboard?user=alice%40example.com "Dashboard" tab=1286919450 action_id=40246465-e0c9-4047-8d95-451bceb6b314
-01:45:24.853 [PASS] Automation: reload — reloaded https://127.0.0.1:39487/dashboard?user=alice%40example.com "Dashboard" tab=1286919450 action_id=40246465-e0c9-4047-8d95-451bceb6b314
-01:45:24.854 > newtab https://127.0.0.1:39487/next
-01:45:24.893   app| 01:45:24.893613 [proxy] #11 GET https://127.0.0.1:39487/next -> 200 (179 bytes, 1ms) action=feb22c10-ff35-4cd7-9444-ca2cc96a741f
-01:45:24.957   app| opened https://127.0.0.1:39487/next "Next" tab=1286919451 action_id=feb22c10-ff35-4cd7-9444-ca2cc96a741f
-01:45:25.057 > tabs
-01:45:25.059   app| 2 tab(s)
-01:45:25.059   app|     1286919450  https://127.0.0.1:39487/dashboard?user=alice%40example.com  "Dashboard"
-01:45:25.059   app|   * 1286919451  https://127.0.0.1:39487/next  "Next"
-01:45:25.160 > closetab
-01:45:25.170   app| 1 tab(s)
-01:45:25.170   app|   * 1286919450  https://127.0.0.1:39487/dashboard?user=alice%40example.com  "Dashboard"
-01:45:25.270 [PASS] Automation: newtab / tabs / closetab — opened https://127.0.0.1:39487/next "Next" tab=1286919451 action_id=feb22c10-ff35-4cd7-9444-ca2cc96a741f | 2 tab(s) ; 1286919450  https://127.0.0.1:39487/dashboard?user=alice%40example.com  "Dashboard" ; * 1286919451  https://127.0.0.1:39487/next  "Next" | 1 tab(s)
-01:45:25.270 > open https://127.0.0.1:39487/csp
-01:45:25.279   app| 01:45:25.279427 [proxy] #12 GET https://127.0.0.1:39487/csp -> 200 (98 bytes, 0s) action=2b648e5a-e099-4678-b40f-083a2b2e5400
-01:45:25.298   app| opened https://127.0.0.1:39487/csp "CSP" tab=1286919450 action_id=2b648e5a-e099-4678-b40f-083a2b2e5400
-01:45:25.398 > eval 6 * 7
-01:45:25.404   app| => 42  (number, via debugger)
-01:45:25.505 [PASS] Automation: eval under a strict CSP (debugger fallback) — => 42  (number, via debugger)
-01:45:25.505 > open https://127.0.0.1:39487/login
-01:45:25.514   app| 01:45:25.514020 [proxy] #13 GET https://127.0.0.1:39487/login -> 200 (687 bytes, 0s) action=bc872250-d06a-402b-9be4-56a742ad7b03
-01:45:25.534   app| opened https://127.0.0.1:39487/login "Login" tab=1286919450 action_id=bc872250-d06a-402b-9be4-56a742ad7b03
-01:45:25.635 > record start /home/runner/work/web-cli/web-cli/scripts/e2e/out-real/audit/login.webcli
-01:45:25.637   app| recording to /home/runner/work/web-cli/web-cli/scripts/e2e/out-real/audit/login.webcli (starting at https://127.0.0.1:39487/login): use the browser normally and/or web-cli commands; 'record stop' ends it
-01:45:25.738 [PASS] Automation: record start — recording to /home/runner/work/web-cli/web-cli/scripts/e2e/out-real/audit/login.webcli (starting at https://127.0.0.1:39487/login): use the browser normally and/or web-cli commands; 'record stop' ends it
-01:45:26.095   app| 01:45:26.095140 [record] type css=#email bob@example.com
-01:45:26.128   app| 01:45:26.128842 [record] type css=#password $WEBCLI_PASSWORD
-01:45:26.129   app| 01:45:26.129688 [record] check css=#remember
-01:45:26.134   app| 01:45:26.134073 [record] click "css=#loginform > button:nth-of-type(1)"
-01:45:26.145   app| 01:45:26.145594 [proxy] #14 POST https://127.0.0.1:39487/session -> 303 (0 bytes, 0s) action=bc872250-d06a-402b-9be4-56a742ad7b03
-01:45:26.149   app| 01:45:26.149040 [proxy] #15 GET https://127.0.0.1:39487/dashboard?user=bob%40example.com -> 200 (334 bytes, 0s) action=bc872250-d06a-402b-9be4-56a742ad7b03
-01:45:26.737 > record stop
-01:45:26.740   app| recording stopped: 5 step(s) written to /home/runner/work/web-cli/web-cli/scripts/e2e/out-real/audit/login.webcli
-01:45:26.840 [PASS] Automation: recording of real user input — err=<nil> recording stopped: 5 step(s) written to /home/runner/work/web-cli/web-cli/scripts/e2e/out-real/audit/login.webcli; script:
-# web-cli recording 2026-09-24T01:45:25Z
+d65358e1-3ba3-4f29-8242-275518226066  click  2     <button> "Login"     1         https://127.0.0.1:35329/
+868fca34-5c8c-4eb5-8b5a-6858bfca3398  click  3     <button> "Who am I"  2         https://127.0.0.1:35329/
+dce4b02d-43a0-42f4-828e-83eee02ef52f  click  1     <a> "Next page"      1         https://127.0.0.1:35329/
+08298076-9596-4f52-8736-3f2e6ba258d8  click  2     <button> "Press me"  0         https://127.0.0.1:35329/next
+01:48:17.426 > status
+01:48:17.426   app| socket:   /home/runner/work/web-cli/web-cli/scripts/e2e/out-real/ipc.sock
+01:48:17.426   app| sessions: 1
+01:48:17.426   app|   #1 origin=chrome-extension://aghlljmggamhjpkcngogikkiohnaaiha/ nm-host pid=4132 since 2026-09-24T01:48:13Z
+01:48:17.426   app| proxy:    http://127.0.0.1:45771
+01:48:17.426   app| captured: 6 request(s), 4 action(s), 3 rule(s)
+01:48:17.527 [PASS] Phase 1: status reports session and captures — sessions: 1 | captured: 6 request(s), 4 action(s), 3 rule(s)
+01:48:17.537 curl replay of login-action.http: POST https://127.0.0.1:35329/api/login -> {"ok":true,"user":"alice"} (err=<nil>)
+01:48:17.537 [PASS] Phase 4: .http file replays with curl — see harness.log
+01:48:17.537 > open https://127.0.0.1:35329/login
+01:48:17.544   app| 01:48:17.544054 [proxy] #7 GET https://127.0.0.1:35329/login -> 200 (687 bytes, 1ms) action=ef39848f-4200-4fab-b4de-3df91a6043ea
+01:48:17.566   app| opened https://127.0.0.1:35329/login "Login" tab=1127006983 action_id=ef39848f-4200-4fab-b4de-3df91a6043ea
+01:48:17.667 [PASS] Automation: open <url> waits for the load — opened https://127.0.0.1:35329/login "Login" tab=1127006983 action_id=ef39848f-4200-4fab-b4de-3df91a6043ea
+01:48:17.667 > type Email alice@example.com
+01:48:17.682   app| typed 17 char(s) into <input:email> "Email" selector=#email action_id=d3ae964a-693e-4a3c-97fc-cc0c1de25089
+01:48:17.783 [PASS] Automation: type <label text> <value> (target by <label>) — typed 17 char(s) into <input:email> "Email" selector=#email action_id=d3ae964a-693e-4a3c-97fc-cc0c1de25089
+01:48:17.783 > type Password $E2E_PASSWORD
+01:48:17.791   app| typed 13 char(s) into <input:password> "Password" selector=#password action_id=11781f21-ca9b-4083-80aa-58332d894eac
+01:48:17.892 [PASS] Automation: type password from $VAR, value never printed — typed 13 char(s) into <input:password> "Password" selector=#password action_id=11781f21-ca9b-4083-80aa-58332d894eac; value in app output=false
+01:48:17.892 > select Country Japan
+01:48:17.900   app| selected "Japan" in <select> "Country: Japan" selector=#country action_id=4ac496c8-a937-4f91-bbc4-d81c281d002c
+01:48:18.000 [PASS] Automation: select <select> option by text — selected "Japan" in <select> "Country: Japan" selector=#country action_id=4ac496c8-a937-4f91-bbc4-d81c281d002c
+01:48:18.000 > check "Remember me"
+01:48:18.007   app| checked <input:checkbox> "Remember me" checked=true selector=#remember action_id=5329914d-8fbe-4ea6-b3b5-dcfa8bc8d924
+01:48:18.108 [PASS] Automation: check a checkbox (wrapping <label>) — checked <input:checkbox> "Remember me" checked=true selector=#remember action_id=5329914d-8fbe-4ea6-b3b5-dcfa8bc8d924
+01:48:18.108 > press Enter Password
+01:48:18.115   app| pressed Enter on <input:password> "Password" action_id=9bae8ddf-7eca-4146-84f6-af66f43b32cd
+01:48:18.125   app| 01:48:18.125012 [proxy] #8 POST https://127.0.0.1:35329/session -> 303 (0 bytes, 0s) action=9bae8ddf-7eca-4146-84f6-af66f43b32cd
+01:48:18.127   app| 01:48:18.127862 [proxy] #9 GET https://127.0.0.1:35329/dashboard?user=alice%40example.com -> 200 (336 bytes, 0s) action=9bae8ddf-7eca-4146-84f6-af66f43b32cd
+01:48:18.215 [PASS] Automation: press Enter in a field submits the form — pressed Enter on <input:password> "Password" action_id=9bae8ddf-7eca-4146-84f6-af66f43b32cd
+01:48:18.215 > waitfor text=Welcome alice@example.com
+01:48:18.217   app| found text=Welcome alice@example.com after 2ms https://127.0.0.1:35329/dashboard?user=alice%40example.com
+01:48:18.318 [PASS] Automation: waitfor text=... (after navigation) — found text=Welcome alice@example.com after 2ms https://127.0.0.1:35329/dashboard?user=alice%40example.com
+01:48:18.618 [PASS] Automation: server received the filled form (POST /session) — body="email=alice%40example.com&password=E2E-s3cret-pw&country=jp&remember=on" action header upstream=""
+01:48:18.618 > log 100
+01:48:18.618   app| #1 GET https://127.0.0.1:35329/ -> 200 (2381 bytes, 3ms)
+01:48:18.618   app| #2 GET https://127.0.0.1:35329/favicon.ico -> 404 (19 bytes, 0s)
+01:48:18.618   app| #3 POST https://127.0.0.1:35329/api/login -> 200 (27 bytes, 0s) action=d65358e1-3ba3-4f29-8242-275518226066
+01:48:18.618   app| #4 GET https://127.0.0.1:35329/api/whoami -> 200 (74 bytes, 0s) action=868fca34-5c8c-4eb5-8b5a-6858bfca3398 intercepts=2
+01:48:18.618   app| #5 GET https://127.0.0.1:35329/blocked -> 451 BLOCKED action=868fca34-5c8c-4eb5-8b5a-6858bfca3398 intercepts=1
+01:48:18.618   app| #6 GET https://127.0.0.1:35329/next -> 200 (179 bytes, 0s) action=dce4b02d-43a0-42f4-828e-83eee02ef52f
+01:48:18.618   app| #7 GET https://127.0.0.1:35329/login -> 200 (687 bytes, 1ms) action=ef39848f-4200-4fab-b4de-3df91a6043ea
+01:48:18.618   app| #8 POST https://127.0.0.1:35329/session -> 303 (0 bytes, 0s) action=9bae8ddf-7eca-4146-84f6-af66f43b32cd
+01:48:18.618   app| #9 GET https://127.0.0.1:35329/dashboard?user=alice%40example.com -> 200 (336 bytes, 0s) action=9bae8ddf-7eca-4146-84f6-af66f43b32cd
+01:48:18.719 [PASS] Automation: form POST + redirect linked to the Enter action — #8 POST https://127.0.0.1:35329/session -> 303 (0 bytes, 0s) action=9bae8ddf-7eca-4146-84f6-af66f43b32cd | #9 GET https://127.0.0.1:35329/dashboard?user=alice%40example.com -> 200 (336 bytes, 0s) action=9bae8ddf-7eca-4146-84f6-af66f43b32cd
+01:48:18.719 > show 8
+01:48:18.719   app| #8 POST https://127.0.0.1:35329/session HTTP/1.1
+01:48:18.719   app| action: 9bae8ddf-7eca-4146-84f6-af66f43b32cd press <input> "Enter on Password" on https://127.0.0.1:35329/login
+01:48:18.719   app| --- request headers
+01:48:18.719   app| Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7
+01:48:18.719   app| Accept-Encoding: gzip, deflate, br, zstd
+01:48:18.719   app| Accept-Language: en-US,en;q=0.9
+01:48:18.719   app| Cache-Control: max-age=0
+01:48:18.719   app| Connection: keep-alive
+01:48:18.719   app| Content-Length: 71
+01:48:18.719   app| Content-Type: application/x-www-form-urlencoded
+01:48:18.719   app| Cookie: session=abc123; imported=from-json
+01:48:18.719   app| Origin: https://127.0.0.1:35329
+01:48:18.719   app| Referer: https://127.0.0.1:35329/login
+01:48:18.719   app| Sec-Ch-Ua: "Chromium";v="146", "Not-A.Brand";v="24", "Google Chrome";v="146"
+01:48:18.719   app| Sec-Ch-Ua-Mobile: ?0
+01:48:18.719   app| Sec-Ch-Ua-Platform: "Linux"
+01:48:18.719   app| Sec-Fetch-Dest: document
+01:48:18.719   app| Sec-Fetch-Mode: navigate
+01:48:18.719   app| Sec-Fetch-Site: same-origin
+01:48:18.719   app| Upgrade-Insecure-Requests: 1
+01:48:18.719   app| User-Agent: Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36
+01:48:18.719   app| --- request body
+01:48:18.719   app| email=alice%40example.com&password=E2E-s3cret-pw&country=jp&remember=on
+01:48:18.719   app| --- response 303 (0s)
+01:48:18.719   app| Content-Length: 0
+01:48:18.719   app| Date: Thu, 24 Sep 2026 01:48:18 GMT
+01:48:18.719   app| Location: /dashboard?user=alice%40example.com
+01:48:18.719   app| Set-Cookie: auth=ok-jp; Path=/; HttpOnly; Secure
+01:48:18.719   app| --- end
+01:48:18.820 [PASS] Automation: show <id>: request headers + form body + response — #8 POST https://127.0.0.1:35329/session HTTP/1.1 | action: 9bae8ddf-7eca-4146-84f6-af66f43b32cd press <input> "Enter on Password" on https://127.0.0.1:35329/login | --- response 303 (0s) | Location: /dashboard?user=alice%40example.com
+01:48:18.820 > body 9 /home/runner/work/web-cli/web-cli/scripts/e2e/out-real/audit/dashboard-served.html
+01:48:18.820   app| wrote 336 byte(s) of the response body of #9 (text/html; charset=utf-8) to /home/runner/work/web-cli/web-cli/scripts/e2e/out-real/audit/dashboard-served.html
+01:48:18.920 [PASS] Automation: body <id> <file>: HTML as served (before JavaScript) — wrote 336 byte(s) of the response body of #9 (text/html; charset=utf-8) to /home/runner/work/web-cli/web-cli/scripts/e2e/out-real/audit/dashboard-served.html
+01:48:18.920 > text
+01:48:18.922   app| --- text of https://127.0.0.1:35329/dashboard?user=alice%40example.com (Dashboard)
+01:48:18.922   app| Welcome alice@example.com
+01:48:18.922   app| 
+01:48:18.922   app| rendered by js
+01:48:18.922   app| --- end of text
+01:48:19.023 [PASS] Automation: text: visible page text — Welcome alice@example.com | rendered by js
+01:48:19.023 > source /home/runner/work/web-cli/web-cli/scripts/e2e/out-real/audit/dashboard-rendered.html
+01:48:19.025   app| saved rendered DOM of https://127.0.0.1:35329/dashboard?user=alice%40example.com (345 bytes) to /home/runner/work/web-cli/web-cli/scripts/e2e/out-real/audit/dashboard-rendered.html
+01:48:19.025   app|   (the HTML as served by the server: 'log' to find the request, then 'body <id> <file>')
+01:48:19.125 [PASS] Automation: source <file>: rendered DOM (after JavaScript) — saved rendered DOM of https://127.0.0.1:35329/dashboard?user=alice%40example.com (345 bytes) to /home/runner/work/web-cli/web-cli/scripts/e2e/out-real/audit/dashboard-rendered.html
+01:48:19.125 > eval document.title
+01:48:19.127   app| => "Dashboard"  (string, via main-world)
+01:48:19.227 [PASS] Automation: eval <js> (page main world) — => "Dashboard"  (string, via main-world)
+01:48:19.227 > eval ({n: 1 + 1, path: location.pathname, theme: localStorage.theme})
+01:48:19.229   app| => {"n":2,"path":"/dashboard","theme":"dark"}  (object, via main-world)
+01:48:19.329 [PASS] Automation: eval returns JSON values — => {"n":2,"path":"/dashboard","theme":"dark"}  (object, via main-world)
+01:48:19.329 > storage dump /home/runner/work/web-cli/web-cli/scripts/e2e/out-real/audit/storage.json
+01:48:19.331   app| dumped 1 localStorage + 1 sessionStorage item(s) for https://127.0.0.1:35329 to /home/runner/work/web-cli/web-cli/scripts/e2e/out-real/audit/storage.json
+01:48:19.331   app|   local   theme=dark
+01:48:19.331   app|   session tab=home
+01:48:19.431 [PASS] Automation: storage dump (localStorage + sessionStorage) — dumped 1 localStorage + 1 sessionStorage item(s) for https://127.0.0.1:35329 to /home/runner/work/web-cli/web-cli/scripts/e2e/out-real/audit/storage.json | local   theme=dark | session tab=home
+01:48:19.431 > screenshot /home/runner/work/web-cli/web-cli/scripts/e2e/out-real/audit/dashboard.png
+01:48:19.467   app| saved screenshot of https://127.0.0.1:35329/dashboard?user=alice%40example.com (11775 bytes) to /home/runner/work/web-cli/web-cli/scripts/e2e/out-real/audit/dashboard.png
+01:48:19.567 [PASS] Automation: screenshot <file> (PNG) — saved screenshot of https://127.0.0.1:35329/dashboard?user=alice%40example.com (11775 bytes) to /home/runner/work/web-cli/web-cli/scripts/e2e/out-real/audit/dashboard.png
+01:48:19.567 > back
+01:48:19.596   app| back https://127.0.0.1:35329/login "Login" tab=1127006983 action_id=8a47979a-0d16-40db-8e4e-36688add0f5e
+01:48:19.696 [PASS] Automation: back — back https://127.0.0.1:35329/login "Login" tab=1127006983 action_id=8a47979a-0d16-40db-8e4e-36688add0f5e
+01:48:19.696 > forward
+01:48:19.725   app| forward https://127.0.0.1:35329/dashboard?user=alice%40example.com "Dashboard" tab=1127006983 action_id=1aa522f6-72c4-46d9-a0d6-c971451b32db
+01:48:19.825 [PASS] Automation: forward — forward https://127.0.0.1:35329/dashboard?user=alice%40example.com "Dashboard" tab=1127006983 action_id=1aa522f6-72c4-46d9-a0d6-c971451b32db
+01:48:19.825 > reload
+01:48:19.832   app| 01:48:19.832911 [proxy] #10 GET https://127.0.0.1:35329/dashboard?user=alice%40example.com -> 200 (336 bytes, 0s) action=7223a699-067b-42cc-9218-3bf9cdb9d4a1
+01:48:19.853   app| reloaded https://127.0.0.1:35329/dashboard?user=alice%40example.com "Dashboard" tab=1127006983 action_id=7223a699-067b-42cc-9218-3bf9cdb9d4a1
+01:48:19.954 [PASS] Automation: reload — reloaded https://127.0.0.1:35329/dashboard?user=alice%40example.com "Dashboard" tab=1127006983 action_id=7223a699-067b-42cc-9218-3bf9cdb9d4a1
+01:48:19.954 > newtab https://127.0.0.1:35329/next
+01:48:19.990   app| 01:48:19.990951 [proxy] #11 GET https://127.0.0.1:35329/next -> 200 (179 bytes, 1ms) action=2526434e-27cc-4437-b07c-0e147d63d7f0
+01:48:20.059   app| opened https://127.0.0.1:35329/next "Next" tab=1127006984 action_id=2526434e-27cc-4437-b07c-0e147d63d7f0
+01:48:20.159 > tabs
+01:48:20.161   app| 2 tab(s)
+01:48:20.161   app|     1127006983  https://127.0.0.1:35329/dashboard?user=alice%40example.com  "Dashboard"
+01:48:20.161   app|   * 1127006984  https://127.0.0.1:35329/next  "Next"
+01:48:20.261 > closetab
+01:48:20.272   app| 1 tab(s)
+01:48:20.272   app|   * 1127006983  https://127.0.0.1:35329/dashboard?user=alice%40example.com  "Dashboard"
+01:48:20.372 [PASS] Automation: newtab / tabs / closetab — opened https://127.0.0.1:35329/next "Next" tab=1127006984 action_id=2526434e-27cc-4437-b07c-0e147d63d7f0 | 2 tab(s) ; 1127006983  https://127.0.0.1:35329/dashboard?user=alice%40example.com  "Dashboard" ; * 1127006984  https://127.0.0.1:35329/next  "Next" | 1 tab(s)
+01:48:20.372 > open https://127.0.0.1:35329/csp
+01:48:20.379   app| 01:48:20.379363 [proxy] #12 GET https://127.0.0.1:35329/csp -> 200 (98 bytes, 0s) action=824c1b10-172f-4b02-a677-23163e16ee96
+01:48:20.397   app| opened https://127.0.0.1:35329/csp "CSP" tab=1127006983 action_id=824c1b10-172f-4b02-a677-23163e16ee96
+01:48:20.498 > eval 6 * 7
+01:48:20.503   app| => 42  (number, via debugger)
+01:48:20.604 [PASS] Automation: eval under a strict CSP (debugger fallback) — => 42  (number, via debugger)
+01:48:20.604 > open https://127.0.0.1:35329/login
+01:48:20.612   app| 01:48:20.612268 [proxy] #13 GET https://127.0.0.1:35329/login -> 200 (687 bytes, 0s) action=029f036c-042b-48c6-a46a-1a7e1515cd27
+01:48:20.634   app| opened https://127.0.0.1:35329/login "Login" tab=1127006983 action_id=029f036c-042b-48c6-a46a-1a7e1515cd27
+01:48:20.735 > record start /home/runner/work/web-cli/web-cli/scripts/e2e/out-real/audit/login.webcli
+01:48:20.737   app| recording to /home/runner/work/web-cli/web-cli/scripts/e2e/out-real/audit/login.webcli (starting at https://127.0.0.1:35329/login): use the browser normally and/or web-cli commands; 'record stop' ends it
+01:48:20.837 [PASS] Automation: record start — recording to /home/runner/work/web-cli/web-cli/scripts/e2e/out-real/audit/login.webcli (starting at https://127.0.0.1:35329/login): use the browser normally and/or web-cli commands; 'record stop' ends it
+01:48:21.196   app| 01:48:21.196084 [record] type css=#email bob@example.com
+01:48:21.230   app| 01:48:21.230792 [record] type css=#password $WEBCLI_PASSWORD
+01:48:21.231   app| 01:48:21.231911 [record] check css=#remember
+01:48:21.236   app| 01:48:21.236637 [record] click "css=#loginform > button:nth-of-type(1)"
+01:48:21.246   app| 01:48:21.246841 [proxy] #14 POST https://127.0.0.1:35329/session -> 303 (0 bytes, 0s) action=029f036c-042b-48c6-a46a-1a7e1515cd27
+01:48:21.250   app| 01:48:21.250885 [proxy] #15 GET https://127.0.0.1:35329/dashboard?user=bob%40example.com -> 200 (334 bytes, 0s) action=029f036c-042b-48c6-a46a-1a7e1515cd27
+01:48:21.839 > record stop
+01:48:21.841   app| recording stopped: 5 step(s) written to /home/runner/work/web-cli/web-cli/scripts/e2e/out-real/audit/login.webcli
+01:48:21.941 [PASS] Automation: recording of real user input — err=<nil> recording stopped: 5 step(s) written to /home/runner/work/web-cli/web-cli/scripts/e2e/out-real/audit/login.webcli; script:
+# web-cli recording 2026-09-24T01:48:20Z
 # replay: bin/app -f login.webcli   (or 'run login.webcli' in the REPL)
 # password fields are recorded as $WEBCLI_PASSWORD: export it before replaying
-open https://127.0.0.1:39487/login
-# type <input:email> "Email" on https://127.0.0.1:39487/login
+open https://127.0.0.1:35329/login
+# type <input:email> "Email" on https://127.0.0.1:35329/login
 type css=#email bob@example.com
-# type <input:password> "Password" on https://127.0.0.1:39487/login
+# type <input:password> "Password" on https://127.0.0.1:35329/login
 type css=#password $WEBCLI_PASSWORD
-# check <input:checkbox> "Remember me" on https://127.0.0.1:39487/login
+# check <input:checkbox> "Remember me" on https://127.0.0.1:35329/login
 check css=#remember
-# click <button> "Sign in" on https://127.0.0.1:39487/login
+# click <button> "Sign in" on https://127.0.0.1:35329/login
 click "css=#loginform > button:nth-of-type(1)"
 
-01:45:26.840 > run /home/runner/work/web-cli/web-cli/scripts/e2e/out-real/audit/login.webcli
-01:45:26.840   app| > open https://127.0.0.1:39487/login
-01:45:26.851   app| 01:45:26.851193 [proxy] #16 GET https://127.0.0.1:39487/login -> 200 (687 bytes, 0s) action=0e322627-1776-4ef1-8981-576d7b8da30d
-01:45:26.875   app| opened https://127.0.0.1:39487/login "Login" tab=1286919450 action_id=0e322627-1776-4ef1-8981-576d7b8da30d
-01:45:26.875   app| > type css=#email bob@example.com
-01:45:26.880   app| typed 15 char(s) into <input:email> "Email" selector=#email action_id=b6b6903a-d697-45e3-86c6-28f323dfd4b4
-01:45:26.880   app| > type css=#password $WEBCLI_PASSWORD
-01:45:26.886   app| typed 12 char(s) into <input:password> "Password" selector=#password action_id=438baf80-a8a6-47d2-9f00-0de652885e74
-01:45:26.887   app| > check css=#remember
-01:45:26.890   app| checked <input:checkbox> "Remember me" checked=true selector=#remember action_id=ca6abb76-a385-4a1b-a076-abc69c22cf4b
-01:45:26.890   app| > click "css=#loginform > button:nth-of-type(1)"
-01:45:26.893   app| click <button> "Sign in" selector=#loginform > button:nth-of-type(1) action_id=6c38e651-7c67-4639-82b7-f5b2c89f237b
-01:45:26.893   app| run /home/runner/work/web-cli/web-cli/scripts/e2e/out-real/audit/login.webcli: 5 step(s) OK in 53ms
-01:45:26.900   app| 01:45:26.900399 [proxy] #17 POST https://127.0.0.1:39487/session -> 303 (0 bytes, 0s) action=6c38e651-7c67-4639-82b7-f5b2c89f237b
-01:45:26.902   app| 01:45:26.902473 [proxy] #18 GET https://127.0.0.1:39487/dashboard?user=bob%40example.com -> 200 (334 bytes, 0s) action=6c38e651-7c67-4639-82b7-f5b2c89f237b
-01:45:27.496 [PASS] Automation: run <recording> replays it ($WEBCLI_PASSWORD from env) — run /home/runner/work/web-cli/web-cli/scripts/e2e/out-real/audit/login.webcli: 5 step(s) OK in 53ms; server got "email=bob%40example.com&password=replay-pw-42&country=us&remember=on"
-01:45:27.496 E2E: 57/57 checks passed — report: /home/runner/work/web-cli/web-cli/scripts/e2e/out-real/e2e-report.md
-01:45:27.509   app| 01:45:27.509443 [ipc] session #1 disconnected
+01:48:21.941 > run /home/runner/work/web-cli/web-cli/scripts/e2e/out-real/audit/login.webcli
+01:48:21.942   app| > open https://127.0.0.1:35329/login
+01:48:21.952   app| 01:48:21.952320 [proxy] #16 GET https://127.0.0.1:35329/login -> 200 (687 bytes, 0s) action=0950ba54-177a-4aa2-b944-721c6b20b975
+01:48:21.971   app| opened https://127.0.0.1:35329/login "Login" tab=1127006983 action_id=0950ba54-177a-4aa2-b944-721c6b20b975
+01:48:21.971   app| > type css=#email bob@example.com
+01:48:21.986   app| typed 15 char(s) into <input:email> "Email" selector=#email action_id=6fada5fd-1fe2-45b9-8c0c-e9527fdd0c5e
+01:48:21.987   app| > type css=#password $WEBCLI_PASSWORD
+01:48:21.991   app| typed 12 char(s) into <input:password> "Password" selector=#password action_id=57255582-0414-497b-9459-00b08578d9e2
+01:48:21.992   app| > check css=#remember
+01:48:21.995   app| checked <input:checkbox> "Remember me" checked=true selector=#remember action_id=87d269b9-4767-4637-8592-34e9687aa6b1
+01:48:21.995   app| > click "css=#loginform > button:nth-of-type(1)"
+01:48:21.998   app| click <button> "Sign in" selector=#loginform > button:nth-of-type(1) action_id=b0b8f2db-8e6b-4592-a074-3e2f764e6f74
+01:48:21.998   app| run /home/runner/work/web-cli/web-cli/scripts/e2e/out-real/audit/login.webcli: 5 step(s) OK in 56ms
+01:48:22.005   app| 01:48:22.005051 [proxy] #17 POST https://127.0.0.1:35329/session -> 303 (0 bytes, 0s) action=b0b8f2db-8e6b-4592-a074-3e2f764e6f74
+01:48:22.009   app| 01:48:22.009366 [proxy] #18 GET https://127.0.0.1:35329/dashboard?user=bob%40example.com -> 200 (334 bytes, 0s) action=b0b8f2db-8e6b-4592-a074-3e2f764e6f74
+01:48:22.601 [PASS] Automation: run <recording> replays it ($WEBCLI_PASSWORD from env) — run /home/runner/work/web-cli/web-cli/scripts/e2e/out-real/audit/login.webcli: 5 step(s) OK in 56ms; server got "email=bob%40example.com&password=replay-pw-42&country=us&remember=on"
+01:48:22.601 E2E: 57/57 checks passed — report: /home/runner/work/web-cli/web-cli/scripts/e2e/out-real/e2e-report.md
+01:48:22.613   app| 01:48:22.613277 [ipc] session #1 disconnected
