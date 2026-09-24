@@ -99,6 +99,25 @@ function waitComplete(tabId, timeoutMs) {
   });
 }
 
+// Back/forward exactly one history entry. chrome.tabs.goBack follows the
+// browser's Back button, which skips entries the user never interacted with
+// (Chrome's history manipulation intervention) - every page driven by
+// automation qualifies, so it would jump several pages back. The page's own
+// history.back() steps one entry; tabs.goBack is the fallback for pages that
+// cannot be scripted.
+async function historyGo(tabId, action) {
+  try {
+    await chrome.scripting.executeScript({
+      target: { tabId }, world: "MAIN", args: [action],
+      func: (a) => { setTimeout(() => (a === "back" ? history.back() : history.forward()), 0); },
+    });
+  } catch (e) {
+    log("history via page failed, using tabs API:", e && e.message);
+    if (action === "back") await chrome.tabs.goBack(tabId);
+    else await chrome.tabs.goForward(tabId);
+  }
+}
+
 // Runs in the page (world MAIN). Returns a JSON-safe result.
 async function pageEval(code) {
   const out = (v) => {
@@ -204,8 +223,7 @@ const handlers = {
     if (tag) await armActionHeader(tab.id, actionId);
     const done = waitComplete(tab.id, timeoutMs || 15000);
     if (action === "open") await chrome.tabs.update(tab.id, { url });
-    else if (action === "back") await chrome.tabs.goBack(tab.id);
-    else if (action === "forward") await chrome.tabs.goForward(tab.id);
+    else if (action === "back" || action === "forward") await historyGo(tab.id, action);
     else if (action === "reload") await chrome.tabs.reload(tab.id);
     else throw new Error(`unknown navigation ${action}`);
     const t = await done;
