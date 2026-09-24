@@ -10,7 +10,19 @@
 | 3 | Go 100% ローカル MITM プロキシ | ✅ 完了 | httptest+実 curl 4件 + github.com 実通信デモ + E2E 8項目 |
 | 4 | コンテキスト紐付け・.http・Cookie | ✅ 完了 | ユニット 3件 + E2E 11項目（curl で .http 再生を含む） |
 
-**総合結果: `scripts/test-all.sh` → `ALL CHECKS PASSED`**
+**総合結果: `scripts/test-all.sh` → `ALL CHECKS PASSED`（ローカル + GitHub Actions 上の実ブラウザ CloakBrowser）**
+
+### 実ブラウザ検証（CloakBrowser / GitHub Actions）
+
+| 項目 | 内容 |
+|---|---|
+| ブラウザ | **CloakBrowser** `chromium-v146.0.7680.177.5`（Chromium 146.0.7680.177、公式 Release の `cloakbrowser-linux-x64.tar.gz`、GitHub API の digest `sha256 4a12bcde…670e` と `sha256sum -c` で一致確認） |
+| 実行場所 | `.github/workflows/e2e-cloakbrowser.yml`（ubuntu-latest + Xvfb、headed）。サンドボックスからは配布元（cloakbrowser.dev / GitHub のアセット CDN）に到達できないため、GitHub のランナーでダウンロード・検証・テストし、エビデンスをブランチへ自動コミットする方式にした |
+| 方式 | `-mode real`: Chromium 自身が `--load-extension=extension/` で拡張機能を読み込み、MV3 service worker が `chrome.runtime.connectNative` で `install-host.sh` 登録済みの **本物の `bin/nm-host` をブラウザが起動**。chrome.* の代替・CDP エミュレーションは一切なし |
+| 結果 | **E2E real 32/32 PASS**、emulated 31/31 PASS、Go テスト全 PASS（`-race`）、PTY fzf PASS、curl プロキシデモ PASS |
+| エビデンス | [`evidence/ci/`](evidence/ci/)（`environment.txt` に run URL・コミット・ブラウザ版・digest、`e2e-report-real.md` 判定表、`e2e-sw-console-real.log` = service worker の console、`e2e-nm-host-real.log`、`sample-requests-real.http`、`sample-cookies-real.json` ほか） |
+
+実ブラウザで確認できたもの（`evidence/ci/e2e-report-real.md` より）: ping→pong（app→拡張の往復 約1.2ms）、Vimium C 方式の可視判定で期待 7 要素ちょうど、fzf 選択→クリック、クリック前に生成した UUID が declarativeNetRequest で `X-Audit-Action-Id` として付与され、プロキシで紐付け後に除去されて上流には届かないこと、`chrome.cookies.getAll/set` による HttpOnly/Secure Cookie のダンプ・インポート、ルールによるヘッダ注入・451 遮断、main_frame 遷移への action 付与、遷移後の content script 再注入、`.http` の出力と curl 再生。
 （Go テスト 15 PASS / 1 SKIP※ を `-race` 付きで実行、PTY 上の fzf 対話 PASS、curl プロキシデモ PASS、E2E 31/31 PASS）
 ※ SKIP は PTY 専用テストで、通常の `go test` ではスキップし `scripts/test-tty.sh` が PTY 上で実行して PASS している。
 
@@ -18,6 +30,7 @@
 
 | ファイル | 内容 |
 |---|---|
+| [`evidence/ci/`](evidence/ci/) | **実ブラウザ CloakBrowser** での同一スクリプト実行結果（GitHub Actions、emulated + real） |
 | [`evidence/build.log`](evidence/build.log) | Go バージョン、`go vet` + `go build ./...` + バイナリビルド |
 | [`evidence/go-test.log`](evidence/go-test.log) | `go test -race -count=1 -v ./...` の全出力 |
 | [`evidence/tty-fzf.log`](evidence/tty-fzf.log) | 擬似端末上の対話型 fzf（"check" を入力 + Enter → hint 7 を選択） |
@@ -39,7 +52,8 @@
 | Go 1.27.1 | PyPI の `go-bin` wheel（公式バイナリ同梱）を展開 | `~/.local`（リポジトリ外） |
 | Go モジュール | `GOPROXY=direct` で GitHub から取得。`golang.org/x/*` と `gopkg.in/yaml.v3` は GitHub ミラーから **GOPROXY 形式の file:// ミラー**をローカル構築 | `go.mod` に `replace` は入れていない。生成された `go.sum` の h1 ハッシュが goproxy / chromedp 本家の `go.sum` と **完全一致**することを確認済み（x/net, x/text, x/sys, yaml.v3） |
 | fzf 0.74 | `go install github.com/junegunn/fzf@latest`（ソースからビルド） | システムの `fzf` として `PATH` に配置 |
-| Chromium 153 | npm `@sparticuz/chromium` の同梱バイナリ（headless shell） | 拡張機能を読み込めないビルドのため、E2E は §E2E 方式を参照 |
+| Chromium 153 | npm `@sparticuz/chromium` の同梱バイナリ（headless shell） | ローカルの emulated E2E 用（拡張機能を読み込めないビルド、§E2E 方式） |
+| CloakBrowser 146 | 公式 GitHub Release を **GitHub Actions ランナー上で**取得し digest 検証 | 実ブラウザ E2E（real モード）用。再配布禁止ライセンスのためリポジトリには含めない |
 
 出所不明の非公式 Chrome バイナリ（npm の匿名パッケージ）は安全上の理由で採用しなかった。
 
@@ -186,12 +200,15 @@ d6c02512-d255-4cb5-8b18-898a1eed730b  click  2     <button> "Login"     1       
 
 ## E2E 方式について（透明性のための記載）
 
-入手できた Chromium は headless shell ビルドで、**パッケージ化されていない拡張機能を読み込めない**（`--load-extension` 非対応）。そこで `scripts/e2e` は次の構成で検証した。
+`scripts/e2e` は 2 モードを持つ。
 
-- **本物**: Blink エンジン（Chromium 153）、ページの DOM/レイアウト/`elementFromPoint`/イベント、ブラウザの HTTPS 通信とプロキシ経由、出荷する `background.js` と `content.js` の **ファイルそのもの**（content.js は CDP の isolated world = content script と同じ隔離ワールドで実行）、`install-host.sh` で配置したホスト定義 JSON の検証（name / type / allowed_origins）、Chrome と同じ方法（`argv[1]=origin`、stdio 長さ付きフレーム）での `bin/nm-host` 起動、`bin/app`、システムの `fzf`、goproxy プロキシ、ダミーの HTTPS オリジンサーバ。
-- **CDP で提供した chrome.* API**（`scripts/e2e/exthost.go`）: `runtime.connectNative`、`tabs.query/sendMessage`、`scripting.executeScript`、`declarativeNetRequest.updateSessionRules`（→ `Network.setExtraHTTPHeaders`）、`cookies.getAll/set`（→ `Network.getCookies/setCookie`）。background.js はセキュアコンテキストが必要なため、Fetch ドメインでネットワークに出さずに返す `https://` 文書上で実行。
+- **real**（`-mode real`、実ブラウザ）: 通常の Chromium ビルド（CI では CloakBrowser 146）が `--load-extension` で `extension/` を読み込み、`--user-data-dir/NativeMessagingHosts/com.share026.webcli.json` から `bin/nm-host` を**ブラウザ自身が起動**する。本番と同一経路で、エミュレーションなし。結果 32/32（`evidence/ci/e2e-report-real.md`）。
+- **emulated**（`-mode emulated`、既定）: headless shell（拡張機能非対応）向け。
+  - **本物のまま使うもの**: Blink（DOM・レイアウト・`elementFromPoint`・イベント）、HTTPS 通信とプロキシ、出荷するファイルそのままの `background.js` / `content.js`（content.js は CDP の isolated world で実行）、ホスト定義 JSON の検証、Chrome と同じ方式での `bin/nm-host` 起動、`bin/app`、`fzf`、goproxy。
+  - **CDP で代替したもの**: chrome.* API のみ（`scripts/e2e/exthost.go`）。
+  - 結果: 31/31。
 
-実機 Chrome では `scripts/install-host.sh` と「パッケージ化されていない拡張機能を読み込む」で同じコードがそのまま動作する（手順: ARCHITECTURE.md §8）。
+どちらのモードも `scripts/test-all.sh` の `E2E_MODES="emulated real"` で実行され、CI は両方を実行している。
 
 ## 自律的に検出・修正した問題
 
@@ -203,6 +220,11 @@ d6c02512-d255-4cb5-8b18-898a1eed730b  click  2     <button> "Login"     1       
 | 4 | `audit.jsonl` の action レコードで `kind:"click"` が消える | ラッパーの `kind` が埋め込み構造体の `kind` を隠していた | ラッパーのキーを `record` に変更し、テストを追加 |
 | 5 | `-race` 下でテスト終了後ログによる panic（稀） | `Listen` の生存確認接続を後から処理する goroutine が `Close` 後も動いていた | `Hub.Close` がハンドラ終了を待つように修正（closed フラグ + WaitGroup）、`-count=20` で安定を確認 |
 | 6 | proxy-demo のブロック確認が `200` と表示 | `curl -i` が CONNECT 応答行を先に出力 | `-w '%{http_code}'` で最終ステータスを表示 |
+| 7 | CI（Go 1.26）で `scripts/e2e` がビルド不可 | cdproto の `RemoteObject.Value` が `jsontext.Value` 型で、Go 1.26 では `json.RawMessage` への代入ができない（1.27 では通る） | 明示的に型変換 `json.RawMessage(ro.Value)` |
+| 8 | **実ブラウザで nm-host が起動直後に消える**（real 7/32） | ブラウザは自分の stderr をネイティブホストに引き継ぐ。chromedp 起動時は読み手のいないパイプとなり、Go は fd 2 への書き込みで SIGPIPE を受けると即終了する（ローカルで exit -13 を再現） | `nm-host` で `signal.Ignore(SIGPIPE)`。回帰テスト `TestSurvivesClosedStderr`（修正前 FAIL / 修正後 PASS）。stderr を取り込まない条件の CI で real 32/32 を確認 |
+| 9 | 上記条件で `WEBCLI_NMHOST_LOG` が空 | `io.MultiWriter(os.Stderr, f)` は最初の失敗で後続に書かない | ファイルを先頭に並べ替え、テストでログ内容も検証 |
+| 10 | CI の emulated モードが起動失敗 | `E2E_HEADED=1` が emulated にも効き、X サーバがなかった | emulated は常に headless、real だけ `xvfb-run` |
+| 11 | CI で PTY fzf テストが FAIL | ディストリ版 fzf（旧版）と、冷えたランナーでの入力タイミング | CI も `go install fzf@latest`（ローカルと同一）、入力待ちを延長、失敗時はテスト出力を表示 |
 
 ## 完了条件チェック
 
@@ -220,6 +242,8 @@ scripts/build.sh                                   # vet + build + bin/
 go test -race ./...                                # ユニット/統合
 scripts/test-tty.sh                                # PTY 上の対話 fzf
 scripts/proxy-demo.sh [https://example.com/]       # curl -x による実サイト MITM
-CHROME_PATH=/path/to/chromium go run ./scripts/e2e # E2E（31 項目）
+CHROME_PATH=/path/to/chromium go run ./scripts/e2e # E2E emulated（31 項目）
+CHROME_PATH=/path/to/chrome xvfb-run go run ./scripts/e2e -mode real -headed  # 実ブラウザ（32 項目）
+gh workflow run e2e-cloakbrowser --ref <branch>    # CloakBrowser で全検証 → docs/evidence/ci/
 CHROME_PATH=/path/to/chromium scripts/test-all.sh  # 上記すべて + docs/evidence/ 更新
 ```

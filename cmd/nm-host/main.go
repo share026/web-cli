@@ -59,7 +59,9 @@ func newLogger() *log.Logger {
 	var w io.Writer = os.Stderr
 	if p := os.Getenv("WEBCLI_NMHOST_LOG"); p != "" {
 		if f, err := os.OpenFile(p, os.O_CREATE|os.O_APPEND|os.O_WRONLY, 0o600); err == nil {
-			w = io.MultiWriter(os.Stderr, f)
+			// file first: io.MultiWriter stops at the first failing writer, and
+			// stderr may be a dead pipe (see main).
+			w = io.MultiWriter(f, os.Stderr)
 		}
 	}
 	return log.New(w, "[nm-host] ", log.LstdFlags|log.Lmicroseconds)

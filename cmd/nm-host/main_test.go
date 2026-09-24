@@ -135,7 +135,8 @@ func TestSurvivesClosedStderr(t *testing.T) {
 	}
 	r.Close()
 	cmd := exec.Command(bin, "chrome-extension://aghlljmggamhjpkcngogikkiohnaaiha/")
-	cmd.Env = append(os.Environ(), "WEBCLI_SOCKET="+filepath.Join(t.TempDir(), "absent.sock"))
+	logFile := filepath.Join(t.TempDir(), "nm-host.log")
+	cmd.Env = append(os.Environ(), "WEBCLI_SOCKET="+filepath.Join(t.TempDir(), "absent.sock"), "WEBCLI_NMHOST_LOG="+logFile)
 	cmd.Stderr = w
 	stdin, _ := cmd.StdinPipe()
 	stdout, _ := cmd.StdoutPipe()
@@ -158,5 +159,9 @@ func TestSurvivesClosedStderr(t *testing.T) {
 	io.Copy(io.Discard, stdout)
 	if err := cmd.Wait(); err != nil && strings.Contains(err.Error(), "broken pipe") {
 		t.Fatalf("host killed by SIGPIPE: %v", err)
+	}
+	// the log file must still receive everything
+	if b, _ := os.ReadFile(logFile); !strings.Contains(string(b), "nm-host start") {
+		t.Fatalf("WEBCLI_NMHOST_LOG missing lines with dead stderr: %q", b)
 	}
 }

@@ -50,6 +50,11 @@ web-cli> help
 go test -race ./...
 scripts/test-tty.sh                                # 擬似端末上の対話 fzf
 scripts/proxy-demo.sh                              # curl -x による実サイトの MITM デモ
-CHROME_PATH=/path/to/chromium go run ./scripts/e2e # E2E（31 項目）
+CHROME_PATH=/path/to/chromium go run ./scripts/e2e # E2E emulated（31 項目, headless shell 可）
+CHROME_PATH=/path/to/chrome go run ./scripts/e2e -mode real -headed  # 実ブラウザ E2E（32 項目）
 CHROME_PATH=/path/to/chromium scripts/test-all.sh  # 全部 + docs/evidence/ を更新
 ```
+
+実ブラウザ検証は GitHub Actions（`.github/workflows/e2e-cloakbrowser.yml`）が
+[CloakBrowser](https://github.com/CloakHQ/CloakBrowser) 146 の公式バイナリを取得・digest 検証して
+`scripts/test-all.sh`（emulated + real）を実行し、結果を `docs/evidence/ci/` にコミットします。

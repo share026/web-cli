@@ -235,3 +235,10 @@ web-cli> hints            # fzf で選んでクリック
 web-cli> export           # audit-out/requests.http
 web-cli> cookies dump     # audit-out/cookies.json
 ```
+
+補足（実ブラウザで確認済みの注意点）:
+
+- `--user-data-dir` を指定した場合、Linux の Chromium はホスト定義を `<user-data-dir>/NativeMessagingHosts/` から探す（`scripts/install-host.sh <user-data-dir>`）。
+- Chromium 137 以降でコマンドラインから拡張機能を読み込む場合は `--disable-features=DisableLoadExtensionCommandLineSwitch` が必要。
+- ブラウザは自分の stderr を nm-host に引き継ぐ。stderr が読み手のいないパイプでも nm-host が落ちないよう、SIGPIPE を無視している。ログは `WEBCLI_NMHOST_LOG` に確実に残る。
+- 動作確認済み: CloakBrowser 146.0.7680.177（Chromium 146）、real E2E 32/32（`docs/evidence/ci/`）。
