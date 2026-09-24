@@ -1,0 +1,5 @@
+run: https://github.com/share026/web-cli/actions/runs/35940175896
+commit: 0ecf905797adffc8874f8e332f83a40cc62fe0e5
+runner: Linux runnervmtr4k5 6.17.0-1022-azure #22-Ubuntu SMP Mon Jul 27 17:24:03 UTC 2026 x86_64 x86_64 x86_64 GNU/Linux
+browser: Chromium 146.0.7680.177  (chromium-v146.0.7680.177.5, sha256 4a12bcde95fa1bb1beef2b41ab5e5c27c36be78e3be3d0dac8c64d705216670e verified)
+outcome: failure
