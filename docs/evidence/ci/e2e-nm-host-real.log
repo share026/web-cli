@@ -1,3 +1,3 @@
-[nm-host] 2026/09/24 01:37:33.171901 nm-host start pid=13404 origin="chrome-extension://aghlljmggamhjpkcngogikkiohnaaiha/" args=["chrome-extension://aghlljmggamhjpkcngogikkiohnaaiha/"]
-[nm-host] 2026/09/24 01:37:33.172683 connected to app at /home/runner/work/web-cli/web-cli/scripts/e2e/out-real/ipc.sock
-[nm-host] 2026/09/24 01:38:01.277023 bridge stopped: app closed the socket
+[nm-host] 2026/09/24 01:41:43.227621 nm-host start pid=13389 origin="chrome-extension://aghlljmggamhjpkcngogikkiohnaaiha/" args=["chrome-extension://aghlljmggamhjpkcngogikkiohnaaiha/"]
+[nm-host] 2026/09/24 01:41:43.227810 connected to app at /home/runner/work/web-cli/web-cli/scripts/e2e/out-real/ipc.sock
+[nm-host] 2026/09/24 01:42:12.316011 bridge stopped: app closed the socket

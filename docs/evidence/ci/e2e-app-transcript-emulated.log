@@ -1,3 +1,84 @@
-01:37:28.446605 [ipc] listening on /home/runner/work/web-cli/web-cli/scripts/e2e/out-emulated/ipc.sock
-01:37:28.447282 [proxy] generated new root CA in /home/runner/work/web-cli/web-cli/scripts/e2e/out-emulated/ca
-01:37:28.455825 [proxy] listening on 127.0.0.1:39613 (CA /home/runner/work/web-cli/web-cli/scripts/e2e/out-emulated/ca/ca.pem, SPKI ulYCGEuDbU/TzTagNgRLOclIabcWckGqoXl4tvP2Rmk=)
+01:41:30.868666 [ipc] listening on /home/runner/work/web-cli/web-cli/scripts/e2e/out-emulated/ipc.sock
+01:41:30.869367 [proxy] generated new root CA in /home/runner/work/web-cli/web-cli/scripts/e2e/out-emulated/ca
+01:41:30.878380 [proxy] listening on 127.0.0.1:34481 (CA /home/runner/work/web-cli/web-cli/scripts/e2e/out-emulated/ca/ca.pem, SPKI vZ2oEIOtsCVHQuvSpBQg9EU9LDiM8cGRzGntemWmH2s=)
+01:41:33.270884 [ipc] session #1 connected
+01:41:33.270961 [ipc] session #1 hello origin=chrome-extension://aghlljmggamhjpkcngogikkiohnaaiha/ pid=12992
+01:41:33.270987 [ipc] session #1 ping -> pong
+2026/09/24 01:41:33 [002] WARN: Cannot read response from mitm'd server dial tcp: lookup web-cli-extension.invalid on 127.0.0.53:53: no such host
+01:41:33.272927 [ext#1] {"event":"pong_received","reply_to":"8a925d033d2749a8a62b9e17e3f4edaf"}
+pong from extension in 765µs: {"from":"extension"}
+01:41:33.386095 [proxy] #2 GET https://127.0.0.1:37005/ -> 200 (2381 bytes, 3ms)
+01:41:33.415481 [proxy] #3 GET https://127.0.0.1:37005/favicon.ico -> 404 (19 bytes, 0s)
+collected 7 visible element(s) on https://127.0.0.1:37005/
+  1  [a]  Next page  https://127.0.0.1:37005/next
+  2  [button]  Login  
+  3  [button]  Who am I  
+  4  [input:text]  Search products  
+  5  [select]  English  
+  6  [div@button]  Role Button  
+  7  [span]  Onclick span  
+fzf selected hint 2
+click hint=2 <button> "Login" action_id=bccb983b-f0ed-45a4-bb88-8aa50cf301dc
+01:41:33.732285 [proxy] #4 POST https://127.0.0.1:37005/api/login -> 200 (27 bytes, 0s) action=bccb983b-f0ed-45a4-bb88-8aa50cf301dc
+#1 GET https://web-cli-extension.invalid/favicon.ico -> 0 (0 bytes, 0s)
+#2 GET https://127.0.0.1:37005/ -> 200 (2381 bytes, 3ms)
+#3 GET https://127.0.0.1:37005/favicon.ico -> 404 (19 bytes, 0s)
+#4 POST https://127.0.0.1:37005/api/login -> 200 (27 bytes, 0s) action=bccb983b-f0ed-45a4-bb88-8aa50cf301dc
+added rule #1 set-req-header url="/api/whoami" name="X-Injected" value="e2e-rule"
+added rule #2 block url="/blocked" status=451
+added rule #3 set-resp-header url="/api/whoami" name="X-Audited" value="web-cli"
+dumped 1 cookie(s) for https://127.0.0.1:37005/ to /home/runner/work/web-cli/web-cli/scripts/e2e/out-emulated/audit/cookies.json
+  session=abc123; domain=127.0.0.1; path=/; secure=true; httpOnly=true
+imported 1/1 cookie(s) from /home/runner/work/web-cli/web-cli/scripts/e2e/out-emulated/audit/cookies-import.json
+collected 7 visible element(s) on https://127.0.0.1:37005/
+  1  [a]  Next page  https://127.0.0.1:37005/next
+  2  [button]  Login  
+  3  [button]  Who am I  
+  4  [input:text]  Search products  
+  5  [select]  English  
+  6  [div@button]  Role Button  
+  7  [span]  Onclick span  
+fzf selected hint 3
+click hint=3 <button> "Who am I" action_id=631a84fe-0048-4466-a2d8-f2d86d7d1d45
+01:41:34.765869 [proxy] #5 GET https://127.0.0.1:37005/api/whoami -> 200 (74 bytes, 0s) action=631a84fe-0048-4466-a2d8-f2d86d7d1d45 intercepts=2
+01:41:34.768215 [proxy] #6 GET https://127.0.0.1:37005/blocked -> 451 BLOCKED action=631a84fe-0048-4466-a2d8-f2d86d7d1d45 intercepts=1
+#1 GET https://web-cli-extension.invalid/favicon.ico -> 0 (0 bytes, 0s)
+#2 GET https://127.0.0.1:37005/ -> 200 (2381 bytes, 3ms)
+#3 GET https://127.0.0.1:37005/favicon.ico -> 404 (19 bytes, 0s)
+#4 POST https://127.0.0.1:37005/api/login -> 200 (27 bytes, 0s) action=bccb983b-f0ed-45a4-bb88-8aa50cf301dc
+#5 GET https://127.0.0.1:37005/api/whoami -> 200 (74 bytes, 0s) action=631a84fe-0048-4466-a2d8-f2d86d7d1d45 intercepts=2
+#6 GET https://127.0.0.1:37005/blocked -> 451 BLOCKED action=631a84fe-0048-4466-a2d8-f2d86d7d1d45 intercepts=1
+collected 7 visible element(s) on https://127.0.0.1:37005/
+  1  [a]  Next page  https://127.0.0.1:37005/next
+  2  [button]  Login  
+  3  [button]  Who am I  
+  4  [input:text]  Search products  
+  5  [select]  English  
+  6  [div@button]  Role Button  
+  7  [span]  Onclick span  
+fzf selected hint 1
+click hint=1 <a> "Next page" action_id=39386975-dbee-4530-bb33-35128991197f
+01:41:34.990577 [proxy] #7 GET https://127.0.0.1:37005/next -> 200 (179 bytes, 0s) action=39386975-dbee-4530-bb33-35128991197f
+collected 2 visible element(s) on https://127.0.0.1:37005/next
+  1  [a]  Back home  https://127.0.0.1:37005/
+  2  [button]  Press me  
+fzf selected hint 2
+click hint=2 <button> "Press me" action_id=1a55ffce-f7af-4f07-9890-91b6504fda18
+collected 2 visible element(s) on https://127.0.0.1:37005/next
+  1  [a]  Back home  https://127.0.0.1:37005/
+  2  [button]  clicked  
+error: fzf: no element matches "search"
+wrote 7 request(s) to /home/runner/work/web-cli/web-cli/scripts/e2e/out-emulated/audit/requests.http
+wrote 1 request(s) to /home/runner/work/web-cli/web-cli/scripts/e2e/out-emulated/audit/login-action.http
+wrote 1 request(s) to /home/runner/work/web-cli/web-cli/scripts/e2e/out-emulated/audit/nav-action.http
+ACTION ID                             KIND   HINT  ELEMENT              REQUESTS  PAGE
+bccb983b-f0ed-45a4-bb88-8aa50cf301dc  click  2     <button> "Login"     1         https://127.0.0.1:37005/
+631a84fe-0048-4466-a2d8-f2d86d7d1d45  click  3     <button> "Who am I"  2         https://127.0.0.1:37005/
+39386975-dbee-4530-bb33-35128991197f  click  1     <a> "Next page"      1         https://127.0.0.1:37005/
+1a55ffce-f7af-4f07-9890-91b6504fda18  click  2     <button> "Press me"  0         https://127.0.0.1:37005/next
+socket:   /home/runner/work/web-cli/web-cli/scripts/e2e/out-emulated/ipc.sock
+sessions: 1
+  #1 origin=chrome-extension://aghlljmggamhjpkcngogikkiohnaaiha/ nm-host pid=12992 since 2026-09-24T01:41:33Z
+proxy:    http://127.0.0.1:34481
+captured: 7 request(s), 4 action(s), 3 rule(s)
+01:41:36.230646 [ipc] session #1 disconnected
