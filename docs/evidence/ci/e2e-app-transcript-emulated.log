@@ -1,3 +1,84 @@
-00:53:30.763326 [ipc] listening on /home/runner/work/web-cli/web-cli/scripts/e2e/out-emulated/ipc.sock
-00:53:30.763925 [proxy] generated new root CA in /home/runner/work/web-cli/web-cli/scripts/e2e/out-emulated/ca
-00:53:30.771953 [proxy] listening on 127.0.0.1:44745 (CA /home/runner/work/web-cli/web-cli/scripts/e2e/out-emulated/ca/ca.pem, SPKI R+8uayrI3ERKAHGAbjB2q4TvVtHzoWvU2ZDHO/CfF38=)
+01:00:37.609935 [ipc] listening on /home/runner/work/web-cli/web-cli/scripts/e2e/out-emulated/ipc.sock
+01:00:37.610734 [proxy] generated new root CA in /home/runner/work/web-cli/web-cli/scripts/e2e/out-emulated/ca
+01:00:37.619335 [proxy] listening on 127.0.0.1:41525 (CA /home/runner/work/web-cli/web-cli/scripts/e2e/out-emulated/ca/ca.pem, SPKI AHK69UTBv/7SAir2KQBTd/jnXDrKaL8qYZlVc1IYPdI=)
+2026/09/24 01:00:39 [002] WARN: Cannot read response from mitm'd server dial tcp: lookup web-cli-extension.invalid on 127.0.0.53:53: no such host
+01:00:39.274850 [ipc] session #1 connected
+01:00:39.274944 [ipc] session #1 hello origin=chrome-extension://aghlljmggamhjpkcngogikkiohnaaiha/ pid=12590
+01:00:39.275019 [ipc] session #1 ping -> pong
+01:00:39.276515 [ext#1] {"event":"pong_received","reply_to":"752aa98c13c64b6c8b56b0574a64e93a"}
+pong from extension in 866µs: {"from":"extension"}
+01:00:39.388449 [proxy] #2 GET https://127.0.0.1:41013/ -> 200 (2381 bytes, 3ms)
+01:00:39.415560 [proxy] #3 GET https://127.0.0.1:41013/favicon.ico -> 404 (19 bytes, 1ms)
+collected 7 visible element(s) on https://127.0.0.1:41013/
+  1  [a]  Next page  https://127.0.0.1:41013/next
+  2  [button]  Login  
+  3  [button]  Who am I  
+  4  [input:text]  Search products  
+  5  [select]  English  
+  6  [div@button]  Role Button  
+  7  [span]  Onclick span  
+fzf selected hint 2
+click hint=2 <button> "Login" action_id=48cbf7ae-f11d-4071-bc54-3e8cd14f32ad
+01:00:39.731141 [proxy] #4 POST https://127.0.0.1:41013/api/login -> 200 (27 bytes, 1ms) action=48cbf7ae-f11d-4071-bc54-3e8cd14f32ad
+#1 GET https://web-cli-extension.invalid/favicon.ico -> 0 (0 bytes, 0s)
+#2 GET https://127.0.0.1:41013/ -> 200 (2381 bytes, 3ms)
+#3 GET https://127.0.0.1:41013/favicon.ico -> 404 (19 bytes, 1ms)
+#4 POST https://127.0.0.1:41013/api/login -> 200 (27 bytes, 1ms) action=48cbf7ae-f11d-4071-bc54-3e8cd14f32ad
+added rule #1 set-req-header url="/api/whoami" name="X-Injected" value="e2e-rule"
+added rule #2 block url="/blocked" status=451
+added rule #3 set-resp-header url="/api/whoami" name="X-Audited" value="web-cli"
+dumped 1 cookie(s) for https://127.0.0.1:41013/ to /home/runner/work/web-cli/web-cli/scripts/e2e/out-emulated/audit/cookies.json
+  session=abc123; domain=127.0.0.1; path=/; secure=true; httpOnly=true
+imported 1/1 cookie(s) from /home/runner/work/web-cli/web-cli/scripts/e2e/out-emulated/audit/cookies-import.json
+collected 7 visible element(s) on https://127.0.0.1:41013/
+  1  [a]  Next page  https://127.0.0.1:41013/next
+  2  [button]  Login  
+  3  [button]  Who am I  
+  4  [input:text]  Search products  
+  5  [select]  English  
+  6  [div@button]  Role Button  
+  7  [span]  Onclick span  
+fzf selected hint 3
+click hint=3 <button> "Who am I" action_id=7c30d8ea-6510-4d71-b29b-674d7d9db740
+01:00:40.766343 [proxy] #5 GET https://127.0.0.1:41013/api/whoami -> 200 (74 bytes, 0s) action=7c30d8ea-6510-4d71-b29b-674d7d9db740 intercepts=2
+01:00:40.768990 [proxy] #6 GET https://127.0.0.1:41013/blocked -> 451 BLOCKED action=7c30d8ea-6510-4d71-b29b-674d7d9db740 intercepts=1
+#1 GET https://web-cli-extension.invalid/favicon.ico -> 0 (0 bytes, 0s)
+#2 GET https://127.0.0.1:41013/ -> 200 (2381 bytes, 3ms)
+#3 GET https://127.0.0.1:41013/favicon.ico -> 404 (19 bytes, 1ms)
+#4 POST https://127.0.0.1:41013/api/login -> 200 (27 bytes, 1ms) action=48cbf7ae-f11d-4071-bc54-3e8cd14f32ad
+#5 GET https://127.0.0.1:41013/api/whoami -> 200 (74 bytes, 0s) action=7c30d8ea-6510-4d71-b29b-674d7d9db740 intercepts=2
+#6 GET https://127.0.0.1:41013/blocked -> 451 BLOCKED action=7c30d8ea-6510-4d71-b29b-674d7d9db740 intercepts=1
+collected 7 visible element(s) on https://127.0.0.1:41013/
+  1  [a]  Next page  https://127.0.0.1:41013/next
+  2  [button]  Login  
+  3  [button]  Who am I  
+  4  [input:text]  Search products  
+  5  [select]  English  
+  6  [div@button]  Role Button  
+  7  [span]  Onclick span  
+fzf selected hint 1
+click hint=1 <a> "Next page" action_id=a6416a11-82b8-46a9-bb18-0741e20b18ef
+01:00:40.991415 [proxy] #7 GET https://127.0.0.1:41013/next -> 200 (179 bytes, 0s) action=a6416a11-82b8-46a9-bb18-0741e20b18ef
+collected 2 visible element(s) on https://127.0.0.1:41013/next
+  1  [a]  Back home  https://127.0.0.1:41013/
+  2  [button]  Press me  
+fzf selected hint 2
+click hint=2 <button> "Press me" action_id=83f8656d-c490-446c-a61a-e2b8021c73bf
+collected 2 visible element(s) on https://127.0.0.1:41013/next
+  1  [a]  Back home  https://127.0.0.1:41013/
+  2  [button]  clicked  
+error: fzf: no element matches "search"
+wrote 7 request(s) to /home/runner/work/web-cli/web-cli/scripts/e2e/out-emulated/audit/requests.http
+wrote 1 request(s) to /home/runner/work/web-cli/web-cli/scripts/e2e/out-emulated/audit/login-action.http
+wrote 1 request(s) to /home/runner/work/web-cli/web-cli/scripts/e2e/out-emulated/audit/nav-action.http
+ACTION ID                             KIND   HINT  ELEMENT              REQUESTS  PAGE
+48cbf7ae-f11d-4071-bc54-3e8cd14f32ad  click  2     <button> "Login"     1         https://127.0.0.1:41013/
+7c30d8ea-6510-4d71-b29b-674d7d9db740  click  3     <button> "Who am I"  2         https://127.0.0.1:41013/
+a6416a11-82b8-46a9-bb18-0741e20b18ef  click  1     <a> "Next page"      1         https://127.0.0.1:41013/
+83f8656d-c490-446c-a61a-e2b8021c73bf  click  2     <button> "Press me"  0         https://127.0.0.1:41013/next
+socket:   /home/runner/work/web-cli/web-cli/scripts/e2e/out-emulated/ipc.sock
+sessions: 1
+  #1 origin=chrome-extension://aghlljmggamhjpkcngogikkiohnaaiha/ nm-host pid=12590 since 2026-09-24T01:00:39Z
+proxy:    http://127.0.0.1:41525
+captured: 7 request(s), 4 action(s), 3 rule(s)
+01:00:42.232762 [ipc] session #1 disconnected

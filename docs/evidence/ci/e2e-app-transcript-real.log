@@ -1,28 +1,81 @@
-00:53:31.842900 [ipc] listening on /home/runner/work/web-cli/web-cli/scripts/e2e/out-real/ipc.sock
-00:53:31.843514 [proxy] generated new root CA in /home/runner/work/web-cli/web-cli/scripts/e2e/out-real/ca
-00:53:31.851411 [proxy] listening on 127.0.0.1:46521 (CA /home/runner/work/web-cli/web-cli/scripts/e2e/out-real/ca/ca.pem, SPKI Iz2drKry5hiqfGTsm/LBirEh95QCt8jjTbLex6EL00M=)
-error: no browser session connected: context deadline exceeded
-00:54:17.720062 [proxy] #1 GET https://127.0.0.1:43595/ -> 200 (2381 bytes, 4ms)
-00:54:17.751348 [proxy] #2 GET https://127.0.0.1:43595/favicon.ico -> 404 (19 bytes, 0s)
-error: no browser session connected: context deadline exceeded
-#1 GET https://127.0.0.1:43595/ -> 200 (2381 bytes, 4ms)
-#2 GET https://127.0.0.1:43595/favicon.ico -> 404 (19 bytes, 0s)
+01:00:43.687060 [ipc] listening on /home/runner/work/web-cli/web-cli/scripts/e2e/out-real/ipc.sock
+01:00:43.687720 [proxy] generated new root CA in /home/runner/work/web-cli/web-cli/scripts/e2e/out-real/ca
+01:00:43.696247 [proxy] listening on 127.0.0.1:36479 (CA /home/runner/work/web-cli/web-cli/scripts/e2e/out-real/ca/ca.pem, SPKI sQtekmIUtBpAHAmkHMfZxN5py25AYgEk02CfDIhbaJU=)
+01:00:48.790783 [ipc] session #1 connected
+01:00:48.790890 [ipc] session #1 hello origin=chrome-extension://aghlljmggamhjpkcngogikkiohnaaiha/ pid=12987
+01:00:48.790920 [ipc] session #1 ping -> pong
+01:00:48.791913 [ext#1] {"event":"pong_received","reply_to":"ec51641d433d4b57902c9b790689bbeb"}
+pong from extension in 1.169ms: {"from":"extension"}
+01:00:48.973781 [proxy] #1 GET https://127.0.0.1:37303/ -> 200 (2381 bytes, 3ms)
+01:00:49.002065 [proxy] #2 GET https://127.0.0.1:37303/favicon.ico -> 404 (19 bytes, 1ms)
+collected 7 visible element(s) on https://127.0.0.1:37303/
+  1  [a]  Next page  https://127.0.0.1:37303/next
+  2  [button]  Login  
+  3  [button]  Who am I  
+  4  [input:text]  Search products  
+  5  [select]  English  
+  6  [div@button]  Role Button  
+  7  [span]  Onclick span  
+fzf selected hint 2
+click hint=2 <button> "Login" action_id=95918e3d-8cd3-418a-82e0-4d18b7bc83ef
+01:00:49.316437 [proxy] #3 POST https://127.0.0.1:37303/api/login -> 200 (27 bytes, 0s) action=95918e3d-8cd3-418a-82e0-4d18b7bc83ef
+#1 GET https://127.0.0.1:37303/ -> 200 (2381 bytes, 3ms)
+#2 GET https://127.0.0.1:37303/favicon.ico -> 404 (19 bytes, 1ms)
+#3 POST https://127.0.0.1:37303/api/login -> 200 (27 bytes, 0s) action=95918e3d-8cd3-418a-82e0-4d18b7bc83ef
 added rule #1 set-req-header url="/api/whoami" name="X-Injected" value="e2e-rule"
 added rule #2 block url="/blocked" status=451
 added rule #3 set-resp-header url="/api/whoami" name="X-Audited" value="web-cli"
-error: no browser session connected: context deadline exceeded
-error: no browser session connected: context deadline exceeded
-error: no browser session connected: context deadline exceeded
-#1 GET https://127.0.0.1:43595/ -> 200 (2381 bytes, 4ms)
-#2 GET https://127.0.0.1:43595/favicon.ico -> 404 (19 bytes, 0s)
-error: no browser session connected: context deadline exceeded
-error: no browser session connected: context deadline exceeded
-error: no browser session connected: context deadline exceeded
-wrote 2 request(s) to /home/runner/work/web-cli/web-cli/scripts/e2e/out-real/audit/requests.http
-wrote 2 request(s) to /home/runner/work/web-cli/web-cli/scripts/e2e/out-real/audit/login-action.http
-wrote 2 request(s) to /home/runner/work/web-cli/web-cli/scripts/e2e/out-real/audit/nav-action.http
-ACTION ID  KIND  HINT  ELEMENT  REQUESTS  PAGE
+dumped 1 cookie(s) for https://127.0.0.1:37303/ to /home/runner/work/web-cli/web-cli/scripts/e2e/out-real/audit/cookies.json
+  session=abc123; domain=127.0.0.1; path=/; secure=true; httpOnly=true
+imported 1/1 cookie(s) from /home/runner/work/web-cli/web-cli/scripts/e2e/out-real/audit/cookies-import.json
+collected 7 visible element(s) on https://127.0.0.1:37303/
+  1  [a]  Next page  https://127.0.0.1:37303/next
+  2  [button]  Login  
+  3  [button]  Who am I  
+  4  [input:text]  Search products  
+  5  [select]  English  
+  6  [div@button]  Role Button  
+  7  [span]  Onclick span  
+fzf selected hint 3
+click hint=3 <button> "Who am I" action_id=f330b999-8780-446e-b3d6-85c188509a39
+01:00:50.343707 [proxy] #4 GET https://127.0.0.1:37303/api/whoami -> 200 (74 bytes, 0s) action=f330b999-8780-446e-b3d6-85c188509a39 intercepts=2
+01:00:50.347135 [proxy] #5 GET https://127.0.0.1:37303/blocked -> 451 BLOCKED action=f330b999-8780-446e-b3d6-85c188509a39 intercepts=1
+#1 GET https://127.0.0.1:37303/ -> 200 (2381 bytes, 3ms)
+#2 GET https://127.0.0.1:37303/favicon.ico -> 404 (19 bytes, 1ms)
+#3 POST https://127.0.0.1:37303/api/login -> 200 (27 bytes, 0s) action=95918e3d-8cd3-418a-82e0-4d18b7bc83ef
+#4 GET https://127.0.0.1:37303/api/whoami -> 200 (74 bytes, 0s) action=f330b999-8780-446e-b3d6-85c188509a39 intercepts=2
+#5 GET https://127.0.0.1:37303/blocked -> 451 BLOCKED action=f330b999-8780-446e-b3d6-85c188509a39 intercepts=1
+collected 7 visible element(s) on https://127.0.0.1:37303/
+  1  [a]  Next page  https://127.0.0.1:37303/next
+  2  [button]  Login  
+  3  [button]  Who am I  
+  4  [input:text]  Search products  
+  5  [select]  English  
+  6  [div@button]  Role Button  
+  7  [span]  Onclick span  
+fzf selected hint 1
+click hint=1 <a> "Next page" action_id=b73880f6-1b29-4d52-af6d-7a88bce95f76
+01:00:50.564931 [proxy] #6 GET https://127.0.0.1:37303/next -> 200 (179 bytes, 0s) action=b73880f6-1b29-4d52-af6d-7a88bce95f76
+collected 2 visible element(s) on https://127.0.0.1:37303/next
+  1  [a]  Back home  https://127.0.0.1:37303/
+  2  [button]  Press me  
+fzf selected hint 2
+click hint=2 <button> "Press me" action_id=e5adf9dd-830f-48ac-a9ff-71e3100138c0
+collected 2 visible element(s) on https://127.0.0.1:37303/next
+  1  [a]  Back home  https://127.0.0.1:37303/
+  2  [button]  clicked  
+error: fzf: no element matches "search"
+wrote 6 request(s) to /home/runner/work/web-cli/web-cli/scripts/e2e/out-real/audit/requests.http
+wrote 1 request(s) to /home/runner/work/web-cli/web-cli/scripts/e2e/out-real/audit/login-action.http
+wrote 1 request(s) to /home/runner/work/web-cli/web-cli/scripts/e2e/out-real/audit/nav-action.http
+ACTION ID                             KIND   HINT  ELEMENT              REQUESTS  PAGE
+95918e3d-8cd3-418a-82e0-4d18b7bc83ef  click  2     <button> "Login"     1         https://127.0.0.1:37303/
+f330b999-8780-446e-b3d6-85c188509a39  click  3     <button> "Who am I"  2         https://127.0.0.1:37303/
+b73880f6-1b29-4d52-af6d-7a88bce95f76  click  1     <a> "Next page"      1         https://127.0.0.1:37303/
+e5adf9dd-830f-48ac-a9ff-71e3100138c0  click  2     <button> "Press me"  0         https://127.0.0.1:37303/next
 socket:   /home/runner/work/web-cli/web-cli/scripts/e2e/out-real/ipc.sock
-sessions: 0
-proxy:    http://127.0.0.1:46521
-captured: 2 request(s), 0 action(s), 3 rule(s)
+sessions: 1
+  #1 origin=chrome-extension://aghlljmggamhjpkcngogikkiohnaaiha/ nm-host pid=12987 since 2026-09-24T01:00:48Z
+proxy:    http://127.0.0.1:36479
+captured: 6 request(s), 4 action(s), 3 rule(s)
+01:00:51.815179 [ipc] session #1 disconnected
