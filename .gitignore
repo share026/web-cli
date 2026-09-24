@@ -1,0 +1,6 @@
+# build outputs
+/bin/
+# runtime artifacts produced by app / e2e runs
+/audit-out/
+/scripts/e2e/out/
+*.sock
