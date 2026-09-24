@@ -73,6 +73,70 @@ async function toContent(tab, message) {
   return res;
 }
 
+const MUTATING_OPS = new Set(["click", "type", "clear", "select", "check", "press", "submit"]);
+
+function waitComplete(tabId, timeoutMs) {
+  return new Promise((resolve, reject) => {
+    let started = false;
+    // back/forward from the back-forward cache may not report "loading":
+    // on timeout accept a tab that is complete anyway.
+    const timer = setTimeout(async () => {
+      chrome.tabs.onUpdated.removeListener(fn);
+      const tab = await chrome.tabs.get(tabId).catch(() => null);
+      if (tab && tab.status === "complete") resolve(tab);
+      else reject(new Error("navigation timed out"));
+    }, timeoutMs);
+    function fn(id, info, tab) {
+      if (id !== tabId) return;
+      if (info.status === "loading") started = true;
+      if (info.status === "complete" && started) {
+        clearTimeout(timer);
+        chrome.tabs.onUpdated.removeListener(fn);
+        resolve(tab);
+      }
+    }
+    chrome.tabs.onUpdated.addListener(fn);
+  });
+}
+
+// Runs in the page (world MAIN). Returns a JSON-safe result.
+async function pageEval(code) {
+  const out = (v) => {
+    if (v === undefined) return { ok: true, type: "undefined" };
+    if (v instanceof Element) return { ok: true, type: "element", value: v.outerHTML.slice(0, 2000) };
+    try { return { ok: true, type: typeof v, value: JSON.parse(JSON.stringify(v)) }; }
+    catch { return { ok: true, type: typeof v, value: String(v) }; }
+  };
+  let v;
+  try {
+    v = (0, eval)(code); // indirect eval: global scope, like the DevTools console
+  } catch (e) {
+    if (e instanceof EvalError || /Content Security Policy|unsafe-eval/i.test(String(e))) {
+      return { ok: false, csp: true, error: String(e) };
+    }
+    return { ok: false, error: String((e && e.stack) || e) };
+  }
+  try { return out(await v); } catch (e) { return { ok: false, error: String((e && e.stack) || e) }; }
+}
+
+async function withDebugger(tabId, fn) {
+  const target = { tabId };
+  await chrome.debugger.attach(target, "1.3");
+  try { return await fn(target); } finally { await chrome.debugger.detach(target).catch(() => {}); }
+}
+
+async function debuggerEval(tabId, code) {
+  return withDebugger(tabId, async (target) => {
+    const r = await chrome.debugger.sendCommand(target, "Runtime.evaluate", {
+      expression: code, awaitPromise: true, returnByValue: true, userGesture: true, replMode: true,
+    });
+    if (r.exceptionDetails) {
+      return { ok: false, error: (r.exceptionDetails.exception && r.exceptionDetails.exception.description) || r.exceptionDetails.text };
+    }
+    return { ok: true, type: r.result.type, value: r.result.value ?? r.result.description };
+  });
+}
+
 // Tag every request the tab issues during the next ACTION_WINDOW_MS with the
 // action ID, so the Go proxy can link traffic to the DOM operation.
 async function armActionHeader(tabId, actionId) {
@@ -102,9 +166,110 @@ const handlers = {
     return ["pong", { from: "extension" }];
   },
 
-  async collect() {
+  async collect({ scope } = {}) {
     const tab = await activeTab();
-    return ["elements", await toContent(tab, { type: "collect" })];
+    return ["elements", await toContent(tab, { type: "collect", scope })];
+  },
+
+  // DOM operations in the active tab (click/type/select/check/press/submit/
+  // scroll/text/html/exists/info/storage). Page-changing ops get an action
+  // ID, armed as a request header exactly like clicks.
+  async dom(p) {
+    const tab = await activeTab();
+    const mutating = MUTATING_OPS.has(p.op);
+    const actionId = mutating ? crypto.randomUUID() : undefined;
+    if (mutating && p.tag) await armActionHeader(tab.id, actionId);
+    let res;
+    try {
+      res = await toContent(tab, { ...p, type: "dom" });
+    } catch (e) {
+      if (mutating && p.tag) await disarmActionHeader();
+      throw e;
+    }
+    delete res.ok;
+    return ["dom_result", { ...res, op: p.op, action_id: actionId }];
+  },
+
+  // open / back / forward / reload in the active tab (or a new tab), waiting
+  // until the tab has finished loading.
+  async navigate({ action, url, new_tab: newTab, tag, timeout_ms: timeoutMs }) {
+    // history navigations are usually served from the bfcache: shorter wait
+    if (!timeoutMs && (action === "back" || action === "forward")) timeoutMs = 5000;
+    let tab = await activeTab().catch(() => null);
+    const actionId = crypto.randomUUID();
+    if (newTab) {
+      tab = await chrome.tabs.create({ url: "about:blank", active: true });
+    }
+    if (!tab) throw new Error("no tab");
+    if (tag) await armActionHeader(tab.id, actionId);
+    const done = waitComplete(tab.id, timeoutMs || 15000);
+    if (action === "open") await chrome.tabs.update(tab.id, { url });
+    else if (action === "back") await chrome.tabs.goBack(tab.id);
+    else if (action === "forward") await chrome.tabs.goForward(tab.id);
+    else if (action === "reload") await chrome.tabs.reload(tab.id);
+    else throw new Error(`unknown navigation ${action}`);
+    const t = await done;
+    return ["nav_result", { action, action_id: actionId, tab_id: t.id, url: t.url, title: t.title }];
+  },
+
+  async tabs({ op, id }) {
+    if (op === "select") {
+      const t = await chrome.tabs.update(id, { active: true });
+      await chrome.windows.update(t.windowId, { focused: true }).catch(() => {});
+    } else if (op === "close") {
+      await chrome.tabs.remove(id ?? (await activeTab()).id);
+    }
+    const all = await chrome.tabs.query({});
+    const cur = await activeTab().catch(() => null);
+    return ["tabs_result", {
+      tabs: all.map((t) => ({ id: t.id, window_id: t.windowId, active: !!cur && t.id === cur.id, url: t.url, title: t.title })),
+    }];
+  },
+
+  // Evaluate JavaScript in the page's main world. Pages whose CSP forbids
+  // eval are handled through the DevTools protocol (chrome.debugger).
+  async eval({ code }) {
+    const tab = await activeTab();
+    let r;
+    try {
+      [{ result: r }] = await chrome.scripting.executeScript({
+        target: { tabId: tab.id }, world: "MAIN", func: pageEval, args: [code],
+      });
+    } catch (e) {
+      r = { ok: false, csp: true, error: String((e && e.message) || e) };
+    }
+    if (r && r.csp) {
+      r = await debuggerEval(tab.id, code);
+      r.via = "debugger";
+    } else if (r) {
+      r.via = "main-world";
+    }
+    if (!r.ok) throw new Error(r.error);
+    return ["eval_result", r];
+  },
+
+  async screenshot() {
+    const tab = await activeTab();
+    let data;
+    try {
+      const url = await chrome.tabs.captureVisibleTab(tab.windowId, { format: "png" });
+      data = url.slice(url.indexOf(",") + 1);
+    } catch (e) {
+      log("captureVisibleTab failed, using the debugger:", e && e.message);
+      data = await withDebugger(tab.id, async (target) =>
+        (await chrome.debugger.sendCommand(target, "Page.captureScreenshot", { format: "png" })).data);
+    }
+    return ["screenshot_result", { url: tab.url, title: tab.title, png_base64: data }];
+  },
+
+  async record({ on, secrets }) {
+    const state = { on: !!on, secrets: !!secrets };
+    await chrome.storage.session.set({ record: state });
+    for (const t of await chrome.tabs.query({})) {
+      chrome.tabs.sendMessage(t.id, { type: "record_state", state }).catch(() => {});
+    }
+    const tab = await activeTab().catch(() => null);
+    return ["record_result", { ...state, url: tab && tab.url, title: tab && tab.title }];
   },
 
   async click({ hint, tag }) {
@@ -168,6 +333,18 @@ async function onNativeMessage(msg) {
     send({ id: msg.id, type: "error", error: String((e && e.message) || e) });
   }
 }
+
+// Messages from content scripts: recording state and recorded user input.
+chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
+  if (msg && msg.type === "record_state") {
+    chrome.storage.session.get("record").then((v) => sendResponse(v.record || { on: false }), () => sendResponse({ on: false }));
+    return true;
+  }
+  if (msg && msg.type === "record_event") {
+    send({ type: "record_event", payload: { ...msg.event, tab_id: sender.tab && sender.tab.id } });
+  }
+  return false;
+});
 
 chrome.runtime.onStartup.addListener(connect);
 chrome.runtime.onInstalled.addListener(connect);

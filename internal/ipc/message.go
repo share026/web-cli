@@ -25,6 +25,21 @@ const (
 	TypeCookiesSet       = "cookies_set"  // app -> ext: import cookies
 	TypeCookiesSetResult = "cookies_set_result"
 	TypeLog              = "log" // ext -> app: diagnostic log line (no reply)
+
+	// Page automation (app -> ext, each answered with "<type>_result").
+	TypeDOM              = "dom" // DOM op in the active tab: click/type/select/check/press/submit/scroll/text/html/exists/info/storage_*
+	TypeDOMResult        = "dom_result"
+	TypeNavigate         = "navigate" // open/back/forward/reload, waits for the load
+	TypeNavResult        = "nav_result"
+	TypeTabs             = "tabs" // list/select/close tabs
+	TypeTabsResult       = "tabs_result"
+	TypeEval             = "eval" // JavaScript in the page main world (CSP fallback: chrome.debugger)
+	TypeEvalResult       = "eval_result"
+	TypeScreenshot       = "screenshot"
+	TypeScreenshotResult = "screenshot_result"
+	TypeRecord           = "record" // start/stop recording real user input
+	TypeRecordResult     = "record_result"
+	TypeRecordEvent      = "record_event" // ext -> app: one recorded user action (no reply)
 )
 
 // Message is the envelope used on every hop (extension <-> nm-host <-> app).

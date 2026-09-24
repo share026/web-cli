@@ -3,8 +3,10 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"html"
 	"net/http"
 	"net/http/httptest"
+	"net/url"
 	"sort"
 	"strings"
 	"sync"
@@ -64,6 +66,29 @@ async function whoami() {
 const nextPage = `<!doctype html><html><head><title>Next</title></head>
 <body><h1>Next page</h1><a href="/">Back home</a><button onclick="this.textContent='clicked'">Press me</button></body></html>`
 
+// loginPage is an ordinary HTML form login (labels, select, checkbox,
+// required fields, submit by Enter or button).
+const loginPage = `<!doctype html><html><head><meta charset="utf-8"><title>Login</title></head>
+<body><h1>Sign in</h1>
+<form id="loginform" method="post" action="/session">
+  <p><label for="email">Email</label> <input id="email" name="email" type="email" required></p>
+  <p><label for="password">Password</label> <input id="password" name="password" type="password" required></p>
+  <p><label for="country">Country</label> <select id="country" name="country">
+       <option value="us">United States</option><option value="jp">Japan</option></select></p>
+  <p><label><input id="remember" type="checkbox" name="remember"> Remember me</label></p>
+  <button type="submit">Sign in</button>
+</form></body></html>`
+
+// dashboardPage renders part of its content and web storage with JavaScript,
+// so 'source' (rendered DOM) and 'body' (served HTML) differ.
+const dashboardPage = `<!doctype html><html><head><meta charset="utf-8"><title>Dashboard</title></head>
+<body><h1 id="dashboard">Welcome %s</h1><p id="js">static</p>
+<script>
+  document.getElementById('js').textContent = 'rendered by js';
+  localStorage.setItem('theme', 'dark');
+  sessionStorage.setItem('tab', 'home');
+</script></body></html>`
+
 // seenRequest is what the upstream (origin) server actually received.
 type seenRequest struct {
 	Method string      `json:"method"`
@@ -92,6 +117,27 @@ func newSite() *site {
 	mux.HandleFunc("/next", func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "text/html; charset=utf-8")
 		fmt.Fprint(w, nextPage)
+	})
+	mux.HandleFunc("/login", func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "text/html; charset=utf-8")
+		fmt.Fprint(w, loginPage)
+	})
+	mux.HandleFunc("/session", func(w http.ResponseWriter, r *http.Request) {
+		if r.Method != http.MethodPost || r.ParseForm() != nil || r.PostForm.Get("email") == "" {
+			http.Error(w, "bad login", http.StatusBadRequest)
+			return
+		}
+		http.SetCookie(w, &http.Cookie{Name: "auth", Value: "ok-" + r.PostForm.Get("country"), Path: "/", HttpOnly: true, Secure: true})
+		http.Redirect(w, r, "/dashboard?user="+url.QueryEscape(r.PostForm.Get("email")), http.StatusSeeOther)
+	})
+	mux.HandleFunc("/dashboard", func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "text/html; charset=utf-8")
+		fmt.Fprintf(w, dashboardPage, html.EscapeString(r.URL.Query().Get("user")))
+	})
+	mux.HandleFunc("/csp", func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "text/html; charset=utf-8")
+		w.Header().Set("Content-Security-Policy", "script-src 'self'")
+		fmt.Fprint(w, `<!doctype html><html><head><title>CSP</title></head><body><p>strict CSP: no eval</p></body></html>`)
 	})
 	mux.HandleFunc("/api/login", func(w http.ResponseWriter, r *http.Request) {
 		var in struct{ User string }

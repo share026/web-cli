@@ -102,3 +102,37 @@ func selectWithFzf(fzfPath string, els []Element, query, header string) (int, er
 	}
 	return hint, nil
 }
+
+// filterWithFzf returns the elements matching query, best match first, using
+// fzf --filter (the same ranking as the interactive UI).
+func filterWithFzf(fzfPath string, els []Element, query string) ([]Element, error) {
+	bin, err := exec.LookPath(fzfPath)
+	if err != nil {
+		return nil, fmt.Errorf("fzf not found (%v)", err)
+	}
+	var in bytes.Buffer
+	byHint := map[int]Element{}
+	for _, e := range els {
+		in.WriteString(e.fzfLine())
+		in.WriteByte('\n')
+		byHint[e.Hint] = e
+	}
+	cmd := exec.Command(bin, "--delimiter=\t", "--with-nth=2..", "--filter="+query)
+	cmd.Stdin = &in
+	out, err := cmd.Output()
+	if err != nil {
+		var ee *exec.ExitError
+		if errors.As(err, &ee) && ee.ExitCode() == 1 {
+			return nil, nil
+		}
+		return nil, fmt.Errorf("fzf: %w", err)
+	}
+	var res []Element
+	for _, l := range strings.Split(strings.TrimSpace(string(out)), "\n") {
+		h, _, _ := strings.Cut(l, "\t")
+		if n, err := strconv.Atoi(h); err == nil {
+			res = append(res, byHint[n])
+		}
+	}
+	return res, nil
+}

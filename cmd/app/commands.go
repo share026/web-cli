@@ -28,6 +28,8 @@ type App struct {
 	log       *log.Logger
 	proxyAddr string
 	ca        tls.Certificate
+	rec       *recorder     // active recording (record start/stop)
+	wait      time.Duration // element wait timeout ('timeout' command)
 }
 
 // ClickResult is the extension's reply to a click request.
@@ -42,32 +44,74 @@ type ClickResult struct {
 
 const requestTimeout = 15 * time.Second
 
-const helpText = `commands:
+const helpText = `Targets (<target>): a hint number from 'list'/'hints', css=<selector>, or any text
+naming the element (label, placeholder, button text, ...; matched with fzf).
+Quote arguments with spaces ("Sign in"); $VAR / ${VAR} expand environment variables.
+
+browser session
   status                         sessions, proxy address, capture counts
   wait [30s]                     wait until the browser extension is connected
   ping                           round-trip ping to the extension
-  hints [query]                  collect visible elements -> fzf -> click
-                                 (with a query: non-interactive fzf --filter, best match)
-  click <hint>                   click an element from the last 'hints' collection
-  actions                        list DOM actions and their linked request count
-  log [n]                        show the last n captured requests (default 20)
+
+navigation and tabs
+  open <url> | newtab <url>      load a URL in the active / a new tab and wait for it
+  back | forward | reload        history navigation
+  url                            current URL and title
+  tabs | tab <id> | closetab [id]
+
+elements and input
+  list [all] [query]             visible elements with hint numbers ('all': whole page)
+  hints [query]                  list -> fzf -> click (query: best match, no UI)
+  click <target>                 click (links, buttons, anything)
+  type <target> <text>           set a text field (fires input/change); text "-" prompts
+                                 without echo; values are never printed
+  clear <target>                 empty a text field
+  select <target> <option>       choose an option of a <select> by text or value
+  check <target> | uncheck <target>
+  press <key> [target]           Enter (submits forms), Tab, Escape, Space, Backspace,
+                                 ArrowDown, PageDown, ... or a single character
+  submit [target]                submit the form of the target / focused element
+  focus <target> | scroll <down|up|top|bottom|target>
+  waitfor <target|text=..|url=regexp|title=..> [timeout]
+  sleep <duration> | timeout [duration]   (element wait, default 10s)
+
+page content
+  text [target] [file]           visible text of the page or an element
+  html <target> [file]           outerHTML of an element
+  source [file]                  rendered DOM of the page (after JavaScript)
+  eval <javascript>              evaluate in the page like the DevTools console
+  screenshot [file]              PNG of the visible area
+  storage dump [file] | storage import <file>    localStorage + sessionStorage
+  cookies dump [file] [url] | cookies import <file>
+
+network (MITM proxy)
+  log [n]                        last n captured requests (default 20)
+  show <id>                      headers and bodies of one request/response
+  body <id> [file]               response body (decompressed), e.g. the served HTML
+  actions                        DOM actions and how many requests each caused
   export [file] [action=<id>] [host=<regexp>]
-                                 write captured requests as a .http file (kulala.nvim / REST Client)
-  cookies dump [file] [url]      dump cookies of the active tab (or url) to JSON
-  cookies import <file>          import cookies from JSON through chrome.cookies.set
-  rule add <action> k=v ...      add an interception rule, e.g.
+                                 captured requests as a .http file (kulala.nvim / REST Client)
+  rule add <action> k=v ...      interception rules, e.g.
                                    rule add block host=^ads\. status=451
                                    rule add set-req-header url=/api/ name=X-Debug value=1
                                    rule add set-resp-header host=example name=X-Audited value=yes
                                    rule add replace-body url=/config.json value="{}"
   rule list | rule del <id> | rule load <file.json>
-  ca                             show CA certificate path and SPKI hash
+  ca                             CA certificate path and SPKI hash
+
+recording and scripts
+  record start [file] [secrets]  record browser input + web-cli commands as a script
+  record stop | record status
+  run <file>                     execute a script (also: bin/app -f <file>)
   quit`
 
 func (a *App) exec(line string) (quit bool, err error) {
 	args := strings.Fields(line)
-	if len(args) == 0 {
+	if len(args) == 0 || strings.HasPrefix(args[0], "#") {
 		return false, nil
+	}
+	if browserCommands[args[0]] {
+		return false, a.execBrowser(line)
 	}
 	ctx, cancel := context.WithTimeout(context.Background(), requestTimeout)
 	defer cancel()
@@ -101,15 +145,6 @@ func (a *App) exec(line string) (quit bool, err error) {
 		fmt.Printf("%s from extension in %s: %s\n", r.Type, time.Since(start).Round(time.Microsecond), string(r.Payload))
 	case "hints", "h", "f":
 		return false, a.cmdHints(ctx, strings.TrimSpace(strings.TrimPrefix(strings.TrimSpace(line), args[0])))
-	case "click":
-		if len(args) != 2 {
-			return false, fmt.Errorf("usage: click <hint>")
-		}
-		hint, err := strconv.Atoi(args[1])
-		if err != nil {
-			return false, err
-		}
-		return false, a.click(ctx, hint)
 	case "actions":
 		a.cmdActions()
 	case "log":

@@ -35,6 +35,7 @@ type config struct {
 	upstreamCA       string
 	insecureUpstream bool
 	commands         string
+	script           string
 	quiet            bool
 }
 
@@ -60,6 +61,7 @@ func main() {
 	flag.StringVar(&cfg.upstreamCA, "upstream-ca", "", "extra PEM CA bundle trusted for upstream TLS (in addition to system roots)")
 	flag.BoolVar(&cfg.insecureUpstream, "insecure-upstream", false, "do not verify upstream TLS certificates (testing only)")
 	flag.StringVar(&cfg.commands, "c", "", "run ';'-separated commands non-interactively, then exit")
+	flag.StringVar(&cfg.script, "f", "", "run a script file (one command per line, e.g. a recording), then exit")
 	flag.BoolVar(&cfg.quiet, "q", false, "do not print a line per proxied request")
 	flag.Parse()
 
@@ -95,7 +97,12 @@ func run(cfg config) error {
 	}
 	defer hub.Close()
 	hub.Logf = func(f string, a ...any) { logger.Printf("["+"ipc] "+strings.TrimPrefix(f, "ipc: "), a...) }
+	a := &App{cfg: cfg, store: store, rules: rules, log: logger, rec: &recorder{}}
 	hub.OnEvent = func(s *ipc.Session, m ipc.Message) {
+		if m.Type == ipc.TypeRecordEvent {
+			a.onRecordEvent(m)
+			return
+		}
 		if m.Type == ipc.TypeLog {
 			logger.Printf("[ext#%d] %s", s.ID, string(m.Payload))
 			return
@@ -109,7 +116,7 @@ func run(cfg config) error {
 	}()
 	logger.Printf("[ipc] listening on %s", cfg.socket)
 
-	a := &App{cfg: cfg, hub: hub, store: store, rules: rules, log: logger}
+	a.hub = hub
 
 	if cfg.proxyAddr != "" {
 		ca, created, err := proxy.LoadOrCreateCA(cfg.caDir)
@@ -162,6 +169,12 @@ func run(cfg config) error {
 		os.Exit(0)
 	}()
 
+	if cfg.script != "" {
+		if cfg.commands != "" {
+			return fmt.Errorf("use either -c or -f")
+		}
+		return a.runScript(cfg.script)
+	}
 	if cfg.commands != "" {
 		for _, c := range strings.Split(cfg.commands, ";") {
 			if strings.TrimSpace(c) == "" {

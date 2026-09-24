@@ -14,6 +14,9 @@ import (
 	"sync"
 	"time"
 	"unicode/utf8"
+
+	"github.com/andybalholm/brotli"
+	"github.com/klauspost/compress/zstd"
 )
 
 // ActionHeader is attached by the extension to requests fired right after a
@@ -191,7 +194,7 @@ func EncodeBody(b []byte, h http.Header) *Body {
 	return out
 }
 
-// Decompress decodes gzip/deflate bodies. ok is false when no decoding applied.
+// Decompress decodes gzip/deflate/br/zstd bodies (what Chrome accepts). ok is false when no decoding applied.
 func Decompress(b []byte, contentEncoding string) ([]byte, string, bool) {
 	var r io.ReadCloser
 	var err error
@@ -200,6 +203,14 @@ func Decompress(b []byte, contentEncoding string) ([]byte, string, bool) {
 		r, err = gzip.NewReader(bytes.NewReader(b))
 	case "deflate":
 		r = flate.NewReader(bytes.NewReader(b))
+	case "br":
+		r = io.NopCloser(brotli.NewReader(bytes.NewReader(b)))
+	case "zstd":
+		zr, zerr := zstd.NewReader(bytes.NewReader(b))
+		if zerr != nil {
+			return b, "", false
+		}
+		r = zr.IOReadCloser()
 	default:
 		return b, "", false
 	}

@@ -3,9 +3,12 @@ module github.com/share026/web-cli
 go 1.26
 
 require (
+	github.com/andybalholm/brotli v1.2.4
 	github.com/chromedp/cdproto v0.0.0-20260714215040-dc233986426f
 	github.com/chromedp/chromedp v0.16.0
 	github.com/elazarl/goproxy v1.9.1
+	github.com/klauspost/compress v1.20.0
+	golang.org/x/sys v0.47.0
 )
 
 require (
@@ -15,6 +18,5 @@ require (
 	github.com/gobwas/pool v0.2.1 // indirect
 	github.com/gobwas/ws v1.4.0 // indirect
 	golang.org/x/net v0.50.0 // indirect
-	golang.org/x/sys v0.47.0 // indirect
 	golang.org/x/text v0.34.0 // indirect
 )

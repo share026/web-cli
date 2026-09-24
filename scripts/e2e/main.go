@@ -226,6 +226,8 @@ func main() {
 	sock := filepath.Join(outAbs, "ipc.sock")
 	proxyAddr := fmt.Sprintf("127.0.0.1:%d", freePort())
 	auditDir := filepath.Join(outAbs, "audit")
+	os.Setenv("E2E_PASSWORD", e2ePassword)
+	os.Setenv("WEBCLI_PASSWORD", replayPassword)
 	h.startApp("-socket", sock, "-proxy", proxyAddr, "-ca-dir", filepath.Join(outAbs, "ca"),
 		"-out", auditDir, "-upstream-ca", siteCA)
 	defer func() {
@@ -465,6 +467,11 @@ func main() {
 	// Replay the exported .http login request with curl through nothing but the
 	// origin (proves the file is a valid, executable request description).
 	h.check("Phase 4", ".http file replays with curl", replayWithCurl(h, httpLogin, siteCA), "see harness.log")
+
+	// ===== Automation: forms, navigation, page content, recording ================
+	if real {
+		h.automationChecks(browserCtx, s, auditDir)
+	}
 
 	h.writeReport()
 	for _, c := range h.checks {
