@@ -1,15 +1,15 @@
-01:41:38.065002 [ipc] listening on /home/runner/work/web-cli/web-cli/scripts/e2e/out-real/ipc.sock
-01:41:38.065697 [proxy] generated new root CA in /home/runner/work/web-cli/web-cli/scripts/e2e/out-real/ca
-01:41:38.074605 [proxy] listening on 127.0.0.1:35497 (CA /home/runner/work/web-cli/web-cli/scripts/e2e/out-real/ca/ca.pem, SPKI uuA5BQekOxJr3J4Jnru+gwfPC2vRrinyHYHEI3ZaHD8=)
-01:41:43.228004 [ipc] session #1 connected
-01:41:43.228131 [ipc] session #1 hello origin=chrome-extension://aghlljmggamhjpkcngogikkiohnaaiha/ pid=13389
-01:41:43.228168 [ipc] session #1 ping -> pong
-01:41:43.229470 [ext#1] {"event":"pong_received","reply_to":"75cb1aad1a224ce5ae927000fa5c1c00"}
-pong from extension in 1.337ms: {"from":"extension"}
-01:41:43.411069 [proxy] #1 GET https://127.0.0.1:40543/ -> 200 (2381 bytes, 3ms)
-01:41:43.439227 [proxy] #2 GET https://127.0.0.1:40543/favicon.ico -> 404 (19 bytes, 0s)
-collected 7 visible element(s) on https://127.0.0.1:40543/
-  1  [a]  Next page  https://127.0.0.1:40543/next
+01:45:18.301403 [ipc] listening on /home/runner/work/web-cli/web-cli/scripts/e2e/out-real/ipc.sock
+01:45:18.302105 [proxy] generated new root CA in /home/runner/work/web-cli/web-cli/scripts/e2e/out-real/ca
+01:45:18.310925 [proxy] listening on 127.0.0.1:35573 (CA /home/runner/work/web-cli/web-cli/scripts/e2e/out-real/ca/ca.pem, SPKI Cno9ntl+RWPdEPM7SsfI/M7Vr1xar84fozGrqZHpjck=)
+01:45:19.411222 [ipc] session #1 connected
+01:45:19.411398 [ipc] session #1 hello origin=chrome-extension://aghlljmggamhjpkcngogikkiohnaaiha/ pid=13511
+01:45:19.411438 [ipc] session #1 ping -> pong
+01:45:19.412976 [ext#1] {"event":"pong_received","reply_to":"9f3b2965d3b347de83d7e89ee81eef88"}
+pong from extension in 3.493ms: {"from":"extension"}
+01:45:19.595427 [proxy] #1 GET https://127.0.0.1:39487/ -> 200 (2381 bytes, 3ms)
+01:45:19.623204 [proxy] #2 GET https://127.0.0.1:39487/favicon.ico -> 404 (19 bytes, 0s)
+collected 7 visible element(s) on https://127.0.0.1:39487/
+  1  [a]  Next page  https://127.0.0.1:39487/next
   2  [button]  Login  
   3  [button]  Who am I  
   4  [input:text]  Search products  
@@ -17,19 +17,19 @@ collected 7 visible element(s) on https://127.0.0.1:40543/
   6  [div@button]  Role Button  
   7  [span]  Onclick span  
 fzf selected hint 2
-click hint=2 <button> "Login" action_id=7c6db828-c7b7-4705-a1e7-31270ecf0c3f
-01:41:43.753116 [proxy] #3 POST https://127.0.0.1:40543/api/login -> 200 (27 bytes, 0s) action=7c6db828-c7b7-4705-a1e7-31270ecf0c3f
-#1 GET https://127.0.0.1:40543/ -> 200 (2381 bytes, 3ms)
-#2 GET https://127.0.0.1:40543/favicon.ico -> 404 (19 bytes, 0s)
-#3 POST https://127.0.0.1:40543/api/login -> 200 (27 bytes, 0s) action=7c6db828-c7b7-4705-a1e7-31270ecf0c3f
+click hint=2 <button> "Login" action_id=cb62120c-16ab-48d0-9310-61a23e1d7b0d
+01:45:19.937356 [proxy] #3 POST https://127.0.0.1:39487/api/login -> 200 (27 bytes, 0s) action=cb62120c-16ab-48d0-9310-61a23e1d7b0d
+#1 GET https://127.0.0.1:39487/ -> 200 (2381 bytes, 3ms)
+#2 GET https://127.0.0.1:39487/favicon.ico -> 404 (19 bytes, 0s)
+#3 POST https://127.0.0.1:39487/api/login -> 200 (27 bytes, 0s) action=cb62120c-16ab-48d0-9310-61a23e1d7b0d
 added rule #1 set-req-header url="/api/whoami" name="X-Injected" value="e2e-rule"
 added rule #2 block url="/blocked" status=451
 added rule #3 set-resp-header url="/api/whoami" name="X-Audited" value="web-cli"
-dumped 1 cookie(s) for https://127.0.0.1:40543/ to /home/runner/work/web-cli/web-cli/scripts/e2e/out-real/audit/cookies.json
+dumped 1 cookie(s) for https://127.0.0.1:39487/ to /home/runner/work/web-cli/web-cli/scripts/e2e/out-real/audit/cookies.json
   session=abc123; domain=127.0.0.1; path=/; secure=true; httpOnly=true
 imported 1/1 cookie(s) from /home/runner/work/web-cli/web-cli/scripts/e2e/out-real/audit/cookies-import.json
-collected 7 visible element(s) on https://127.0.0.1:40543/
-  1  [a]  Next page  https://127.0.0.1:40543/next
+collected 7 visible element(s) on https://127.0.0.1:39487/
+  1  [a]  Next page  https://127.0.0.1:39487/next
   2  [button]  Login  
   3  [button]  Who am I  
   4  [input:text]  Search products  
@@ -37,16 +37,16 @@ collected 7 visible element(s) on https://127.0.0.1:40543/
   6  [div@button]  Role Button  
   7  [span]  Onclick span  
 fzf selected hint 3
-click hint=3 <button> "Who am I" action_id=da92fd6e-f629-4a84-aca3-dbe4f0e84756
-01:41:44.781033 [proxy] #4 GET https://127.0.0.1:40543/api/whoami -> 200 (74 bytes, 1ms) action=da92fd6e-f629-4a84-aca3-dbe4f0e84756 intercepts=2
-01:41:44.784271 [proxy] #5 GET https://127.0.0.1:40543/blocked -> 451 BLOCKED action=da92fd6e-f629-4a84-aca3-dbe4f0e84756 intercepts=1
-#1 GET https://127.0.0.1:40543/ -> 200 (2381 bytes, 3ms)
-#2 GET https://127.0.0.1:40543/favicon.ico -> 404 (19 bytes, 0s)
-#3 POST https://127.0.0.1:40543/api/login -> 200 (27 bytes, 0s) action=7c6db828-c7b7-4705-a1e7-31270ecf0c3f
-#4 GET https://127.0.0.1:40543/api/whoami -> 200 (74 bytes, 1ms) action=da92fd6e-f629-4a84-aca3-dbe4f0e84756 intercepts=2
-#5 GET https://127.0.0.1:40543/blocked -> 451 BLOCKED action=da92fd6e-f629-4a84-aca3-dbe4f0e84756 intercepts=1
-collected 7 visible element(s) on https://127.0.0.1:40543/
-  1  [a]  Next page  https://127.0.0.1:40543/next
+click hint=3 <button> "Who am I" action_id=bbc81f34-036e-44eb-a851-073a2e7b22f8
+01:45:20.966533 [proxy] #4 GET https://127.0.0.1:39487/api/whoami -> 200 (74 bytes, 1ms) action=bbc81f34-036e-44eb-a851-073a2e7b22f8 intercepts=2
+01:45:20.970630 [proxy] #5 GET https://127.0.0.1:39487/blocked -> 451 BLOCKED action=bbc81f34-036e-44eb-a851-073a2e7b22f8 intercepts=1
+#1 GET https://127.0.0.1:39487/ -> 200 (2381 bytes, 3ms)
+#2 GET https://127.0.0.1:39487/favicon.ico -> 404 (19 bytes, 0s)
+#3 POST https://127.0.0.1:39487/api/login -> 200 (27 bytes, 0s) action=cb62120c-16ab-48d0-9310-61a23e1d7b0d
+#4 GET https://127.0.0.1:39487/api/whoami -> 200 (74 bytes, 1ms) action=bbc81f34-036e-44eb-a851-073a2e7b22f8 intercepts=2
+#5 GET https://127.0.0.1:39487/blocked -> 451 BLOCKED action=bbc81f34-036e-44eb-a851-073a2e7b22f8 intercepts=1
+collected 7 visible element(s) on https://127.0.0.1:39487/
+  1  [a]  Next page  https://127.0.0.1:39487/next
   2  [button]  Login  
   3  [button]  Who am I  
   4  [input:text]  Search products  
@@ -54,51 +54,51 @@ collected 7 visible element(s) on https://127.0.0.1:40543/
   6  [div@button]  Role Button  
   7  [span]  Onclick span  
 fzf selected hint 1
-click hint=1 <a> "Next page" action_id=573674f7-da5c-4aea-b3de-a0d124d2d68f
-01:41:45.001635 [proxy] #6 GET https://127.0.0.1:40543/next -> 200 (179 bytes, 0s) action=573674f7-da5c-4aea-b3de-a0d124d2d68f
-collected 2 visible element(s) on https://127.0.0.1:40543/next
-  1  [a]  Back home  https://127.0.0.1:40543/
+click hint=1 <a> "Next page" action_id=26e9f8d0-2c83-4346-9a00-2e04fda9d95d
+01:45:21.188945 [proxy] #6 GET https://127.0.0.1:39487/next -> 200 (179 bytes, 1ms) action=26e9f8d0-2c83-4346-9a00-2e04fda9d95d
+collected 2 visible element(s) on https://127.0.0.1:39487/next
+  1  [a]  Back home  https://127.0.0.1:39487/
   2  [button]  Press me  
 fzf selected hint 2
-click hint=2 <button> "Press me" action_id=37b9c3a5-6543-499b-97a0-82b25dd38ce2
-collected 2 visible element(s) on https://127.0.0.1:40543/next
-  1  [a]  Back home  https://127.0.0.1:40543/
+click hint=2 <button> "Press me" action_id=f27f93f4-fa75-4c32-b72e-b866d36156a0
+collected 2 visible element(s) on https://127.0.0.1:39487/next
+  1  [a]  Back home  https://127.0.0.1:39487/
   2  [button]  clicked  
 error: fzf: no element matches "search"
 wrote 6 request(s) to /home/runner/work/web-cli/web-cli/scripts/e2e/out-real/audit/requests.http
 wrote 1 request(s) to /home/runner/work/web-cli/web-cli/scripts/e2e/out-real/audit/login-action.http
 wrote 1 request(s) to /home/runner/work/web-cli/web-cli/scripts/e2e/out-real/audit/nav-action.http
 ACTION ID                             KIND   HINT  ELEMENT              REQUESTS  PAGE
-7c6db828-c7b7-4705-a1e7-31270ecf0c3f  click  2     <button> "Login"     1         https://127.0.0.1:40543/
-da92fd6e-f629-4a84-aca3-dbe4f0e84756  click  3     <button> "Who am I"  2         https://127.0.0.1:40543/
-573674f7-da5c-4aea-b3de-a0d124d2d68f  click  1     <a> "Next page"      1         https://127.0.0.1:40543/
-37b9c3a5-6543-499b-97a0-82b25dd38ce2  click  2     <button> "Press me"  0         https://127.0.0.1:40543/next
+cb62120c-16ab-48d0-9310-61a23e1d7b0d  click  2     <button> "Login"     1         https://127.0.0.1:39487/
+bbc81f34-036e-44eb-a851-073a2e7b22f8  click  3     <button> "Who am I"  2         https://127.0.0.1:39487/
+26e9f8d0-2c83-4346-9a00-2e04fda9d95d  click  1     <a> "Next page"      1         https://127.0.0.1:39487/
+f27f93f4-fa75-4c32-b72e-b866d36156a0  click  2     <button> "Press me"  0         https://127.0.0.1:39487/next
 socket:   /home/runner/work/web-cli/web-cli/scripts/e2e/out-real/ipc.sock
 sessions: 1
-  #1 origin=chrome-extension://aghlljmggamhjpkcngogikkiohnaaiha/ nm-host pid=13389 since 2026-09-24T01:41:43Z
-proxy:    http://127.0.0.1:35497
+  #1 origin=chrome-extension://aghlljmggamhjpkcngogikkiohnaaiha/ nm-host pid=13511 since 2026-09-24T01:45:19Z
+proxy:    http://127.0.0.1:35573
 captured: 6 request(s), 4 action(s), 3 rule(s)
-01:41:47.228909 [proxy] #7 GET https://127.0.0.1:40543/login -> 200 (687 bytes, 0s) action=d423eb76-1fad-4db8-a919-3135397f22a0
-opened https://127.0.0.1:40543/login "Login" tab=1312659209 action_id=d423eb76-1fad-4db8-a919-3135397f22a0
-typed 17 char(s) into <input:email> "Email" selector=#email action_id=b0649a7b-b4b0-4369-8179-cb038ebffb9c
-typed 13 char(s) into <input:password> "Password" selector=#password action_id=3aba1be7-bf02-4bf8-ac8e-c55584a80bac
-selected "Japan" in <select> "Country: Japan" selector=#country action_id=3d08cfa0-bd67-4a4c-bee4-9d4e7722cf4a
-checked <input:checkbox> "Remember me" checked=true selector=#remember action_id=f20efc33-a7f4-45a8-839a-9d9aac8fdfe2
-pressed Enter on <input:password> "Password" action_id=cdcf3e08-8960-4d87-a619-1f3c803b0ac4
-01:41:47.814304 [proxy] #8 POST https://127.0.0.1:40543/session -> 303 (0 bytes, 0s) action=cdcf3e08-8960-4d87-a619-1f3c803b0ac4
-01:41:47.818618 [proxy] #9 GET https://127.0.0.1:40543/dashboard?user=alice%40example.com -> 200 (336 bytes, 0s) action=cdcf3e08-8960-4d87-a619-1f3c803b0ac4
-found text=Welcome alice@example.com after 3ms https://127.0.0.1:40543/dashboard?user=alice%40example.com
-#1 GET https://127.0.0.1:40543/ -> 200 (2381 bytes, 3ms)
-#2 GET https://127.0.0.1:40543/favicon.ico -> 404 (19 bytes, 0s)
-#3 POST https://127.0.0.1:40543/api/login -> 200 (27 bytes, 0s) action=7c6db828-c7b7-4705-a1e7-31270ecf0c3f
-#4 GET https://127.0.0.1:40543/api/whoami -> 200 (74 bytes, 1ms) action=da92fd6e-f629-4a84-aca3-dbe4f0e84756 intercepts=2
-#5 GET https://127.0.0.1:40543/blocked -> 451 BLOCKED action=da92fd6e-f629-4a84-aca3-dbe4f0e84756 intercepts=1
-#6 GET https://127.0.0.1:40543/next -> 200 (179 bytes, 0s) action=573674f7-da5c-4aea-b3de-a0d124d2d68f
-#7 GET https://127.0.0.1:40543/login -> 200 (687 bytes, 0s) action=d423eb76-1fad-4db8-a919-3135397f22a0
-#8 POST https://127.0.0.1:40543/session -> 303 (0 bytes, 0s) action=cdcf3e08-8960-4d87-a619-1f3c803b0ac4
-#9 GET https://127.0.0.1:40543/dashboard?user=alice%40example.com -> 200 (336 bytes, 0s) action=cdcf3e08-8960-4d87-a619-1f3c803b0ac4
-#8 POST https://127.0.0.1:40543/session HTTP/1.1
-action: cdcf3e08-8960-4d87-a619-1f3c803b0ac4 press <input> "Enter on Password" on https://127.0.0.1:40543/login
+01:45:22.431464 [proxy] #7 GET https://127.0.0.1:39487/login -> 200 (687 bytes, 0s) action=99b03020-8ac9-4941-938f-62d1346798e6
+opened https://127.0.0.1:39487/login "Login" tab=1286919450 action_id=99b03020-8ac9-4941-938f-62d1346798e6
+typed 17 char(s) into <input:email> "Email" selector=#email action_id=1a9cb255-c77e-40f4-a686-76b2668239d6
+typed 13 char(s) into <input:password> "Password" selector=#password action_id=1cde4d30-1b27-4474-867a-a029b0cf905c
+selected "Japan" in <select> "Country: Japan" selector=#country action_id=3eb587dc-9cf2-4726-b4f4-b30ec3645092
+checked <input:checkbox> "Remember me" checked=true selector=#remember action_id=046f38fa-f77d-4be2-b6c9-7d5bb1257fbe
+pressed Enter on <input:password> "Password" action_id=15d187c0-b1da-46dd-8e25-56d164cb58d4
+01:45:23.016142 [proxy] #8 POST https://127.0.0.1:39487/session -> 303 (0 bytes, 0s) action=15d187c0-b1da-46dd-8e25-56d164cb58d4
+01:45:23.020871 [proxy] #9 GET https://127.0.0.1:39487/dashboard?user=alice%40example.com -> 200 (336 bytes, 0s) action=15d187c0-b1da-46dd-8e25-56d164cb58d4
+found text=Welcome alice@example.com after 3ms https://127.0.0.1:39487/dashboard?user=alice%40example.com
+#1 GET https://127.0.0.1:39487/ -> 200 (2381 bytes, 3ms)
+#2 GET https://127.0.0.1:39487/favicon.ico -> 404 (19 bytes, 0s)
+#3 POST https://127.0.0.1:39487/api/login -> 200 (27 bytes, 0s) action=cb62120c-16ab-48d0-9310-61a23e1d7b0d
+#4 GET https://127.0.0.1:39487/api/whoami -> 200 (74 bytes, 1ms) action=bbc81f34-036e-44eb-a851-073a2e7b22f8 intercepts=2
+#5 GET https://127.0.0.1:39487/blocked -> 451 BLOCKED action=bbc81f34-036e-44eb-a851-073a2e7b22f8 intercepts=1
+#6 GET https://127.0.0.1:39487/next -> 200 (179 bytes, 1ms) action=26e9f8d0-2c83-4346-9a00-2e04fda9d95d
+#7 GET https://127.0.0.1:39487/login -> 200 (687 bytes, 0s) action=99b03020-8ac9-4941-938f-62d1346798e6
+#8 POST https://127.0.0.1:39487/session -> 303 (0 bytes, 0s) action=15d187c0-b1da-46dd-8e25-56d164cb58d4
+#9 GET https://127.0.0.1:39487/dashboard?user=alice%40example.com -> 200 (336 bytes, 0s) action=15d187c0-b1da-46dd-8e25-56d164cb58d4
+#8 POST https://127.0.0.1:39487/session HTTP/1.1
+action: 15d187c0-b1da-46dd-8e25-56d164cb58d4 press <input> "Enter on Password" on https://127.0.0.1:39487/login
 --- request headers
 Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7
 Accept-Encoding: gzip, deflate, br, zstd
@@ -108,8 +108,8 @@ Connection: keep-alive
 Content-Length: 71
 Content-Type: application/x-www-form-urlencoded
 Cookie: session=abc123; imported=from-json
-Origin: https://127.0.0.1:40543
-Referer: https://127.0.0.1:40543/login
+Origin: https://127.0.0.1:39487
+Referer: https://127.0.0.1:39487/login
 Sec-Ch-Ua: "Chromium";v="146", "Not-A.Brand";v="24", "Google Chrome";v="146"
 Sec-Ch-Ua-Mobile: ?0
 Sec-Ch-Ua-Platform: "Linux"
@@ -122,59 +122,60 @@ User-Agent: Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Geck
 email=alice%40example.com&password=E2E-s3cret-pw&country=jp&remember=on
 --- response 303 (0s)
 Content-Length: 0
-Date: Thu, 24 Sep 2026 01:41:47 GMT
+Date: Thu, 24 Sep 2026 01:45:23 GMT
 Location: /dashboard?user=alice%40example.com
 Set-Cookie: auth=ok-jp; Path=/; HttpOnly; Secure
 --- end
 wrote 336 byte(s) of the response body of #9 (text/html; charset=utf-8) to /home/runner/work/web-cli/web-cli/scripts/e2e/out-real/audit/dashboard-served.html
---- text of https://127.0.0.1:40543/dashboard?user=alice%40example.com (Dashboard)
+--- text of https://127.0.0.1:39487/dashboard?user=alice%40example.com (Dashboard)
 Welcome alice@example.com
 
 rendered by js
 --- end of text
-saved rendered DOM of https://127.0.0.1:40543/dashboard?user=alice%40example.com (345 bytes) to /home/runner/work/web-cli/web-cli/scripts/e2e/out-real/audit/dashboard-rendered.html
+saved rendered DOM of https://127.0.0.1:39487/dashboard?user=alice%40example.com (345 bytes) to /home/runner/work/web-cli/web-cli/scripts/e2e/out-real/audit/dashboard-rendered.html
   (the HTML as served by the server: 'log' to find the request, then 'body <id> <file>')
 => "Dashboard"  (string, via main-world)
 => {"n":2,"path":"/dashboard","theme":"dark"}  (object, via main-world)
-dumped 1 localStorage + 1 sessionStorage item(s) for https://127.0.0.1:40543 to /home/runner/work/web-cli/web-cli/scripts/e2e/out-real/audit/storage.json
+dumped 1 localStorage + 1 sessionStorage item(s) for https://127.0.0.1:39487 to /home/runner/work/web-cli/web-cli/scripts/e2e/out-real/audit/storage.json
   local   theme=dark
   session tab=home
-saved screenshot of https://127.0.0.1:40543/dashboard?user=alice%40example.com (11775 bytes) to /home/runner/work/web-cli/web-cli/scripts/e2e/out-real/audit/dashboard.png
-back about:blank "about:blank" tab=1312659209 action_id=d30fa134-a267-461e-8028-0e8af66c6d5a
-forward https://127.0.0.1:40543/dashboard?user=alice%40example.com "Dashboard" tab=1312659209 action_id=3f598a8c-e505-48d8-9bd9-cab4295a40de
-01:42:09.521300 [proxy] #10 GET https://127.0.0.1:40543/dashboard?user=alice%40example.com -> 200 (336 bytes, 1ms) action=64c7ec58-cbdb-46c3-ade7-0ddde0b2bc82
-reloaded https://127.0.0.1:40543/dashboard?user=alice%40example.com "Dashboard" tab=1312659209 action_id=64c7ec58-cbdb-46c3-ade7-0ddde0b2bc82
-01:42:09.679579 [proxy] #11 GET https://127.0.0.1:40543/next -> 200 (179 bytes, 1ms) action=7819aa04-ea8b-414f-9a08-ff359608d627
-opened https://127.0.0.1:40543/next "Next" tab=1312659210 action_id=7819aa04-ea8b-414f-9a08-ff359608d627
+saved screenshot of https://127.0.0.1:39487/dashboard?user=alice%40example.com (11775 bytes) to /home/runner/work/web-cli/web-cli/scripts/e2e/out-real/audit/dashboard.png
+back https://127.0.0.1:39487/login "Login" tab=1286919450 action_id=3a865960-4dd5-4378-98d9-968772f3f930
+forward https://127.0.0.1:39487/dashboard?user=alice%40example.com "Dashboard" tab=1286919450 action_id=94aee626-5d4d-486d-9a77-70f4fd5c0ef5
+01:45:24.733098 [proxy] #10 GET https://127.0.0.1:39487/dashboard?user=alice%40example.com -> 200 (336 bytes, 0s) action=40246465-e0c9-4047-8d95-451bceb6b314
+reloaded https://127.0.0.1:39487/dashboard?user=alice%40example.com "Dashboard" tab=1286919450 action_id=40246465-e0c9-4047-8d95-451bceb6b314
+01:45:24.893613 [proxy] #11 GET https://127.0.0.1:39487/next -> 200 (179 bytes, 1ms) action=feb22c10-ff35-4cd7-9444-ca2cc96a741f
+opened https://127.0.0.1:39487/next "Next" tab=1286919451 action_id=feb22c10-ff35-4cd7-9444-ca2cc96a741f
 2 tab(s)
-    1312659209  https://127.0.0.1:40543/dashboard?user=alice%40example.com  "Dashboard"
-  * 1312659210  https://127.0.0.1:40543/next  "Next"
+    1286919450  https://127.0.0.1:39487/dashboard?user=alice%40example.com  "Dashboard"
+  * 1286919451  https://127.0.0.1:39487/next  "Next"
 1 tab(s)
-  * 1312659209  https://127.0.0.1:40543/dashboard?user=alice%40example.com  "Dashboard"
-01:42:10.082328 [proxy] #12 GET https://127.0.0.1:40543/csp -> 200 (98 bytes, 0s) action=4f9bfa71-97ae-4ac7-95dd-570fbecca4ef
-opened https://127.0.0.1:40543/csp "CSP" tab=1312659209 action_id=4f9bfa71-97ae-4ac7-95dd-570fbecca4ef
+  * 1286919450  https://127.0.0.1:39487/dashboard?user=alice%40example.com  "Dashboard"
+01:45:25.279427 [proxy] #12 GET https://127.0.0.1:39487/csp -> 200 (98 bytes, 0s) action=2b648e5a-e099-4678-b40f-083a2b2e5400
+opened https://127.0.0.1:39487/csp "CSP" tab=1286919450 action_id=2b648e5a-e099-4678-b40f-083a2b2e5400
 => 42  (number, via debugger)
-01:42:10.318007 [proxy] #13 GET https://127.0.0.1:40543/login -> 200 (687 bytes, 0s) action=084371c8-a08e-4734-a274-680d617d51ee
-opened https://127.0.0.1:40543/login "Login" tab=1312659209 action_id=084371c8-a08e-4734-a274-680d617d51ee
-recording to /home/runner/work/web-cli/web-cli/scripts/e2e/out-real/audit/login.webcli (starting at https://127.0.0.1:40543/login): use the browser normally and/or web-cli commands; 'record stop' ends it
-01:42:10.901202 [record] type css=#email bob@example.com
-01:42:10.939416 [record] type css=#password $WEBCLI_PASSWORD
-01:42:10.940461 [record] check css=#remember
-01:42:10.947745 [record] click "css=#loginform > button:nth-of-type(1)"
-01:42:10.963949 [proxy] #14 POST https://127.0.0.1:40543/session -> 303 (0 bytes, 0s) action=084371c8-a08e-4734-a274-680d617d51ee
-01:42:10.968641 [proxy] #15 GET https://127.0.0.1:40543/dashboard?user=bob%40example.com -> 200 (334 bytes, 1ms) action=084371c8-a08e-4734-a274-680d617d51ee
+01:45:25.514020 [proxy] #13 GET https://127.0.0.1:39487/login -> 200 (687 bytes, 0s) action=bc872250-d06a-402b-9be4-56a742ad7b03
+opened https://127.0.0.1:39487/login "Login" tab=1286919450 action_id=bc872250-d06a-402b-9be4-56a742ad7b03
+recording to /home/runner/work/web-cli/web-cli/scripts/e2e/out-real/audit/login.webcli (starting at https://127.0.0.1:39487/login): use the browser normally and/or web-cli commands; 'record stop' ends it
+01:45:26.095140 [record] type css=#email bob@example.com
+01:45:26.128842 [record] type css=#password $WEBCLI_PASSWORD
+01:45:26.129688 [record] check css=#remember
+01:45:26.134073 [record] click "css=#loginform > button:nth-of-type(1)"
+01:45:26.145594 [proxy] #14 POST https://127.0.0.1:39487/session -> 303 (0 bytes, 0s) action=bc872250-d06a-402b-9be4-56a742ad7b03
+01:45:26.149040 [proxy] #15 GET https://127.0.0.1:39487/dashboard?user=bob%40example.com -> 200 (334 bytes, 0s) action=bc872250-d06a-402b-9be4-56a742ad7b03
 recording stopped: 5 step(s) written to /home/runner/work/web-cli/web-cli/scripts/e2e/out-real/audit/login.webcli
-> open https://127.0.0.1:40543/login
-01:42:11.665654 [proxy] #16 GET https://127.0.0.1:40543/login -> 200 (687 bytes, 0s) action=97c902de-4c6a-44b1-afe7-98221caea738
-opened https://127.0.0.1:40543/login "Login" tab=1312659209 action_id=97c902de-4c6a-44b1-afe7-98221caea738
+> open https://127.0.0.1:39487/login
+01:45:26.851193 [proxy] #16 GET https://127.0.0.1:39487/login -> 200 (687 bytes, 0s) action=0e322627-1776-4ef1-8981-576d7b8da30d
+opened https://127.0.0.1:39487/login "Login" tab=1286919450 action_id=0e322627-1776-4ef1-8981-576d7b8da30d
 > type css=#email bob@example.com
-typed 15 char(s) into <input:email> "Email" selector=#email action_id=dfc9152d-202d-4ade-8880-4f47add33c72
+typed 15 char(s) into <input:email> "Email" selector=#email action_id=b6b6903a-d697-45e3-86c6-28f323dfd4b4
 > type css=#password $WEBCLI_PASSWORD
-typed 12 char(s) into <input:password> "Password" selector=#password action_id=4043f9f5-a9ec-48a1-a9ab-88a2e56f5c7c
+typed 12 char(s) into <input:password> "Password" selector=#password action_id=438baf80-a8a6-47d2-9f00-0de652885e74
 > check css=#remember
-checked <input:checkbox> "Remember me" checked=true selector=#remember action_id=c57f2940-0e08-43d0-9052-5c79d8f901f2
+checked <input:checkbox> "Remember me" checked=true selector=#remember action_id=ca6abb76-a385-4a1b-a076-abc69c22cf4b
 > click "css=#loginform > button:nth-of-type(1)"
-click <button> "Sign in" selector=#loginform > button:nth-of-type(1) action_id=517ab914-bc44-4c47-b115-b9f0e2b25948
-run /home/runner/work/web-cli/web-cli/scripts/e2e/out-real/audit/login.webcli: 5 step(s) OK in 57ms
-01:42:11.717705 [proxy] #17 POST https://127.0.0.1:40543/session -> 303 (0 bytes, 0s) action=517ab914-bc44-4c47-b115-b9f0e2b25948
-01:42:11.720040 [proxy] #18 GET https://127.0.0.1:40543/dashboard?user=bob%40example.com -> 200 (334 bytes, 0s) action=517ab914-bc44-4c47-b115-b9f0e2b25948
+click <button> "Sign in" selector=#loginform > button:nth-of-type(1) action_id=6c38e651-7c67-4639-82b7-f5b2c89f237b
+run /home/runner/work/web-cli/web-cli/scripts/e2e/out-real/audit/login.webcli: 5 step(s) OK in 53ms
+01:45:26.900399 [proxy] #17 POST https://127.0.0.1:39487/session -> 303 (0 bytes, 0s) action=6c38e651-7c67-4639-82b7-f5b2c89f237b
+01:45:26.902473 [proxy] #18 GET https://127.0.0.1:39487/dashboard?user=bob%40example.com -> 200 (334 bytes, 0s) action=6c38e651-7c67-4639-82b7-f5b2c89f237b
+01:45:27.509443 [ipc] session #1 disconnected

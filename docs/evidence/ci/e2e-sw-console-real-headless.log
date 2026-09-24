@@ -1,2 +1,2 @@
-01:42:13.742 console.log "[web-cli]" "pong received from app" "{\"from\":\"app\"}"
-01:42:13.744 state "{\"perms\":[\"nativeMessaging\",\"tabs\",\"scripting\",\"cookies\",\"declarativeNetRequest\",\"storage\",\"debugger\"],\"native\":\"function\"}"
+01:45:28.981 console.log "[web-cli]" "pong received from app" "{\"from\":\"app\"}"
+01:45:28.983 state "{\"perms\":[\"nativeMessaging\",\"tabs\",\"scripting\",\"cookies\",\"declarativeNetRequest\",\"storage\",\"debugger\"],\"native\":\"function\"}"

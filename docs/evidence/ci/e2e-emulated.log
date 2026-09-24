@@ -1,159 +1,159 @@
-01:41:30.842 scripts/build.sh: built: app nm-host
-01:41:30.856 scripts/install-host.sh:
+01:45:13.647 scripts/build.sh: built: app nm-host
+01:45:13.662 scripts/install-host.sh:
 installed /home/runner/work/web-cli/web-cli/scripts/e2e/out-emulated/chrome-profile/NativeMessagingHosts/com.share026.webcli.json
 extension id: aghlljmggamhjpkcngogikkiohnaaiha
-01:41:30.864 dummy HTTPS site: https://127.0.0.1:37005
-01:41:30.868   app| 01:41:30.868666 [ipc] listening on /home/runner/work/web-cli/web-cli/scripts/e2e/out-emulated/ipc.sock
-01:41:30.869   app| 01:41:30.869367 [proxy] generated new root CA in /home/runner/work/web-cli/web-cli/scripts/e2e/out-emulated/ca
-01:41:30.878   app| 01:41:30.878380 [proxy] listening on 127.0.0.1:34481 (CA /home/runner/work/web-cli/web-cli/scripts/e2e/out-emulated/ca/ca.pem, SPKI vZ2oEIOtsCVHQuvSpBQg9EU9LDiM8cGRzGntemWmH2s=)
-01:41:30.878 [PASS] Phase 3: dynamic root CA generated — ca.pem created, SPKI vZ2oEIOtsCVHQuvSpBQg9EU9LDiM8cGRzGntemWmH2s=
-01:41:30.878 E2E mode: emulated (headed=false, chrome=/home/runner/work/_temp/cloak/chrome)
-01:41:33.197 browser: Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36
-01:41:33.266 native host manifest OK: /home/runner/work/web-cli/web-cli/scripts/e2e/out-emulated/chrome-profile/NativeMessagingHosts/com.share026.webcli.json -> /home/runner/work/web-cli/web-cli/bin/nm-host (allowed_origins=[chrome-extension://aghlljmggamhjpkcngogikkiohnaaiha/])
-01:41:33.270 [nm-host] 2026/09/24 01:41:33.270643 nm-host start pid=12992 origin="chrome-extension://aghlljmggamhjpkcngogikkiohnaaiha/" args=["chrome-extension://aghlljmggamhjpkcngogikkiohnaaiha/"]
-01:41:33.270   app| 01:41:33.270884 [ipc] session #1 connected
-01:41:33.270   app| 01:41:33.270961 [ipc] session #1 hello origin=chrome-extension://aghlljmggamhjpkcngogikkiohnaaiha/ pid=12992
-01:41:33.270 [PASS] Phase 1: nm-host started by extension and connected to app — hello with origin chrome-extension://aghlljmggamhjpkcngogikkiohnaaiha/
-01:41:33.271 [nm-host] 2026/09/24 01:41:33.270888 connected to app at /home/runner/work/web-cli/web-cli/scripts/e2e/out-emulated/ipc.sock
-01:41:33.271   app| 01:41:33.270987 [ipc] session #1 ping -> pong
-01:41:33.271 [PASS] Phase 1: extension {type:ping} answered by Go with {type:pong} — app log: ping -> pong
-01:41:33.271   app| 2026/09/24 01:41:33 [002] WARN: Cannot read response from mitm'd server dial tcp: lookup web-cli-extension.invalid on 127.0.0.53:53: no such host
-01:41:33.272   app| 01:41:33.272927 [ext#1] {"event":"pong_received","reply_to":"8a925d033d2749a8a62b9e17e3f4edaf"}
-01:41:33.273 [PASS] Phase 1: background.js received pong — extension reported pong_received back over the bridge
-01:41:33.273 > ping
-01:41:33.273   app| pong from extension in 765µs: {"from":"extension"}
-01:41:33.374 [PASS] Phase 1: app -> extension ping round trip — pong from extension in 765µs: {"from":"extension"}
-01:41:33.386   app| 01:41:33.386095 [proxy] #2 GET https://127.0.0.1:37005/ -> 200 (2381 bytes, 3ms)
-01:41:33.415   app| 01:41:33.415481 [proxy] #3 GET https://127.0.0.1:37005/favicon.ico -> 404 (19 bytes, 0s)
-01:41:33.420 content.js injected into isolated world (context 3)
-01:41:33.712 > hints Login
-01:41:33.720   app| collected 7 visible element(s) on https://127.0.0.1:37005/
-01:41:33.720   app|   1  [a]  Next page  https://127.0.0.1:37005/next
-01:41:33.720   app|   2  [button]  Login  
-01:41:33.720   app|   3  [button]  Who am I  
-01:41:33.720   app|   4  [input:text]  Search products  
-01:41:33.720   app|   5  [select]  English  
-01:41:33.720   app|   6  [div@button]  Role Button  
-01:41:33.720   app|   7  [span]  Onclick span  
-01:41:33.724   app| fzf selected hint 2
-01:41:33.727 declarativeNetRequest session rules -> extra headers map[X-Audit-Action-Id:bccb983b-f0ed-45a4-bb88-8aa50cf301dc]
-01:41:33.729   app| click hint=2 <button> "Login" action_id=bccb983b-f0ed-45a4-bb88-8aa50cf301dc
-01:41:33.732   app| 01:41:33.732285 [proxy] #4 POST https://127.0.0.1:37005/api/login -> 200 (27 bytes, 0s) action=bccb983b-f0ed-45a4-bb88-8aa50cf301dc
-01:41:33.830 [PASS] Phase 2: hints Login -> fzf -> click — fzf selected hint 2 | click hint=2 <button> "Login" action_id=bccb983b-f0ed-45a4-bb88-8aa50cf301dc
-01:41:33.830 [PASS] Phase 2: Vimium C visibility filter — visible=["Next page" "Login" "Who am I" "Search products" "English" "Role Button" "Onclick span"] missing=[] leaked-hidden=[]
-01:41:33.839 [PASS] Phase 2: click fired in page (fetch /api/login ran) — #status="logged in: alice"
-01:41:34.139 [PASS] Phase 4: X-Audit-Action-Id stripped before upstream — origin saw 1 POST /api/login, action header present=false, body={"user":"alice","password":"wonderland"}
-01:41:34.139 > log 50
-01:41:34.139   app| #1 GET https://web-cli-extension.invalid/favicon.ico -> 0 (0 bytes, 0s)
-01:41:34.139   app| #2 GET https://127.0.0.1:37005/ -> 200 (2381 bytes, 3ms)
-01:41:34.139   app| #3 GET https://127.0.0.1:37005/favicon.ico -> 404 (19 bytes, 0s)
-01:41:34.139   app| #4 POST https://127.0.0.1:37005/api/login -> 200 (27 bytes, 0s) action=bccb983b-f0ed-45a4-bb88-8aa50cf301dc
-01:41:34.240 [PASS] Phase 4: proxy linked POST /api/login to the click action — #4 POST https://127.0.0.1:37005/api/login -> 200 (27 bytes, 0s) action=bccb983b-f0ed-45a4-bb88-8aa50cf301dc
-01:41:34.240 > rule add set-req-header url=/api/whoami name=X-Injected value=e2e-rule
-01:41:34.240   app| added rule #1 set-req-header url="/api/whoami" name="X-Injected" value="e2e-rule"
-01:41:34.340 [PASS] Phase 3: rule add set-req-header — added rule #1 set-req-header url="/api/whoami" name="X-Injected" value="e2e-rule"
-01:41:34.340 > rule add block url=/blocked status=451
-01:41:34.340   app| added rule #2 block url="/blocked" status=451
-01:41:34.441 [PASS] Phase 3: rule add block — added rule #2 block url="/blocked" status=451
-01:41:34.441 > rule add set-resp-header url=/api/whoami name=X-Audited value=web-cli
-01:41:34.442   app| added rule #3 set-resp-header url="/api/whoami" name="X-Audited" value="web-cli"
-01:41:34.542 [PASS] Phase 3: rule add set-resp-header — added rule #3 set-resp-header url="/api/whoami" name="X-Audited" value="web-cli"
-01:41:34.542 > cookies dump /home/runner/work/web-cli/web-cli/scripts/e2e/out-emulated/audit/cookies.json
-01:41:34.547   app| dumped 1 cookie(s) for https://127.0.0.1:37005/ to /home/runner/work/web-cli/web-cli/scripts/e2e/out-emulated/audit/cookies.json
-01:41:34.547   app|   session=abc123; domain=127.0.0.1; path=/; secure=true; httpOnly=true
-01:41:34.647 [PASS] Phase 4: cookies dump via chrome.cookies.getAll — dumped 1 cookie(s) for https://127.0.0.1:37005/ to /home/runner/work/web-cli/web-cli/scripts/e2e/out-emulated/audit/cookies.json; file has session=abc123 (HttpOnly,Secure)=true
-01:41:34.647 > cookies import /home/runner/work/web-cli/web-cli/scripts/e2e/out-emulated/audit/cookies-import.json
-01:41:34.650   app| imported 1/1 cookie(s) from /home/runner/work/web-cli/web-cli/scripts/e2e/out-emulated/audit/cookies-import.json
-01:41:34.750 [PASS] Phase 4: cookies import via chrome.cookies.set — imported 1/1 cookie(s) from /home/runner/work/web-cli/web-cli/scripts/e2e/out-emulated/audit/cookies-import.json
-01:41:34.750 > hints who am
-01:41:34.756   app| collected 7 visible element(s) on https://127.0.0.1:37005/
-01:41:34.756   app|   1  [a]  Next page  https://127.0.0.1:37005/next
-01:41:34.756   app|   2  [button]  Login  
-01:41:34.756   app|   3  [button]  Who am I  
-01:41:34.756   app|   4  [input:text]  Search products  
-01:41:34.756   app|   5  [select]  English  
-01:41:34.756   app|   6  [div@button]  Role Button  
-01:41:34.756   app|   7  [span]  Onclick span  
-01:41:34.759   app| fzf selected hint 3
-01:41:34.761 declarativeNetRequest session rules -> extra headers map[X-Audit-Action-Id:631a84fe-0048-4466-a2d8-f2d86d7d1d45]
-01:41:34.764   app| click hint=3 <button> "Who am I" action_id=631a84fe-0048-4466-a2d8-f2d86d7d1d45
-01:41:34.765   app| 01:41:34.765869 [proxy] #5 GET https://127.0.0.1:37005/api/whoami -> 200 (74 bytes, 0s) action=631a84fe-0048-4466-a2d8-f2d86d7d1d45 intercepts=2
-01:41:34.768   app| 01:41:34.768215 [proxy] #6 GET https://127.0.0.1:37005/blocked -> 451 BLOCKED action=631a84fe-0048-4466-a2d8-f2d86d7d1d45 intercepts=1
-01:41:34.864 [PASS] Phase 2: hints 'who am' -> click — click hint=3 <button> "Who am I" action_id=631a84fe-0048-4466-a2d8-f2d86d7d1d45
-01:41:34.869 [PASS] Phase 4: imported cookie sent by the browser — origin received Cookie: "session=abc123; imported=from-json"; page shows "cookies: imported=from-json,session=abc123"
-01:41:34.869 [PASS] Phase 3: request header injected by rule — origin received X-Injected: "e2e-rule"
-01:41:34.869 [PASS] Phase 3: request blocked by rule (never reached origin) — page shows "blocked status: 451", origin saw 0 /blocked requests
-01:41:34.869 > log 50
-01:41:34.869   app| #1 GET https://web-cli-extension.invalid/favicon.ico -> 0 (0 bytes, 0s)
-01:41:34.869   app| #2 GET https://127.0.0.1:37005/ -> 200 (2381 bytes, 3ms)
-01:41:34.869   app| #3 GET https://127.0.0.1:37005/favicon.ico -> 404 (19 bytes, 0s)
-01:41:34.869   app| #4 POST https://127.0.0.1:37005/api/login -> 200 (27 bytes, 0s) action=bccb983b-f0ed-45a4-bb88-8aa50cf301dc
-01:41:34.869   app| #5 GET https://127.0.0.1:37005/api/whoami -> 200 (74 bytes, 0s) action=631a84fe-0048-4466-a2d8-f2d86d7d1d45 intercepts=2
-01:41:34.869   app| #6 GET https://127.0.0.1:37005/blocked -> 451 BLOCKED action=631a84fe-0048-4466-a2d8-f2d86d7d1d45 intercepts=1
-01:41:34.970 [PASS] Phase 3: blocked + modified requests recorded with intercept notes — #5 GET https://127.0.0.1:37005/api/whoami -> 200 (74 bytes, 0s) action=631a84fe-0048-4466-a2d8-f2d86d7d1d45 intercepts=2 | #6 GET https://127.0.0.1:37005/blocked -> 451 BLOCKED action=631a84fe-0048-4466-a2d8-f2d86d7d1d45 intercepts=1
-01:41:34.970 > hints next page
-01:41:34.975   app| collected 7 visible element(s) on https://127.0.0.1:37005/
-01:41:34.975   app|   1  [a]  Next page  https://127.0.0.1:37005/next
-01:41:34.975   app|   2  [button]  Login  
-01:41:34.975   app|   3  [button]  Who am I  
-01:41:34.975   app|   4  [input:text]  Search products  
-01:41:34.975   app|   5  [select]  English  
-01:41:34.975   app|   6  [div@button]  Role Button  
-01:41:34.975   app|   7  [span]  Onclick span  
-01:41:34.979   app| fzf selected hint 1
-01:41:34.982 declarativeNetRequest session rules -> extra headers map[X-Audit-Action-Id:39386975-dbee-4530-bb33-35128991197f]
-01:41:34.984   app| click hint=1 <a> "Next page" action_id=39386975-dbee-4530-bb33-35128991197f
-01:41:34.990   app| 01:41:34.990577 [proxy] #7 GET https://127.0.0.1:37005/next -> 200 (179 bytes, 0s) action=39386975-dbee-4530-bb33-35128991197f
-01:41:35.010 content.js injected into isolated world (context 5)
-01:41:35.085 [PASS] Phase 2: hints 'next page' -> link click navigates — click hint=1 <a> "Next page" action_id=39386975-dbee-4530-bb33-35128991197f
-01:41:35.086 [PASS] Phase 2: navigation happened — document.title="Next"
-01:41:35.086 [PASS] Phase 4: main_frame navigation tagged, header stripped upstream — origin saw 1 GET /next without action header
-01:41:35.386 > hints press
-01:41:35.392   app| collected 2 visible element(s) on https://127.0.0.1:37005/next
-01:41:35.392   app|   1  [a]  Back home  https://127.0.0.1:37005/
-01:41:35.392   app|   2  [button]  Press me  
-01:41:35.395   app| fzf selected hint 2
-01:41:35.397 declarativeNetRequest session rules -> extra headers map[X-Audit-Action-Id:1a55ffce-f7af-4f07-9890-91b6504fda18]
-01:41:35.400   app| click hint=2 <button> "Press me" action_id=1a55ffce-f7af-4f07-9890-91b6504fda18
-01:41:35.500 [PASS] Phase 2: content script re-injected after navigation; focus/click on new page — collected 2 visible element(s) on https://127.0.0.1:37005/next | click hint=2 <button> "Press me" action_id=1a55ffce-f7af-4f07-9890-91b6504fda18
-01:41:35.508 [PASS] Phase 2: button on new page clicked — button text="clicked"
-01:41:35.508 > hints search
-01:41:35.512   app| collected 2 visible element(s) on https://127.0.0.1:37005/next
-01:41:35.512   app|   1  [a]  Back home  https://127.0.0.1:37005/
-01:41:35.512   app|   2  [button]  clicked  
-01:41:35.516   app| error: fzf: no element matches "search"
-01:41:35.516 [PASS] Phase 2: stale page: 'search' has no match on new page — error: fzf: no element matches "search"
-01:41:35.516 > export /home/runner/work/web-cli/web-cli/scripts/e2e/out-emulated/audit/requests.http
-01:41:35.516   app| wrote 7 request(s) to /home/runner/work/web-cli/web-cli/scripts/e2e/out-emulated/audit/requests.http
-01:41:35.617 [PASS] Phase 4: export all captured requests to .http — wrote 7 request(s) to /home/runner/work/web-cli/web-cli/scripts/e2e/out-emulated/audit/requests.http
-01:41:35.617 > export /home/runner/work/web-cli/web-cli/scripts/e2e/out-emulated/audit/login-action.http action=bccb983b-f0ed-45a4-bb88-8aa50cf301dc
-01:41:35.617   app| wrote 1 request(s) to /home/runner/work/web-cli/web-cli/scripts/e2e/out-emulated/audit/login-action.http
-01:41:35.717 [PASS] Phase 4: export filtered by action ID — wrote 1 request(s) to /home/runner/work/web-cli/web-cli/scripts/e2e/out-emulated/audit/login-action.http
-01:41:35.717 > export /home/runner/work/web-cli/web-cli/scripts/e2e/out-emulated/audit/nav-action.http action=39386975-dbee-4530-bb33-35128991197f
-01:41:35.717   app| wrote 1 request(s) to /home/runner/work/web-cli/web-cli/scripts/e2e/out-emulated/audit/nav-action.http
-01:41:35.818 [PASS] Phase 4: navigation action has linked requests — wrote 1 request(s) to /home/runner/work/web-cli/web-cli/scripts/e2e/out-emulated/audit/nav-action.http
-01:41:35.818 > actions
-01:41:35.818   app| ACTION ID                             KIND   HINT  ELEMENT              REQUESTS  PAGE
-01:41:35.818   app| bccb983b-f0ed-45a4-bb88-8aa50cf301dc  click  2     <button> "Login"     1         https://127.0.0.1:37005/
-01:41:35.818   app| 631a84fe-0048-4466-a2d8-f2d86d7d1d45  click  3     <button> "Who am I"  2         https://127.0.0.1:37005/
-01:41:35.818   app| 39386975-dbee-4530-bb33-35128991197f  click  1     <a> "Next page"      1         https://127.0.0.1:37005/
-01:41:35.818   app| 1a55ffce-f7af-4f07-9890-91b6504fda18  click  2     <button> "Press me"  0         https://127.0.0.1:37005/next
-01:41:36.119 actions table:
+01:45:13.670 dummy HTTPS site: https://127.0.0.1:37891
+01:45:13.674   app| 01:45:13.674361 [ipc] listening on /home/runner/work/web-cli/web-cli/scripts/e2e/out-emulated/ipc.sock
+01:45:13.675   app| 01:45:13.675123 [proxy] generated new root CA in /home/runner/work/web-cli/web-cli/scripts/e2e/out-emulated/ca
+01:45:13.683   app| 01:45:13.683743 [proxy] listening on 127.0.0.1:33789 (CA /home/runner/work/web-cli/web-cli/scripts/e2e/out-emulated/ca/ca.pem, SPKI OqZNX40tcVVs1Zr9+PPMWLhsqOgULqhy1gIKxL89xQs=)
+01:45:13.683 [PASS] Phase 3: dynamic root CA generated — ca.pem created, SPKI OqZNX40tcVVs1Zr9+PPMWLhsqOgULqhy1gIKxL89xQs=
+01:45:13.683 E2E mode: emulated (headed=false, chrome=/home/runner/work/_temp/cloak/chrome)
+01:45:13.998 browser: Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36
+01:45:14.061 native host manifest OK: /home/runner/work/web-cli/web-cli/scripts/e2e/out-emulated/chrome-profile/NativeMessagingHosts/com.share026.webcli.json -> /home/runner/work/web-cli/web-cli/bin/nm-host (allowed_origins=[chrome-extension://aghlljmggamhjpkcngogikkiohnaaiha/])
+01:45:14.063 [nm-host] 2026/09/24 01:45:14.063784 nm-host start pid=13115 origin="chrome-extension://aghlljmggamhjpkcngogikkiohnaaiha/" args=["chrome-extension://aghlljmggamhjpkcngogikkiohnaaiha/"]
+01:45:14.064   app| 01:45:14.063990 [ipc] session #1 connected
+01:45:14.064 [nm-host] 2026/09/24 01:45:14.064139 connected to app at /home/runner/work/web-cli/web-cli/scripts/e2e/out-emulated/ipc.sock
+01:45:14.064   app| 01:45:14.064274 [ipc] session #1 hello origin=chrome-extension://aghlljmggamhjpkcngogikkiohnaaiha/ pid=13115
+01:45:14.064   app| 01:45:14.064313 [ipc] session #1 ping -> pong
+01:45:14.064   app| 2026/09/24 01:45:14 [002] WARN: Cannot read response from mitm'd server dial tcp: lookup web-cli-extension.invalid on 127.0.0.53:53: no such host
+01:45:14.064 [PASS] Phase 1: nm-host started by extension and connected to app — hello with origin chrome-extension://aghlljmggamhjpkcngogikkiohnaaiha/
+01:45:14.064 [PASS] Phase 1: extension {type:ping} answered by Go with {type:pong} — app log: ping -> pong
+01:45:14.067   app| 01:45:14.067664 [ext#1] {"event":"pong_received","reply_to":"5d0a5def411e45488d2dc59d450ba7f5"}
+01:45:14.067 [PASS] Phase 1: background.js received pong — extension reported pong_received back over the bridge
+01:45:14.067 > ping
+01:45:14.068   app| pong from extension in 814µs: {"from":"extension"}
+01:45:14.169 [PASS] Phase 1: app -> extension ping round trip — pong from extension in 814µs: {"from":"extension"}
+01:45:14.180   app| 01:45:14.179474 [proxy] #2 GET https://127.0.0.1:37891/ -> 200 (2381 bytes, 3ms)
+01:45:14.206   app| 01:45:14.205939 [proxy] #3 GET https://127.0.0.1:37891/favicon.ico -> 404 (19 bytes, 0s)
+01:45:14.212 content.js injected into isolated world (context 3)
+01:45:14.502 > hints Login
+01:45:14.510   app| collected 7 visible element(s) on https://127.0.0.1:37891/
+01:45:14.510   app|   1  [a]  Next page  https://127.0.0.1:37891/next
+01:45:14.510   app|   2  [button]  Login  
+01:45:14.510   app|   3  [button]  Who am I  
+01:45:14.510   app|   4  [input:text]  Search products  
+01:45:14.510   app|   5  [select]  English  
+01:45:14.510   app|   6  [div@button]  Role Button  
+01:45:14.510   app|   7  [span]  Onclick span  
+01:45:14.513   app| fzf selected hint 2
+01:45:14.516 declarativeNetRequest session rules -> extra headers map[X-Audit-Action-Id:1cbd23ac-9c8f-4be9-b2a2-caff0dc3e90c]
+01:45:14.518   app| click hint=2 <button> "Login" action_id=1cbd23ac-9c8f-4be9-b2a2-caff0dc3e90c
+01:45:14.521   app| 01:45:14.521634 [proxy] #4 POST https://127.0.0.1:37891/api/login -> 200 (27 bytes, 1ms) action=1cbd23ac-9c8f-4be9-b2a2-caff0dc3e90c
+01:45:14.619 [PASS] Phase 2: hints Login -> fzf -> click — fzf selected hint 2 | click hint=2 <button> "Login" action_id=1cbd23ac-9c8f-4be9-b2a2-caff0dc3e90c
+01:45:14.619 [PASS] Phase 2: Vimium C visibility filter — visible=["Next page" "Login" "Who am I" "Search products" "English" "Role Button" "Onclick span"] missing=[] leaked-hidden=[]
+01:45:14.627 [PASS] Phase 2: click fired in page (fetch /api/login ran) — #status="logged in: alice"
+01:45:14.928 [PASS] Phase 4: X-Audit-Action-Id stripped before upstream — origin saw 1 POST /api/login, action header present=false, body={"user":"alice","password":"wonderland"}
+01:45:14.928 > log 50
+01:45:14.928   app| #1 GET https://web-cli-extension.invalid/favicon.ico -> 0 (0 bytes, 0s)
+01:45:14.928   app| #2 GET https://127.0.0.1:37891/ -> 200 (2381 bytes, 3ms)
+01:45:14.928   app| #3 GET https://127.0.0.1:37891/favicon.ico -> 404 (19 bytes, 0s)
+01:45:14.928   app| #4 POST https://127.0.0.1:37891/api/login -> 200 (27 bytes, 1ms) action=1cbd23ac-9c8f-4be9-b2a2-caff0dc3e90c
+01:45:15.028 [PASS] Phase 4: proxy linked POST /api/login to the click action — #4 POST https://127.0.0.1:37891/api/login -> 200 (27 bytes, 1ms) action=1cbd23ac-9c8f-4be9-b2a2-caff0dc3e90c
+01:45:15.028 > rule add set-req-header url=/api/whoami name=X-Injected value=e2e-rule
+01:45:15.028   app| added rule #1 set-req-header url="/api/whoami" name="X-Injected" value="e2e-rule"
+01:45:15.129 [PASS] Phase 3: rule add set-req-header — added rule #1 set-req-header url="/api/whoami" name="X-Injected" value="e2e-rule"
+01:45:15.129 > rule add block url=/blocked status=451
+01:45:15.129   app| added rule #2 block url="/blocked" status=451
+01:45:15.230 [PASS] Phase 3: rule add block — added rule #2 block url="/blocked" status=451
+01:45:15.230 > rule add set-resp-header url=/api/whoami name=X-Audited value=web-cli
+01:45:15.230   app| added rule #3 set-resp-header url="/api/whoami" name="X-Audited" value="web-cli"
+01:45:15.330 [PASS] Phase 3: rule add set-resp-header — added rule #3 set-resp-header url="/api/whoami" name="X-Audited" value="web-cli"
+01:45:15.330 > cookies dump /home/runner/work/web-cli/web-cli/scripts/e2e/out-emulated/audit/cookies.json
+01:45:15.334   app| dumped 1 cookie(s) for https://127.0.0.1:37891/ to /home/runner/work/web-cli/web-cli/scripts/e2e/out-emulated/audit/cookies.json
+01:45:15.334   app|   session=abc123; domain=127.0.0.1; path=/; secure=true; httpOnly=true
+01:45:15.435 [PASS] Phase 4: cookies dump via chrome.cookies.getAll — dumped 1 cookie(s) for https://127.0.0.1:37891/ to /home/runner/work/web-cli/web-cli/scripts/e2e/out-emulated/audit/cookies.json; file has session=abc123 (HttpOnly,Secure)=true
+01:45:15.435 > cookies import /home/runner/work/web-cli/web-cli/scripts/e2e/out-emulated/audit/cookies-import.json
+01:45:15.438   app| imported 1/1 cookie(s) from /home/runner/work/web-cli/web-cli/scripts/e2e/out-emulated/audit/cookies-import.json
+01:45:15.538 [PASS] Phase 4: cookies import via chrome.cookies.set — imported 1/1 cookie(s) from /home/runner/work/web-cli/web-cli/scripts/e2e/out-emulated/audit/cookies-import.json
+01:45:15.538 > hints who am
+01:45:15.543   app| collected 7 visible element(s) on https://127.0.0.1:37891/
+01:45:15.543   app|   1  [a]  Next page  https://127.0.0.1:37891/next
+01:45:15.543   app|   2  [button]  Login  
+01:45:15.543   app|   3  [button]  Who am I  
+01:45:15.543   app|   4  [input:text]  Search products  
+01:45:15.543   app|   5  [select]  English  
+01:45:15.543   app|   6  [div@button]  Role Button  
+01:45:15.543   app|   7  [span]  Onclick span  
+01:45:15.546   app| fzf selected hint 3
+01:45:15.549 declarativeNetRequest session rules -> extra headers map[X-Audit-Action-Id:50b25543-f7c7-4d63-8003-9cf68829b8de]
+01:45:15.551   app| click hint=3 <button> "Who am I" action_id=50b25543-f7c7-4d63-8003-9cf68829b8de
+01:45:15.553   app| 01:45:15.553120 [proxy] #5 GET https://127.0.0.1:37891/api/whoami -> 200 (74 bytes, 0s) action=50b25543-f7c7-4d63-8003-9cf68829b8de intercepts=2
+01:45:15.555   app| 01:45:15.555685 [proxy] #6 GET https://127.0.0.1:37891/blocked -> 451 BLOCKED action=50b25543-f7c7-4d63-8003-9cf68829b8de intercepts=1
+01:45:15.652 [PASS] Phase 2: hints 'who am' -> click — click hint=3 <button> "Who am I" action_id=50b25543-f7c7-4d63-8003-9cf68829b8de
+01:45:15.656 [PASS] Phase 4: imported cookie sent by the browser — origin received Cookie: "session=abc123; imported=from-json"; page shows "cookies: imported=from-json,session=abc123"
+01:45:15.656 [PASS] Phase 3: request header injected by rule — origin received X-Injected: "e2e-rule"
+01:45:15.656 [PASS] Phase 3: request blocked by rule (never reached origin) — page shows "blocked status: 451", origin saw 0 /blocked requests
+01:45:15.656 > log 50
+01:45:15.656   app| #1 GET https://web-cli-extension.invalid/favicon.ico -> 0 (0 bytes, 0s)
+01:45:15.656   app| #2 GET https://127.0.0.1:37891/ -> 200 (2381 bytes, 3ms)
+01:45:15.656   app| #3 GET https://127.0.0.1:37891/favicon.ico -> 404 (19 bytes, 0s)
+01:45:15.656   app| #4 POST https://127.0.0.1:37891/api/login -> 200 (27 bytes, 1ms) action=1cbd23ac-9c8f-4be9-b2a2-caff0dc3e90c
+01:45:15.656   app| #5 GET https://127.0.0.1:37891/api/whoami -> 200 (74 bytes, 0s) action=50b25543-f7c7-4d63-8003-9cf68829b8de intercepts=2
+01:45:15.656   app| #6 GET https://127.0.0.1:37891/blocked -> 451 BLOCKED action=50b25543-f7c7-4d63-8003-9cf68829b8de intercepts=1
+01:45:15.756 [PASS] Phase 3: blocked + modified requests recorded with intercept notes — #5 GET https://127.0.0.1:37891/api/whoami -> 200 (74 bytes, 0s) action=50b25543-f7c7-4d63-8003-9cf68829b8de intercepts=2 | #6 GET https://127.0.0.1:37891/blocked -> 451 BLOCKED action=50b25543-f7c7-4d63-8003-9cf68829b8de intercepts=1
+01:45:15.756 > hints next page
+01:45:15.761   app| collected 7 visible element(s) on https://127.0.0.1:37891/
+01:45:15.761   app|   1  [a]  Next page  https://127.0.0.1:37891/next
+01:45:15.761   app|   2  [button]  Login  
+01:45:15.761   app|   3  [button]  Who am I  
+01:45:15.761   app|   4  [input:text]  Search products  
+01:45:15.761   app|   5  [select]  English  
+01:45:15.761   app|   6  [div@button]  Role Button  
+01:45:15.761   app|   7  [span]  Onclick span  
+01:45:15.765   app| fzf selected hint 1
+01:45:15.767 declarativeNetRequest session rules -> extra headers map[X-Audit-Action-Id:f550ba66-fbf1-4ec6-8472-5e00f78bc62b]
+01:45:15.770   app| click hint=1 <a> "Next page" action_id=f550ba66-fbf1-4ec6-8472-5e00f78bc62b
+01:45:15.775   app| 01:45:15.775593 [proxy] #7 GET https://127.0.0.1:37891/next -> 200 (179 bytes, 0s) action=f550ba66-fbf1-4ec6-8472-5e00f78bc62b
+01:45:15.794 content.js injected into isolated world (context 5)
+01:45:15.870 [PASS] Phase 2: hints 'next page' -> link click navigates — click hint=1 <a> "Next page" action_id=f550ba66-fbf1-4ec6-8472-5e00f78bc62b
+01:45:15.872 [PASS] Phase 2: navigation happened — document.title="Next"
+01:45:15.872 [PASS] Phase 4: main_frame navigation tagged, header stripped upstream — origin saw 1 GET /next without action header
+01:45:16.172 > hints press
+01:45:16.177   app| collected 2 visible element(s) on https://127.0.0.1:37891/next
+01:45:16.177   app|   1  [a]  Back home  https://127.0.0.1:37891/
+01:45:16.177   app|   2  [button]  Press me  
+01:45:16.181   app| fzf selected hint 2
+01:45:16.183 declarativeNetRequest session rules -> extra headers map[X-Audit-Action-Id:80735ad3-c362-4ebe-9292-831efd80955c]
+01:45:16.185   app| click hint=2 <button> "Press me" action_id=80735ad3-c362-4ebe-9292-831efd80955c
+01:45:16.286 [PASS] Phase 2: content script re-injected after navigation; focus/click on new page — collected 2 visible element(s) on https://127.0.0.1:37891/next | click hint=2 <button> "Press me" action_id=80735ad3-c362-4ebe-9292-831efd80955c
+01:45:16.293 [PASS] Phase 2: button on new page clicked — button text="clicked"
+01:45:16.293 > hints search
+01:45:16.297   app| collected 2 visible element(s) on https://127.0.0.1:37891/next
+01:45:16.297   app|   1  [a]  Back home  https://127.0.0.1:37891/
+01:45:16.297   app|   2  [button]  clicked  
+01:45:16.301   app| error: fzf: no element matches "search"
+01:45:16.301 [PASS] Phase 2: stale page: 'search' has no match on new page — error: fzf: no element matches "search"
+01:45:16.301 > export /home/runner/work/web-cli/web-cli/scripts/e2e/out-emulated/audit/requests.http
+01:45:16.301   app| wrote 7 request(s) to /home/runner/work/web-cli/web-cli/scripts/e2e/out-emulated/audit/requests.http
+01:45:16.401 [PASS] Phase 4: export all captured requests to .http — wrote 7 request(s) to /home/runner/work/web-cli/web-cli/scripts/e2e/out-emulated/audit/requests.http
+01:45:16.401 > export /home/runner/work/web-cli/web-cli/scripts/e2e/out-emulated/audit/login-action.http action=1cbd23ac-9c8f-4be9-b2a2-caff0dc3e90c
+01:45:16.402   app| wrote 1 request(s) to /home/runner/work/web-cli/web-cli/scripts/e2e/out-emulated/audit/login-action.http
+01:45:16.502 [PASS] Phase 4: export filtered by action ID — wrote 1 request(s) to /home/runner/work/web-cli/web-cli/scripts/e2e/out-emulated/audit/login-action.http
+01:45:16.502 > export /home/runner/work/web-cli/web-cli/scripts/e2e/out-emulated/audit/nav-action.http action=f550ba66-fbf1-4ec6-8472-5e00f78bc62b
+01:45:16.502   app| wrote 1 request(s) to /home/runner/work/web-cli/web-cli/scripts/e2e/out-emulated/audit/nav-action.http
+01:45:16.603 [PASS] Phase 4: navigation action has linked requests — wrote 1 request(s) to /home/runner/work/web-cli/web-cli/scripts/e2e/out-emulated/audit/nav-action.http
+01:45:16.603 > actions
+01:45:16.603   app| ACTION ID                             KIND   HINT  ELEMENT              REQUESTS  PAGE
+01:45:16.603   app| 1cbd23ac-9c8f-4be9-b2a2-caff0dc3e90c  click  2     <button> "Login"     1         https://127.0.0.1:37891/
+01:45:16.603   app| 50b25543-f7c7-4d63-8003-9cf68829b8de  click  3     <button> "Who am I"  2         https://127.0.0.1:37891/
+01:45:16.603   app| f550ba66-fbf1-4ec6-8472-5e00f78bc62b  click  1     <a> "Next page"      1         https://127.0.0.1:37891/
+01:45:16.603   app| 80735ad3-c362-4ebe-9292-831efd80955c  click  2     <button> "Press me"  0         https://127.0.0.1:37891/next
+01:45:16.904 actions table:
 wrote 1 request(s) to /home/runner/work/web-cli/web-cli/scripts/e2e/out-emulated/audit/nav-action.http
 ACTION ID                             KIND   HINT  ELEMENT              REQUESTS  PAGE
-bccb983b-f0ed-45a4-bb88-8aa50cf301dc  click  2     <button> "Login"     1         https://127.0.0.1:37005/
-631a84fe-0048-4466-a2d8-f2d86d7d1d45  click  3     <button> "Who am I"  2         https://127.0.0.1:37005/
-39386975-dbee-4530-bb33-35128991197f  click  1     <a> "Next page"      1         https://127.0.0.1:37005/
-1a55ffce-f7af-4f07-9890-91b6504fda18  click  2     <button> "Press me"  0         https://127.0.0.1:37005/next
-01:41:36.119 > status
-01:41:36.119   app| socket:   /home/runner/work/web-cli/web-cli/scripts/e2e/out-emulated/ipc.sock
-01:41:36.119   app| sessions: 1
-01:41:36.119   app|   #1 origin=chrome-extension://aghlljmggamhjpkcngogikkiohnaaiha/ nm-host pid=12992 since 2026-09-24T01:41:33Z
-01:41:36.119   app| proxy:    http://127.0.0.1:34481
-01:41:36.119   app| captured: 7 request(s), 4 action(s), 3 rule(s)
-01:41:36.219 [PASS] Phase 1: status reports session and captures — sessions: 1 | captured: 7 request(s), 4 action(s), 3 rule(s)
-01:41:36.230 curl replay of login-action.http: POST https://127.0.0.1:37005/api/login -> {"ok":true,"user":"alice"} (err=<nil>)
-01:41:36.230 [PASS] Phase 4: .http file replays with curl — see harness.log
-01:41:36.230 E2E: 31/31 checks passed — report: /home/runner/work/web-cli/web-cli/scripts/e2e/out-emulated/e2e-report.md
-01:41:36.230 [nm-host] 2026/09/24 01:41:36.230549 bridge stopped: browser closed stdin (port disconnected)
-01:41:36.230   app| 01:41:36.230646 [ipc] session #1 disconnected
+1cbd23ac-9c8f-4be9-b2a2-caff0dc3e90c  click  2     <button> "Login"     1         https://127.0.0.1:37891/
+50b25543-f7c7-4d63-8003-9cf68829b8de  click  3     <button> "Who am I"  2         https://127.0.0.1:37891/
+f550ba66-fbf1-4ec6-8472-5e00f78bc62b  click  1     <a> "Next page"      1         https://127.0.0.1:37891/
+80735ad3-c362-4ebe-9292-831efd80955c  click  2     <button> "Press me"  0         https://127.0.0.1:37891/next
+01:45:16.904 > status
+01:45:16.904   app| socket:   /home/runner/work/web-cli/web-cli/scripts/e2e/out-emulated/ipc.sock
+01:45:16.904   app| sessions: 1
+01:45:16.904   app|   #1 origin=chrome-extension://aghlljmggamhjpkcngogikkiohnaaiha/ nm-host pid=13115 since 2026-09-24T01:45:14Z
+01:45:16.904   app| proxy:    http://127.0.0.1:33789
+01:45:16.904   app| captured: 7 request(s), 4 action(s), 3 rule(s)
+01:45:17.004 [PASS] Phase 1: status reports session and captures — sessions: 1 | captured: 7 request(s), 4 action(s), 3 rule(s)
+01:45:17.016 curl replay of login-action.http: POST https://127.0.0.1:37891/api/login -> {"ok":true,"user":"alice"} (err=<nil>)
+01:45:17.016 [PASS] Phase 4: .http file replays with curl — see harness.log
+01:45:17.016 E2E: 31/31 checks passed — report: /home/runner/work/web-cli/web-cli/scripts/e2e/out-emulated/e2e-report.md
+01:45:17.016 [nm-host] 2026/09/24 01:45:17.016483 bridge stopped: browser closed stdin (port disconnected)
+01:45:17.016   app| 01:45:17.016603 [ipc] session #1 disconnected
