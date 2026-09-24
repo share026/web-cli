@@ -33,6 +33,8 @@ import (
 	"time"
 
 	"github.com/chromedp/cdproto/page"
+	"github.com/chromedp/cdproto/runtime"
+	"github.com/chromedp/cdproto/target"
 	"github.com/chromedp/chromedp"
 
 	"github.com/share026/web-cli/internal/audit"
@@ -262,7 +264,15 @@ func main() {
 			chromedp.Flag("disable-features", "DisableLoadExtensionCommandLineSwitch,Translate"),
 			// Chrome passes its environment to native hosts it spawns.
 			chromedp.Env("WEBCLI_SOCKET="+sock, "WEBCLI_NMHOST_LOG="+filepath.Join(outAbs, "nm-host.log")),
+			// Chromium's own log (native host lookup/launch errors) and nm-host stderr.
+			chromedp.Flag("enable-logging", "stderr"),
+			chromedp.Flag("v", "0"),
+			chromedp.Flag("vmodule", "*native_messag*=2,*native_process_launcher*=2,*extension_service*=1"),
 		)
+		if f, err := os.Create(filepath.Join(outAbs, "chrome.log")); err == nil {
+			defer f.Close()
+			opts = append(opts, chromedp.CombinedOutput(f))
+		}
 	}
 	mark := h.mark()
 	allocCtx, cancelAlloc := chromedp.NewExecAllocator(context.Background(), opts...)
@@ -280,16 +290,20 @@ func main() {
 	if real {
 		// The service worker of the unpacked extension must be running in the browser.
 		var sw string
+		var swID target.ID
 		for i := 0; i < 50 && sw == ""; i++ {
 			targets, _ := chromedp.Targets(browserCtx)
 			for _, t := range targets {
 				if t.Type == "service_worker" && strings.HasPrefix(t.URL, "chrome-extension://"+extID+"/") {
-					sw = t.URL
+					sw, swID = t.URL, t.TargetID
 				}
 			}
 			time.Sleep(100 * time.Millisecond)
 		}
 		h.check("Phase 1", "real Chromium loaded extension/ (MV3 service worker running)", sw != "", "service worker %q", sw)
+		if swID != "" {
+			go watchServiceWorker(browserCtx, swID, filepath.Join(outAbs, "sw-console.log"), h.logf)
+		}
 	} else {
 		ext := &extHost{extDir: extDir, extID: extID, userDataDir: userData, socket: sock, logf: h.logf}
 		if err := ext.start(browserCtx); err != nil {
@@ -619,4 +633,50 @@ func mustRun(dir, name string, args ...string) string {
 		panic(fmt.Sprintf("%s: %v\n%s", name, err, o))
 	}
 	return o
+}
+
+// watchServiceWorker attaches to the extension's service worker and writes its
+// console output and uncaught exceptions to path (diagnostics for real mode).
+func watchServiceWorker(browserCtx context.Context, id target.ID, path string, logf func(string, ...any)) {
+	f, err := os.Create(path)
+	if err != nil {
+		return
+	}
+	swCtx, _ := chromedp.NewContext(browserCtx, chromedp.WithTargetID(id))
+	var mu sync.Mutex
+	write := func(format string, a ...any) {
+		mu.Lock()
+		defer mu.Unlock()
+		fmt.Fprintf(f, time.Now().Format("15:04:05.000")+" "+format+"\n", a...)
+	}
+	chromedp.ListenTarget(swCtx, func(ev any) {
+		switch e := ev.(type) {
+		case *runtime.EventConsoleAPICalled:
+			parts := make([]string, 0, len(e.Args))
+			for _, a := range e.Args {
+				if len(a.Value) > 0 {
+					parts = append(parts, string(a.Value))
+				} else {
+					parts = append(parts, a.Description)
+				}
+			}
+			write("console.%s %s", e.Type, strings.Join(parts, " "))
+		case *runtime.EventExceptionThrown:
+			write("exception %s", e.ExceptionDetails.Error())
+		}
+	})
+	if err := chromedp.Run(swCtx, runtime.Enable()); err != nil {
+		logf("service worker console: attach failed: %v", err)
+		return
+	}
+	var state string
+	chromedp.Run(swCtx, chromedp.ActionFunc(func(ctx context.Context) error {
+		ro, _, err := runtime.Evaluate(`JSON.stringify({perms: chrome.runtime.getManifest().permissions, native: typeof chrome.runtime.connectNative})`).WithReturnByValue(true).Do(ctx)
+		if err == nil && ro != nil {
+			state = string(ro.Value)
+		}
+		return err
+	}))
+	write("state %s", state)
+	logf("service worker console -> %s (%s)", path, state)
 }
