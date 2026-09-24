@@ -32,6 +32,7 @@ import (
 	"sync"
 	"time"
 
+	"github.com/chromedp/cdproto/page"
 	"github.com/chromedp/chromedp"
 
 	"github.com/share026/web-cli/internal/audit"
@@ -46,6 +47,8 @@ type check struct {
 type harness struct {
 	root, out string
 	logFile   *os.File
+	mode      string
+	browser   string
 	mu        sync.Mutex
 	checks    []check
 
@@ -179,6 +182,8 @@ func run(dir, name string, args ...string) (string, error) {
 func main() {
 	out := flag.String("out", "scripts/e2e/out", "output directory for logs, report and artifacts")
 	chrome := flag.String("chrome", os.Getenv("CHROME_PATH"), "Chromium binary (env CHROME_PATH)")
+	mode := flag.String("mode", envOr("E2E_MODE", "emulated"), `"real": Chromium loads extension/ itself and spawns nm-host via the registered host manifest (needs a full Chromium build, e.g. CloakBrowser); "emulated": run the extension JS with chrome.* provided over CDP (works with headless shell)`)
+	headed := flag.Bool("headed", os.Getenv("E2E_HEADED") == "1", "run the browser with a window (use xvfb-run on servers)")
 	flag.Parse()
 
 	root, _ := os.Getwd()
@@ -233,6 +238,9 @@ func main() {
 	h.check("Phase 3", "dynamic root CA generated", exists(filepath.Join(outAbs, "ca", "ca.pem")), "ca.pem created, SPKI %s", spki)
 
 	// 3. Chromium through the proxy ------------------------------------------
+	extDir := filepath.Join(root, "extension")
+	real := *mode == "real"
+	h.logf("E2E mode: %s (headed=%v, chrome=%s)", *mode, *headed, *chrome)
 	opts := append(chromedp.DefaultExecAllocatorOptions[:],
 		chromedp.ExecPath(*chrome),
 		chromedp.UserDataDir(userData),
@@ -243,6 +251,20 @@ func main() {
 		chromedp.Flag("ignore-certificate-errors-spki-list", spki),
 		chromedp.WindowSize(1000, 700),
 	)
+	if *headed {
+		opts = append(opts, chromedp.Flag("headless", false))
+	}
+	if real {
+		opts = append(opts,
+			chromedp.Flag("disable-extensions", false), // chromedp disables extensions by default
+			chromedp.Flag("load-extension", extDir),
+			chromedp.Flag("disable-extensions-except", extDir),
+			chromedp.Flag("disable-features", "DisableLoadExtensionCommandLineSwitch,Translate"),
+			// Chrome passes its environment to native hosts it spawns.
+			chromedp.Env("WEBCLI_SOCKET="+sock, "WEBCLI_NMHOST_LOG="+filepath.Join(outAbs, "nm-host.log")),
+		)
+	}
+	mark := h.mark()
 	allocCtx, cancelAlloc := chromedp.NewExecAllocator(context.Background(), opts...)
 	defer cancelAlloc()
 	browserCtx, cancelBrowser := chromedp.NewContext(allocCtx)
@@ -253,13 +275,28 @@ func main() {
 	var ver string
 	chromedp.Run(browserCtx, chromedp.Evaluate(`navigator.userAgent`, &ver))
 	h.logf("browser: %s", ver)
+	h.mode, h.browser = *mode, ver
 
-	ext := &extHost{extDir: filepath.Join(root, "extension"), extID: extID, userDataDir: userData, socket: sock, logf: h.logf}
-	mark := h.mark()
-	if err := ext.start(browserCtx); err != nil {
-		h.fatal("extension runtime: %v", err)
+	if real {
+		// The service worker of the unpacked extension must be running in the browser.
+		var sw string
+		for i := 0; i < 50 && sw == ""; i++ {
+			targets, _ := chromedp.Targets(browserCtx)
+			for _, t := range targets {
+				if t.Type == "service_worker" && strings.HasPrefix(t.URL, "chrome-extension://"+extID+"/") {
+					sw = t.URL
+				}
+			}
+			time.Sleep(100 * time.Millisecond)
+		}
+		h.check("Phase 1", "real Chromium loaded extension/ (MV3 service worker running)", sw != "", "service worker %q", sw)
+	} else {
+		ext := &extHost{extDir: extDir, extID: extID, userDataDir: userData, socket: sock, logf: h.logf}
+		if err := ext.start(browserCtx); err != nil {
+			h.fatal("extension runtime: %v", err)
+		}
+		defer ext.stop()
 	}
-	defer ext.stop()
 
 	// ===== Phase 1: ping/pong ================================================
 	_, ok = h.waitLine(mark, `\[ipc\] session #\d+ hello origin=chrome-extension://`+extID+`/`, 10*time.Second)
@@ -273,7 +310,7 @@ func main() {
 	_ = m
 
 	// ===== Phase 2: collect + fzf + click =====================================
-	if err := chromedp.Run(browserCtx, chromedp.Navigate(s.URL+"/")); err != nil {
+	if err := chromedp.Run(browserCtx, page.BringToFront(), chromedp.Navigate(s.URL+"/")); err != nil {
 		h.fatal("navigate: %v", err)
 	}
 	time.Sleep(300 * time.Millisecond)
@@ -461,7 +498,7 @@ func (h *harness) writeReport() {
 			pass++
 		}
 	}
-	fmt.Fprintf(&b, "# web-cli E2E report\n\n- date: %s\n- result: %d/%d checks passed\n\n", time.Now().Format(time.RFC3339), pass, len(h.checks))
+	fmt.Fprintf(&b, "# web-cli E2E report\n\n- mode: %s\n- browser: %s\n- date: %s\n- result: %d/%d checks passed\n\n", h.mode, h.browser, time.Now().Format(time.RFC3339), pass, len(h.checks))
 	b.WriteString("| # | Phase | Check | Result | Evidence |\n|---|---|---|---|---|\n")
 	for i, c := range h.checks {
 		r := "✅ PASS"
@@ -565,6 +602,13 @@ func waitTitle(ctx context.Context, want string, got *string) {
 		}
 		time.Sleep(100 * time.Millisecond)
 	}
+}
+
+func envOr(k, def string) string {
+	if v := os.Getenv(k); v != "" {
+		return v
+	}
+	return def
 }
 
 func exists(p string) bool { _, err := os.Stat(p); return err == nil }

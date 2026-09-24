@@ -4,3 +4,4 @@
 /audit-out/
 /scripts/e2e/out/
 *.sock
+/scripts/e2e/out-*/

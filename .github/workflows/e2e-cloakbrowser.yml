@@ -1,0 +1,104 @@
+name: e2e-cloakbrowser
+
+# Full verification on a real, extension-capable Chromium (CloakBrowser 146):
+# the browser loads extension/ itself and spawns nm-host through the registered
+# Native Messaging host manifest. Evidence is committed back to docs/evidence/ci/.
+on:
+  push:
+    paths-ignore: ["docs/evidence/**"]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: e2e-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  CLOAK_TAG: chromium-v146.0.7680.177.5
+  CLOAK_ASSET: cloakbrowser-linux-x64.tar.gz
+  # sha256 published by the GitHub Releases API ("digest") for the asset above
+  CLOAK_SHA256: 4a12bcde95fa1bb1beef2b41ab5e5c27c36be78e3be3d0dac8c64d705216670e
+
+jobs:
+  e2e:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+
+      - name: System packages (fzf, xvfb)
+        run: |
+          sudo apt-get update -q
+          sudo apt-get install -y -q fzf xvfb
+          fzf --version
+
+      - name: Download and verify CloakBrowser
+        run: |
+          set -euo pipefail
+          curl -fsSL -o "$RUNNER_TEMP/$CLOAK_ASSET" \
+            "https://github.com/CloakHQ/CloakBrowser/releases/download/$CLOAK_TAG/$CLOAK_ASSET"
+          echo "$CLOAK_SHA256  $RUNNER_TEMP/$CLOAK_ASSET" | sha256sum -c -
+          mkdir -p "$RUNNER_TEMP/cloak"
+          tar -xzf "$RUNNER_TEMP/$CLOAK_ASSET" -C "$RUNNER_TEMP/cloak"
+          bin=$(find "$RUNNER_TEMP/cloak" -type f \( -name chrome -o -name chromium -o -name cloakbrowser \) -perm -u+x | head -1)
+          echo "CloakBrowser binary: $bin"
+          "$bin" --version
+          echo "CHROME_PATH=$bin" >> "$GITHUB_ENV"
+
+      - name: Run all checks (build, go test -race, PTY fzf, curl proxy demo, E2E emulated + real)
+        id: tests
+        continue-on-error: true
+        env:
+          EVIDENCE_DIR: docs/evidence/ci
+          E2E_MODES: emulated real
+          E2E_HEADED: "1"
+        run: |
+          rm -rf docs/evidence/ci
+          {
+            echo "run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+            echo "commit: ${{ github.sha }}"
+            echo "runner: $(uname -a)"
+            echo "browser: $("$CHROME_PATH" --version) ($CLOAK_TAG, sha256 $CLOAK_SHA256 verified)"
+          } | tee /tmp/ci-env.txt
+          scripts/test-all.sh 2>&1 | tee /tmp/test-all.log
+          exit ${PIPESTATUS[0]}
+
+      - name: Collect evidence
+        if: always()
+        run: |
+          mkdir -p docs/evidence/ci
+          cp /tmp/ci-env.txt docs/evidence/ci/environment.txt
+          cp /tmp/test-all.log docs/evidence/ci/test-all.log
+          echo "outcome: ${{ steps.tests.outcome }}" >> docs/evidence/ci/environment.txt
+          cat docs/evidence/ci/e2e-report-*.md >> "$GITHUB_STEP_SUMMARY" || true
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: e2e-output
+          path: |
+            docs/evidence/ci
+            scripts/e2e/out-*/
+          if-no-files-found: warn
+
+      - name: Commit evidence to the branch
+        if: always() && github.event_name == 'push'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -f docs/evidence/ci
+          git commit -m "ci: CloakBrowser E2E evidence (${{ steps.tests.outcome }}) for ${GITHUB_SHA::7}" || exit 0
+          for i in 1 2 3; do
+            git pull --rebase -q origin "${GITHUB_REF_NAME}" && git push -q origin "HEAD:${GITHUB_REF_NAME}" && break
+            sleep 5
+          done
+
+      - name: Fail if checks failed
+        if: steps.tests.outcome != 'success'
+        run: exit 1
