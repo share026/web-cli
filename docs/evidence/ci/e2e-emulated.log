@@ -1,2 +1,16 @@
-# github.com/share026/web-cli/scripts/e2e
-scripts/e2e/exthost.go:589:9: cannot use ro.Value (variable of slice type jsontext.Value) as "encoding/json".RawMessage value in assignment
+00:53:30.741 scripts/build.sh: built: app nm-host
+00:53:30.753 scripts/install-host.sh:
+installed /home/runner/work/web-cli/web-cli/scripts/e2e/out-emulated/chrome-profile/NativeMessagingHosts/com.share026.webcli.json
+extension id: aghlljmggamhjpkcngogikkiohnaaiha
+00:53:30.760 dummy HTTPS site: https://127.0.0.1:42983
+00:53:30.763   app| 00:53:30.763326 [ipc] listening on /home/runner/work/web-cli/web-cli/scripts/e2e/out-emulated/ipc.sock
+00:53:30.763   app| 00:53:30.763925 [proxy] generated new root CA in /home/runner/work/web-cli/web-cli/scripts/e2e/out-emulated/ca
+00:53:30.772   app| 00:53:30.771953 [proxy] listening on 127.0.0.1:44745 (CA /home/runner/work/web-cli/web-cli/scripts/e2e/out-emulated/ca/ca.pem, SPKI R+8uayrI3ERKAHGAbjB2q4TvVtHzoWvU2ZDHO/CfF38=)
+00:53:30.772 [PASS] Phase 3: dynamic root CA generated — ca.pem created, SPKI R+8uayrI3ERKAHGAbjB2q4TvVtHzoWvU2ZDHO/CfF38=
+00:53:30.772 E2E mode: emulated (headed=true, chrome=/home/runner/work/_temp/cloak/chrome)
+00:53:30.843 FATAL: launch chromium: chrome failed to start:
+[12488:12488:0924/005330.826423:ERROR:ui/ozone/platform/x11/ozone_platform_x11.cc:256] Missing X server or $DISPLAY
+[12488:12488:0924/005330.826449:ERROR:ui/aura/env.cc:246] The platform failed to initialize.  Exiting.
+
+00:53:30.844 E2E: 1/1 checks passed — report: /home/runner/work/web-cli/web-cli/scripts/e2e/out-emulated/e2e-report.md
+exit status 1

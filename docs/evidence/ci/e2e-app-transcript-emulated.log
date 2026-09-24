@@ -1,0 +1,3 @@
+00:53:30.763326 [ipc] listening on /home/runner/work/web-cli/web-cli/scripts/e2e/out-emulated/ipc.sock
+00:53:30.763925 [proxy] generated new root CA in /home/runner/work/web-cli/web-cli/scripts/e2e/out-emulated/ca
+00:53:30.771953 [proxy] listening on 127.0.0.1:44745 (CA /home/runner/work/web-cli/web-cli/scripts/e2e/out-emulated/ca/ca.pem, SPKI R+8uayrI3ERKAHGAbjB2q4TvVtHzoWvU2ZDHO/CfF38=)

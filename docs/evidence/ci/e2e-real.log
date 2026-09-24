@@ -1,2 +1,143 @@
-# github.com/share026/web-cli/scripts/e2e
-scripts/e2e/exthost.go:589:9: cannot use ro.Value (variable of slice type jsontext.Value) as "encoding/json".RawMessage value in assignment
+00:53:31.820 scripts/build.sh: built: app nm-host
+00:53:31.832 scripts/install-host.sh:
+installed /home/runner/work/web-cli/web-cli/scripts/e2e/out-real/chrome-profile/NativeMessagingHosts/com.share026.webcli.json
+extension id: aghlljmggamhjpkcngogikkiohnaaiha
+00:53:31.839 dummy HTTPS site: https://127.0.0.1:43595
+00:53:31.843   app| 00:53:31.842900 [ipc] listening on /home/runner/work/web-cli/web-cli/scripts/e2e/out-real/ipc.sock
+00:53:31.843   app| 00:53:31.843514 [proxy] generated new root CA in /home/runner/work/web-cli/web-cli/scripts/e2e/out-real/ca
+00:53:31.851   app| 00:53:31.851411 [proxy] listening on 127.0.0.1:46521 (CA /home/runner/work/web-cli/web-cli/scripts/e2e/out-real/ca/ca.pem, SPKI Iz2drKry5hiqfGTsm/LBirEh95QCt8jjTbLex6EL00M=)
+00:53:31.851 [PASS] Phase 3: dynamic root CA generated — ca.pem created, SPKI Iz2drKry5hiqfGTsm/LBirEh95QCt8jjTbLex6EL00M=
+00:53:31.851 E2E mode: real (headed=true, chrome=/home/runner/work/_temp/cloak/chrome)
+00:53:32.571 browser: Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36
+00:53:32.674 [PASS] Phase 1: real Chromium loaded extension/ (MV3 service worker running) — service worker "chrome-extension://aghlljmggamhjpkcngogikkiohnaaiha/background.js"
+00:53:42.675 [FAIL] Phase 1: nm-host started by extension and connected to app — hello with origin chrome-extension://aghlljmggamhjpkcngogikkiohnaaiha/
+00:53:52.675 [FAIL] Phase 1: extension {type:ping} answered by Go with {type:pong} — app log: ping -> pong
+00:54:02.684 [FAIL] Phase 1: background.js received pong — extension reported pong_received back over the bridge
+00:54:02.684 > ping
+00:54:17.697   app| error: no browser session connected: context deadline exceeded
+00:54:17.697 [FAIL] Phase 1: app -> extension ping round trip — error: no browser session connected: context deadline exceeded
+00:54:17.720   app| 00:54:17.720062 [proxy] #1 GET https://127.0.0.1:43595/ -> 200 (2381 bytes, 4ms)
+00:54:17.751   app| 00:54:17.751348 [proxy] #2 GET https://127.0.0.1:43595/favicon.ico -> 404 (19 bytes, 0s)
+00:54:18.049 > hints Login
+00:54:33.063   app| error: no browser session connected: context deadline exceeded
+00:54:33.063 [FAIL] Phase 2: hints Login -> fzf -> click — 
+00:54:33.063 [FAIL] Phase 2: Vimium C visibility filter — visible=[] missing=["English" "Login" "Next page" "Onclick span" "Role Button" "Search products" "Who am I"] leaked-hidden=[]
+00:54:38.182 [FAIL] Phase 2: click fired in page (fetch /api/login ran) — #status="idle"
+00:54:38.483 [FAIL] Phase 4: X-Audit-Action-Id stripped before upstream — origin saw 0 POST /api/login, action header present=false, body=
+00:54:38.483 > log 50
+00:54:38.483   app| #1 GET https://127.0.0.1:43595/ -> 200 (2381 bytes, 4ms)
+00:54:38.483   app| #2 GET https://127.0.0.1:43595/favicon.ico -> 404 (19 bytes, 0s)
+00:54:58.589 [FAIL] Phase 4: proxy linked POST /api/login to the click action — 
+00:54:58.589 > rule add set-req-header url=/api/whoami name=X-Injected value=e2e-rule
+00:54:58.589   app| added rule #1 set-req-header url="/api/whoami" name="X-Injected" value="e2e-rule"
+00:54:58.690 [PASS] Phase 3: rule add set-req-header — added rule #1 set-req-header url="/api/whoami" name="X-Injected" value="e2e-rule"
+00:54:58.690 > rule add block url=/blocked status=451
+00:54:58.690   app| added rule #2 block url="/blocked" status=451
+00:54:58.790 [PASS] Phase 3: rule add block — added rule #2 block url="/blocked" status=451
+00:54:58.790 > rule add set-resp-header url=/api/whoami name=X-Audited value=web-cli
+00:54:58.790   app| added rule #3 set-resp-header url="/api/whoami" name="X-Audited" value="web-cli"
+00:54:58.891 [PASS] Phase 3: rule add set-resp-header — added rule #3 set-resp-header url="/api/whoami" name="X-Audited" value="web-cli"
+00:54:58.891 > cookies dump /home/runner/work/web-cli/web-cli/scripts/e2e/out-real/audit/cookies.json
+00:55:13.892   app| error: no browser session connected: context deadline exceeded
+00:55:13.892 [FAIL] Phase 4: cookies dump via chrome.cookies.getAll — error: no browser session connected: context deadline exceeded; file has session=abc123 (HttpOnly,Secure)=false
+00:55:13.892 > cookies import /home/runner/work/web-cli/web-cli/scripts/e2e/out-real/audit/cookies-import.json
+00:55:28.907   app| error: no browser session connected: context deadline exceeded
+00:55:28.907 [FAIL] Phase 4: cookies import via chrome.cookies.set — error: no browser session connected: context deadline exceeded
+00:55:28.907 > hints who am
+00:55:43.907   app| error: no browser session connected: context deadline exceeded
+00:55:43.907 [FAIL] Phase 2: hints 'who am' -> click — 
+00:55:49.024 [FAIL] Phase 4: imported cookie sent by the browser — origin received Cookie: ""; page shows "idle"
+00:55:49.024 [FAIL] Phase 3: request header injected by rule — origin received X-Injected: ""
+00:55:49.024 [FAIL] Phase 3: request blocked by rule (never reached origin) — page shows "", origin saw 0 /blocked requests
+00:55:49.024 > log 50
+00:55:49.024   app| #1 GET https://127.0.0.1:43595/ -> 200 (2381 bytes, 4ms)
+00:55:49.024   app| #2 GET https://127.0.0.1:43595/favicon.ico -> 404 (19 bytes, 0s)
+00:56:09.144 [FAIL] Phase 3: blocked + modified requests recorded with intercept notes — 
+00:56:09.144 > hints next page
+00:56:24.158   app| error: no browser session connected: context deadline exceeded
+00:56:24.158 [FAIL] Phase 2: hints 'next page' -> link click navigates — 
+00:56:29.224 [FAIL] Phase 2: navigation happened — document.title="web-cli E2E dummy"
+00:56:29.224 [FAIL] Phase 4: main_frame navigation tagged, header stripped upstream — origin saw 0 GET /next without action header
+00:56:29.525 > hints press
+00:56:44.539   app| error: no browser session connected: context deadline exceeded
+00:56:44.539 [FAIL] Phase 2: content script re-injected after navigation; focus/click on new page — 
+00:56:49.660 [FAIL] Phase 2: button on new page clicked — button text="Login"
+00:56:49.660 > hints search
+00:57:04.675   app| error: no browser session connected: context deadline exceeded
+00:57:04.675 [FAIL] Phase 2: stale page: 'search' has no match on new page — error: no browser session connected: context deadline exceeded
+00:57:04.675 > export /home/runner/work/web-cli/web-cli/scripts/e2e/out-real/audit/requests.http
+00:57:04.675   app| wrote 2 request(s) to /home/runner/work/web-cli/web-cli/scripts/e2e/out-real/audit/requests.http
+00:57:04.775 [FAIL] Phase 4: export all captured requests to .http — wrote 2 request(s) to /home/runner/work/web-cli/web-cli/scripts/e2e/out-real/audit/requests.http
+00:57:04.775 > export /home/runner/work/web-cli/web-cli/scripts/e2e/out-real/audit/login-action.http action=
+00:57:04.776   app| wrote 2 request(s) to /home/runner/work/web-cli/web-cli/scripts/e2e/out-real/audit/login-action.http
+00:57:24.876 [FAIL] Phase 4: export filtered by action ID — wrote 2 request(s) to /home/runner/work/web-cli/web-cli/scripts/e2e/out-real/audit/login-action.http
+00:57:24.876 > export /home/runner/work/web-cli/web-cli/scripts/e2e/out-real/audit/nav-action.http action=
+00:57:24.876   app| wrote 2 request(s) to /home/runner/work/web-cli/web-cli/scripts/e2e/out-real/audit/nav-action.http
+00:57:24.977 [PASS] Phase 4: navigation action has linked requests — wrote 2 request(s) to /home/runner/work/web-cli/web-cli/scripts/e2e/out-real/audit/nav-action.http
+00:57:24.977 > actions
+00:57:24.977   app| ACTION ID  KIND  HINT  ELEMENT  REQUESTS  PAGE
+00:57:25.278 actions table:
+error: no browser session connected: context deadline exceeded
+error: no browser session connected: context deadline exceeded
+wrote 2 request(s) to /home/runner/work/web-cli/web-cli/scripts/e2e/out-real/audit/requests.http
+wrote 2 request(s) to /home/runner/work/web-cli/web-cli/scripts/e2e/out-real/audit/login-action.http
+wrote 2 request(s) to /home/runner/work/web-cli/web-cli/scripts/e2e/out-real/audit/nav-action.http
+ACTION ID  KIND  HINT  ELEMENT  REQUESTS  PAGE
+00:57:25.278 > status
+00:57:25.278   app| socket:   /home/runner/work/web-cli/web-cli/scripts/e2e/out-real/ipc.sock
+00:57:25.278   app| sessions: 0
+00:57:25.278   app| proxy:    http://127.0.0.1:46521
+00:57:25.278   app| captured: 2 request(s), 0 action(s), 3 rule(s)
+00:57:25.378 [PASS] Phase 1: status reports session and captures — sessions: 0 | captured: 2 request(s), 0 action(s), 3 rule(s)
+00:57:25.388 curl replay of login-action.http: GET https://127.0.0.1:43595/ -> <!doctype html>
+<html><head><meta charset="utf-8"><title>web-cli E2E dummy</title>
+<style>
+  body { font: 14px sans-serif; margin: 0; padding: 10px; }
+  .row { margin: 6px 0; }
+</style></head>
+<body>
+  <h1>Dummy app</h1>
+  <!-- visible targets -->
+  <div class="row"><a id="next" href="/next">Next page</a></div>
+  <div class="row"><button id="login" onclick="login()">Login</button>
+       <button id="whoami" onclick="whoami()">Who am I</button></div>
+  <div class="row"><input id="q" placeholder="Search products"></div>
+  <div class="row"><select name="lang"><option>English</option><option>日本語</option></select></div>
+  <div class="row"><div role="button" id="rolebtn" style="display:inline-block">Role Button</div>
+       <span id="span" onclick="document.getElementById('status').textContent='span clicked'">Onclick span</span></div>
+  <p id="status">idle</p>
+  <p id="status2"></p>
+
+  <!-- hidden: each must be rejected by content.js -->
+  <button style="display:none">Hidden display</button>
+  <button style="visibility:hidden">Hidden visibility</button>
+  <button style="opacity:0">Hidden opacity</button>
+  <div style="opacity:0"><a href="#x">Hidden parent opacity</a></div>
+  <button style="width:0;height:0;padding:0;border:0;overflow:hidden">Zero size</button>
+  <button style="position:absolute;top:-500px;left:10px">Offscreen</button>
+  <button disabled>Disabled</button>
+  <input type="hidden" name="csrf" value="t">
+  <button style="position:absolute;left:420px;top:120px">Covered button</button>
+  <div style="position:absolute;left:400px;top:100px;width:220px;height:80px;background:#eee;z-index:10">modal overlay</div>
+  <div style="height:3000px"></div>
+  <button>Below fold</button>
+
+<script>
+async function login() {
+  const r = await fetch('/api/login', {method: 'POST', headers: {'Content-Type': 'application/json'},
+                                       body: JSON.stringify({user: 'alice', password: 'wonderland'})});
+  const j = await r.json();
+  document.getElementById('status').textContent = 'logged in: ' + j.user;
+}
+async function whoami() {
+  const r = await fetch('/api/whoami');
+  const j = await r.json();
+  document.getElementById('status').textContent = 'cookies: ' + j.cookies.join(',');
+  const b = await fetch('/blocked');
+  document.getElementById('status2').textContent = 'blocked status: ' + b.status;
+}
+</script>
+</body></html> (err=<nil>)
+00:57:25.388 [FAIL] Phase 4: .http file replays with curl — see harness.log
+00:57:25.388 E2E: 7/32 checks passed — report: /home/runner/work/web-cli/web-cli/scripts/e2e/out-real/e2e-report.md
+exit status 1

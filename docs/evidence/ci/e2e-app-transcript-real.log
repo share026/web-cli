@@ -1,0 +1,28 @@
+00:53:31.842900 [ipc] listening on /home/runner/work/web-cli/web-cli/scripts/e2e/out-real/ipc.sock
+00:53:31.843514 [proxy] generated new root CA in /home/runner/work/web-cli/web-cli/scripts/e2e/out-real/ca
+00:53:31.851411 [proxy] listening on 127.0.0.1:46521 (CA /home/runner/work/web-cli/web-cli/scripts/e2e/out-real/ca/ca.pem, SPKI Iz2drKry5hiqfGTsm/LBirEh95QCt8jjTbLex6EL00M=)
+error: no browser session connected: context deadline exceeded
+00:54:17.720062 [proxy] #1 GET https://127.0.0.1:43595/ -> 200 (2381 bytes, 4ms)
+00:54:17.751348 [proxy] #2 GET https://127.0.0.1:43595/favicon.ico -> 404 (19 bytes, 0s)
+error: no browser session connected: context deadline exceeded
+#1 GET https://127.0.0.1:43595/ -> 200 (2381 bytes, 4ms)
+#2 GET https://127.0.0.1:43595/favicon.ico -> 404 (19 bytes, 0s)
+added rule #1 set-req-header url="/api/whoami" name="X-Injected" value="e2e-rule"
+added rule #2 block url="/blocked" status=451
+added rule #3 set-resp-header url="/api/whoami" name="X-Audited" value="web-cli"
+error: no browser session connected: context deadline exceeded
+error: no browser session connected: context deadline exceeded
+error: no browser session connected: context deadline exceeded
+#1 GET https://127.0.0.1:43595/ -> 200 (2381 bytes, 4ms)
+#2 GET https://127.0.0.1:43595/favicon.ico -> 404 (19 bytes, 0s)
+error: no browser session connected: context deadline exceeded
+error: no browser session connected: context deadline exceeded
+error: no browser session connected: context deadline exceeded
+wrote 2 request(s) to /home/runner/work/web-cli/web-cli/scripts/e2e/out-real/audit/requests.http
+wrote 2 request(s) to /home/runner/work/web-cli/web-cli/scripts/e2e/out-real/audit/login-action.http
+wrote 2 request(s) to /home/runner/work/web-cli/web-cli/scripts/e2e/out-real/audit/nav-action.http
+ACTION ID  KIND  HINT  ELEMENT  REQUESTS  PAGE
+socket:   /home/runner/work/web-cli/web-cli/scripts/e2e/out-real/ipc.sock
+sessions: 0
+proxy:    http://127.0.0.1:46521
+captured: 2 request(s), 0 action(s), 3 rule(s)
