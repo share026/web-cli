@@ -93,7 +93,7 @@ func (h *harness) automationChecks(browserCtx context.Context, s *site, auditDir
 
 	// --- page content ----------------------------------------------------------
 	_, lines, ok = h.cmd("text", `^--- end of text`)
-	h.check(P, "text: visible page text", ok && len(grep(lines, `^Welcome alice@example.com$`)) == 1, "%s", strings.Join(grep(lines, "Welcome|rendered"), " | "))
+	h.check(P, "text: visible page text", ok && len(grep(lines, `^\s*Welcome alice@example.com$`)) == 1, "%s", strings.Join(grep(lines, "Welcome|rendered"), " | "))
 
 	src := filepath.Join(auditDir, "dashboard-rendered.html")
 	_, lines, ok = h.cmd("source "+src, `^saved rendered DOM`)
@@ -126,7 +126,7 @@ func (h *harness) automationChecks(browserCtx context.Context, s *site, auditDir
 	_, lines, ok = h.cmd("newtab "+s.URL+"/next", `^opened https://\S+/next "Next"`)
 	_, lines2, ok2 := h.cmd("tabs", `^2 tab\(s\)`)
 	_, lines3, ok3 := h.cmd("closetab", `^1 tab\(s\)`)
-	h.check(P, "newtab / tabs / closetab", ok && ok2 && ok3 && len(grep(lines2, `^\* \d+  https://\S+/next`)) == 1,
+	h.check(P, "newtab / tabs / closetab", ok && ok2 && ok3 && len(grep(lines2, `^\s*\* \d+  https://\S+/next`)) == 1,
 		"%s | %s | %s", first(grep(lines, "opened")), strings.Join(grep(lines2, "tab|https"), " ; "), first(grep(lines3, "tab")))
 
 	// --- eval on a page whose CSP forbids eval -> chrome.debugger fallback ---------

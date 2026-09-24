@@ -323,17 +323,17 @@ func (a *App) browserCmd(ctx context.Context, line string, args []string, rec *r
 		fmt.Println("  (the HTML as served by the server: 'log' to find the request, then 'body <id> <file>')")
 
 	case "waitfor":
-		if len(args) < 2 || len(args) > 3 {
+		if len(args) < 2 {
 			return usage("waitfor <target|text=...|url=regexp|title=...> [timeout]")
 		}
 		d := a.waitTimeout()
-		if len(args) == 3 {
-			var err error
-			if d, err = time.ParseDuration(args[2]); err != nil {
-				return err
+		spec := args[1:]
+		if len(spec) > 1 {
+			if pd, err := time.ParseDuration(spec[len(spec)-1]); err == nil {
+				d, spec = pd, spec[:len(spec)-1]
 			}
 		}
-		return a.cmdWaitFor(args[1], d)
+		return a.cmdWaitFor(strings.Join(spec, " "), d)
 
 	case "sleep":
 		if len(args) != 2 {

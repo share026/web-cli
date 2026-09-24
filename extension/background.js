@@ -209,7 +209,15 @@ const handlers = {
     else if (action === "reload") await chrome.tabs.reload(tab.id);
     else throw new Error(`unknown navigation ${action}`);
     const t = await done;
-    return ["nav_result", { action, action_id: actionId, tab_id: t.id, url: t.url, title: t.title }];
+    // The page itself is authoritative (tab.url can lag behind for pages
+    // restored from the back-forward cache).
+    let { url: u, title } = t;
+    try {
+      const info = await toContent(t, { type: "dom", op: "info" });
+      u = info.url;
+      title = info.title;
+    } catch { /* not scriptable (chrome://, PDF, ...) */ }
+    return ["nav_result", { action, action_id: actionId, tab_id: t.id, url: u, title }];
   },
 
   async tabs({ op, id }) {
@@ -335,7 +343,7 @@ async function onNativeMessage(msg) {
 }
 
 // Messages from content scripts: recording state and recorded user input.
-chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
+chrome.runtime.onMessage?.addListener((msg, sender, sendResponse) => {
   if (msg && msg.type === "record_state") {
     chrome.storage.session.get("record").then((v) => sendResponse(v.record || { on: false }), () => sendResponse({ on: false }));
     return true;
