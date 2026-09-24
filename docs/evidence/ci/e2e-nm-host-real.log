@@ -1,0 +1,3 @@
+[nm-host] 2026/09/24 01:05:48.536063 nm-host start pid=4226 origin="chrome-extension://aghlljmggamhjpkcngogikkiohnaaiha/" args=["chrome-extension://aghlljmggamhjpkcngogikkiohnaaiha/"]
+[nm-host] 2026/09/24 01:05:48.536591 connected to app at /home/runner/work/web-cli/web-cli/scripts/e2e/out-real/ipc.sock
+[nm-host] 2026/09/24 01:05:51.580056 bridge stopped: browser closed stdin (port disconnected)
