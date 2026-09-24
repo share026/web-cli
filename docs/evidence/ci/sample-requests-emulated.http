@@ -16,10 +16,10 @@ Sec-Fetch-Site: same-origin
 User-Agent: Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36
 
 
-### #2 GET https://127.0.0.1:41013/
+### #2 GET https://127.0.0.1:44749/
 # @name req_2
 # response: 200 OK, text/html; charset=utf-8, 2381 bytes
-GET https://127.0.0.1:41013/ HTTP/1.1
+GET https://127.0.0.1:44749/ HTTP/1.1
 Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7
 Accept-Language: en-US,en;q=0.9
 Sec-Ch-Ua: "Chromium";v="146", "Not-A.Brand";v="24", "Google Chrome";v="146"
@@ -33,13 +33,13 @@ Upgrade-Insecure-Requests: 1
 User-Agent: Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36
 
 
-### #3 GET https://127.0.0.1:41013/favicon.ico
+### #3 GET https://127.0.0.1:44749/favicon.ico
 # @name req_3
 # response: 404 Not Found, text/plain; charset=utf-8, 19 bytes
-GET https://127.0.0.1:41013/favicon.ico HTTP/1.1
+GET https://127.0.0.1:44749/favicon.ico HTTP/1.1
 Accept: image/avif,image/webp,image/apng,image/svg+xml,image/*,*/*;q=0.8
 Accept-Language: en-US,en;q=0.9
-Referer: https://127.0.0.1:41013/
+Referer: https://127.0.0.1:44749/
 Sec-Ch-Ua: "Chromium";v="146", "Not-A.Brand";v="24", "Google Chrome";v="146"
 Sec-Ch-Ua-Mobile: ?0
 Sec-Ch-Ua-Platform: "Linux"
@@ -49,16 +49,16 @@ Sec-Fetch-Site: same-origin
 User-Agent: Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36
 
 
-### #4 POST https://127.0.0.1:41013/api/login
+### #4 POST https://127.0.0.1:44749/api/login
 # @name req_4
-# action: 48cbf7ae-f11d-4071-bc54-3e8cd14f32ad click hint=2 <button> "Login" page=https://127.0.0.1:41013/
+# action: 25af7d07-c175-4c4c-8af2-cc911e04bb24 click hint=2 <button> "Login" page=https://127.0.0.1:44749/
 # response: 200 OK, application/json, 27 bytes
-POST https://127.0.0.1:41013/api/login HTTP/1.1
+POST https://127.0.0.1:44749/api/login HTTP/1.1
 Accept: */*
 Accept-Language: en-US,en;q=0.9
 Content-Type: application/json
-Origin: https://127.0.0.1:41013
-Referer: https://127.0.0.1:41013/
+Origin: https://127.0.0.1:44749
+Referer: https://127.0.0.1:44749/
 Sec-Ch-Ua: "Chromium";v="146", "Not-A.Brand";v="24", "Google Chrome";v="146"
 Sec-Ch-Ua-Mobile: ?0
 Sec-Ch-Ua-Platform: "Linux"
@@ -69,17 +69,17 @@ User-Agent: Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Geck
 
 {"user":"alice","password":"wonderland"}
 
-### #5 GET https://127.0.0.1:41013/api/whoami
+### #5 GET https://127.0.0.1:44749/api/whoami
 # @name req_5
-# action: 7c30d8ea-6510-4d71-b29b-674d7d9db740 click hint=3 <button> "Who am I" page=https://127.0.0.1:41013/
+# action: 9f92efd2-a8c8-4afe-bdd1-b512649ffa9b click hint=3 <button> "Who am I" page=https://127.0.0.1:44749/
 # response: 200 OK, application/json, 74 bytes
 # intercept: #1 set-req-header url="/api/whoami" name="X-Injected" value="e2e-rule"
 # intercept: #3 set-resp-header url="/api/whoami" name="X-Audited" value="web-cli"
-GET https://127.0.0.1:41013/api/whoami HTTP/1.1
+GET https://127.0.0.1:44749/api/whoami HTTP/1.1
 Accept: */*
 Accept-Language: en-US,en;q=0.9
 Cookie: session=abc123; imported=from-json
-Referer: https://127.0.0.1:41013/
+Referer: https://127.0.0.1:44749/
 Sec-Ch-Ua: "Chromium";v="146", "Not-A.Brand";v="24", "Google Chrome";v="146"
 Sec-Ch-Ua-Mobile: ?0
 Sec-Ch-Ua-Platform: "Linux"
@@ -90,16 +90,16 @@ User-Agent: Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Geck
 X-Injected: e2e-rule
 
 
-### #6 GET https://127.0.0.1:41013/blocked
+### #6 GET https://127.0.0.1:44749/blocked
 # @name req_6
-# action: 7c30d8ea-6510-4d71-b29b-674d7d9db740 click hint=3 <button> "Who am I" page=https://127.0.0.1:41013/
+# action: 9f92efd2-a8c8-4afe-bdd1-b512649ffa9b click hint=3 <button> "Who am I" page=https://127.0.0.1:44749/
 # response: 451 (blocked by proxy rule)
 # intercept: #2 block url="/blocked" status=451
-GET https://127.0.0.1:41013/blocked HTTP/1.1
+GET https://127.0.0.1:44749/blocked HTTP/1.1
 Accept: */*
 Accept-Language: en-US,en;q=0.9
 Cookie: session=abc123; imported=from-json
-Referer: https://127.0.0.1:41013/
+Referer: https://127.0.0.1:44749/
 Sec-Ch-Ua: "Chromium";v="146", "Not-A.Brand";v="24", "Google Chrome";v="146"
 Sec-Ch-Ua-Mobile: ?0
 Sec-Ch-Ua-Platform: "Linux"
@@ -109,15 +109,15 @@ Sec-Fetch-Site: same-origin
 User-Agent: Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36
 
 
-### #7 GET https://127.0.0.1:41013/next
+### #7 GET https://127.0.0.1:44749/next
 # @name req_7
-# action: a6416a11-82b8-46a9-bb18-0741e20b18ef click hint=1 <a> "Next page" page=https://127.0.0.1:41013/
+# action: 23beccd0-023d-421d-aee1-5bb97fca4219 click hint=1 <a> "Next page" page=https://127.0.0.1:44749/
 # response: 200 OK, text/html; charset=utf-8, 179 bytes
-GET https://127.0.0.1:41013/next HTTP/1.1
+GET https://127.0.0.1:44749/next HTTP/1.1
 Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7
 Accept-Language: en-US,en;q=0.9
 Cookie: session=abc123; imported=from-json
-Referer: https://127.0.0.1:41013/
+Referer: https://127.0.0.1:44749/
 Sec-Ch-Ua: "Chromium";v="146", "Not-A.Brand";v="24", "Google Chrome";v="146"
 Sec-Ch-Ua-Mobile: ?0
 Sec-Ch-Ua-Platform: "Linux"
