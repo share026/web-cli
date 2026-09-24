@@ -59,7 +59,7 @@ jobs:
         continue-on-error: true
         env:
           EVIDENCE_DIR: docs/evidence/ci
-          E2E_MODES: emulated real
+          E2E_MODES: emulated real real-headless
           E2E_HEADED: "1"
         run: |
           rm -rf docs/evidence/ci

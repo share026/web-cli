@@ -26,13 +26,18 @@ if [[ -n "${CHROME_PATH:-}" ]]; then
   for mode in ${E2E_MODES:-emulated}; do
     step "end-to-end ($mode): Chromium + extension + nm-host + app + fzf + proxy"
     out="scripts/e2e/out-$mode"
-    runner=(env E2E_HEADED=0) # emulated mode drives a headless shell
+    # emulated: headless shell; real: headed (xvfb when E2E_HEADED=1);
+    # real-headless: the real extension path under Chromium's --headless
+    runner=(env E2E_HEADED=0)
+    hmode=$mode
     if [[ "$mode" == real && "${E2E_HEADED:-}" == 1 ]] && command -v xvfb-run >/dev/null; then
       runner=(xvfb-run -a -s "-screen 0 1280x800x24")
     elif [[ "$mode" == real ]]; then
       runner=()
+    elif [[ "$mode" == real-headless ]]; then
+      hmode=real
     fi
-    "${runner[@]}" go run ./scripts/e2e -mode "$mode" -out "$out" 2>&1 | tee "$ev/e2e-$mode.log"
+    "${runner[@]}" go run ./scripts/e2e -mode "$hmode" -out "$out" 2>&1 | tee "$ev/e2e-$mode.log"
     [[ ${PIPESTATUS[0]} -eq 0 ]] || status=1
     cp "$out/e2e-report.md" "$ev/e2e-report-$mode.md" 2>/dev/null
     cp "$out/app-transcript.log" "$ev/e2e-app-transcript-$mode.log" 2>/dev/null

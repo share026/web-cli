@@ -291,6 +291,11 @@ func main() {
 	chromedp.Run(browserCtx, chromedp.Evaluate(`navigator.userAgent`, &ver))
 	h.logf("browser: %s", ver)
 	h.mode, h.browser = *mode, ver
+	if *headed {
+		h.mode += " (headed)"
+	} else {
+		h.mode += " (headless: --headless)"
+	}
 
 	if real {
 		// The service worker of the unpacked extension must be running in the browser.
