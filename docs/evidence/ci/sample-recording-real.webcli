@@ -1,12 +1,12 @@
-# web-cli recording 2026-09-24T02:45:44Z
+# web-cli recording 2026-09-24T02:51:03Z
 # replay: bin/app -f login.webcli   (or 'run login.webcli' in the REPL)
 # password fields are recorded as $WEBCLI_PASSWORD: export it before replaying
-open https://127.0.0.1:35943/login
-# type <input:email> "Email" on https://127.0.0.1:35943/login
+open https://127.0.0.1:35597/login
+# type <input:email> "Email" on https://127.0.0.1:35597/login
 type css=#email bob@example.com
-# type <input:password> "Password" on https://127.0.0.1:35943/login
+# type <input:password> "Password" on https://127.0.0.1:35597/login
 type css=#password $WEBCLI_PASSWORD
-# check <input:checkbox> "Remember me" on https://127.0.0.1:35943/login
+# check <input:checkbox> "Remember me" on https://127.0.0.1:35597/login
 check css=#remember
-# click <button> "Sign in" on https://127.0.0.1:35943/login
+# click <button> "Sign in" on https://127.0.0.1:35597/login
 click "css=#loginform > button:nth-of-type(1)"
