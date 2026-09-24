@@ -1,15 +1,15 @@
-01:18:35.543847 [ipc] listening on /home/runner/work/web-cli/web-cli/scripts/e2e/out-real-headless/ipc.sock
-01:18:35.544526 [proxy] generated new root CA in /home/runner/work/web-cli/web-cli/scripts/e2e/out-real-headless/ca
-01:18:35.553150 [proxy] listening on 127.0.0.1:33867 (CA /home/runner/work/web-cli/web-cli/scripts/e2e/out-real-headless/ca/ca.pem, SPKI 8cLBgjekNub6vA948hqx0fw1Mr0iGPLNoPfDpetbqO8=)
-01:18:36.018808 [ipc] session #1 connected
-01:18:36.018939 [ipc] session #1 hello origin=chrome-extension://aghlljmggamhjpkcngogikkiohnaaiha/ pid=4578
-01:18:36.018978 [ipc] session #1 ping -> pong
-01:18:36.019964 [ext#1] {"event":"pong_received","reply_to":"88e270eefa6a445da3651ec7d69b6f0c"}
-pong from extension in 3.872ms: {"from":"extension"}
-01:18:36.207082 [proxy] #1 GET https://127.0.0.1:37101/ -> 200 (2381 bytes, 3ms)
-01:18:36.239963 [proxy] #2 GET https://127.0.0.1:37101/favicon.ico -> 404 (19 bytes, 0s)
-collected 7 visible element(s) on https://127.0.0.1:37101/
-  1  [a]  Next page  https://127.0.0.1:37101/next
+01:20:23.101623 [ipc] listening on /home/runner/work/web-cli/web-cli/scripts/e2e/out-real-headless/ipc.sock
+01:20:23.102290 [proxy] generated new root CA in /home/runner/work/web-cli/web-cli/scripts/e2e/out-real-headless/ca
+01:20:23.112058 [proxy] listening on 127.0.0.1:35631 (CA /home/runner/work/web-cli/web-cli/scripts/e2e/out-real-headless/ca/ca.pem, SPKI 22SzL/rKLf3hTKWS7j7rQAh8uhIS66kfDX07s7z7NjM=)
+01:20:24.028734 [ipc] session #1 connected
+01:20:24.028868 [ipc] session #1 hello origin=chrome-extension://aghlljmggamhjpkcngogikkiohnaaiha/ pid=4632
+01:20:24.028906 [ipc] session #1 ping -> pong
+01:20:24.029920 [ext#1] {"event":"pong_received","reply_to":"7c52ebadeb0e493f9c4a5b622165f912"}
+pong from extension in 809µs: {"from":"extension"}
+01:20:24.266226 [proxy] #1 GET https://127.0.0.1:46441/ -> 200 (2381 bytes, 3ms)
+01:20:24.300178 [proxy] #2 GET https://127.0.0.1:46441/favicon.ico -> 404 (19 bytes, 0s)
+collected 7 visible element(s) on https://127.0.0.1:46441/
+  1  [a]  Next page  https://127.0.0.1:46441/next
   2  [button]  Login  
   3  [button]  Who am I  
   4  [input:text]  Search products  
@@ -17,19 +17,19 @@ collected 7 visible element(s) on https://127.0.0.1:37101/
   6  [div@button]  Role Button  
   7  [span]  Onclick span  
 fzf selected hint 2
-click hint=2 <button> "Login" action_id=1632a2fb-ec3d-43f5-9953-33563edd5418
-01:18:36.553390 [proxy] #3 POST https://127.0.0.1:37101/api/login -> 200 (27 bytes, 1ms) action=1632a2fb-ec3d-43f5-9953-33563edd5418
-#1 GET https://127.0.0.1:37101/ -> 200 (2381 bytes, 3ms)
-#2 GET https://127.0.0.1:37101/favicon.ico -> 404 (19 bytes, 0s)
-#3 POST https://127.0.0.1:37101/api/login -> 200 (27 bytes, 1ms) action=1632a2fb-ec3d-43f5-9953-33563edd5418
+click hint=2 <button> "Login" action_id=a9c34ead-9818-43df-b44c-caa235eb9200
+01:20:24.610767 [proxy] #3 POST https://127.0.0.1:46441/api/login -> 200 (27 bytes, 0s) action=a9c34ead-9818-43df-b44c-caa235eb9200
+#1 GET https://127.0.0.1:46441/ -> 200 (2381 bytes, 3ms)
+#2 GET https://127.0.0.1:46441/favicon.ico -> 404 (19 bytes, 0s)
+#3 POST https://127.0.0.1:46441/api/login -> 200 (27 bytes, 0s) action=a9c34ead-9818-43df-b44c-caa235eb9200
 added rule #1 set-req-header url="/api/whoami" name="X-Injected" value="e2e-rule"
 added rule #2 block url="/blocked" status=451
 added rule #3 set-resp-header url="/api/whoami" name="X-Audited" value="web-cli"
-dumped 1 cookie(s) for https://127.0.0.1:37101/ to /home/runner/work/web-cli/web-cli/scripts/e2e/out-real-headless/audit/cookies.json
+dumped 1 cookie(s) for https://127.0.0.1:46441/ to /home/runner/work/web-cli/web-cli/scripts/e2e/out-real-headless/audit/cookies.json
   session=abc123; domain=127.0.0.1; path=/; secure=true; httpOnly=true
 imported 1/1 cookie(s) from /home/runner/work/web-cli/web-cli/scripts/e2e/out-real-headless/audit/cookies-import.json
-collected 7 visible element(s) on https://127.0.0.1:37101/
-  1  [a]  Next page  https://127.0.0.1:37101/next
+collected 7 visible element(s) on https://127.0.0.1:46441/
+  1  [a]  Next page  https://127.0.0.1:46441/next
   2  [button]  Login  
   3  [button]  Who am I  
   4  [input:text]  Search products  
@@ -37,16 +37,16 @@ collected 7 visible element(s) on https://127.0.0.1:37101/
   6  [div@button]  Role Button  
   7  [span]  Onclick span  
 fzf selected hint 3
-click hint=3 <button> "Who am I" action_id=762c1f0a-ea6e-454c-8db5-c492327960f5
-01:18:37.580837 [proxy] #4 GET https://127.0.0.1:37101/api/whoami -> 200 (74 bytes, 1ms) action=762c1f0a-ea6e-454c-8db5-c492327960f5 intercepts=2
-01:18:37.584241 [proxy] #5 GET https://127.0.0.1:37101/blocked -> 451 BLOCKED action=762c1f0a-ea6e-454c-8db5-c492327960f5 intercepts=1
-#1 GET https://127.0.0.1:37101/ -> 200 (2381 bytes, 3ms)
-#2 GET https://127.0.0.1:37101/favicon.ico -> 404 (19 bytes, 0s)
-#3 POST https://127.0.0.1:37101/api/login -> 200 (27 bytes, 1ms) action=1632a2fb-ec3d-43f5-9953-33563edd5418
-#4 GET https://127.0.0.1:37101/api/whoami -> 200 (74 bytes, 1ms) action=762c1f0a-ea6e-454c-8db5-c492327960f5 intercepts=2
-#5 GET https://127.0.0.1:37101/blocked -> 451 BLOCKED action=762c1f0a-ea6e-454c-8db5-c492327960f5 intercepts=1
-collected 7 visible element(s) on https://127.0.0.1:37101/
-  1  [a]  Next page  https://127.0.0.1:37101/next
+click hint=3 <button> "Who am I" action_id=e01ce679-e92f-4b35-99a6-8a24d05823f3
+01:20:25.634200 [proxy] #4 GET https://127.0.0.1:46441/api/whoami -> 200 (74 bytes, 1ms) action=e01ce679-e92f-4b35-99a6-8a24d05823f3 intercepts=2
+01:20:25.636986 [proxy] #5 GET https://127.0.0.1:46441/blocked -> 451 BLOCKED action=e01ce679-e92f-4b35-99a6-8a24d05823f3 intercepts=1
+#1 GET https://127.0.0.1:46441/ -> 200 (2381 bytes, 3ms)
+#2 GET https://127.0.0.1:46441/favicon.ico -> 404 (19 bytes, 0s)
+#3 POST https://127.0.0.1:46441/api/login -> 200 (27 bytes, 0s) action=a9c34ead-9818-43df-b44c-caa235eb9200
+#4 GET https://127.0.0.1:46441/api/whoami -> 200 (74 bytes, 1ms) action=e01ce679-e92f-4b35-99a6-8a24d05823f3 intercepts=2
+#5 GET https://127.0.0.1:46441/blocked -> 451 BLOCKED action=e01ce679-e92f-4b35-99a6-8a24d05823f3 intercepts=1
+collected 7 visible element(s) on https://127.0.0.1:46441/
+  1  [a]  Next page  https://127.0.0.1:46441/next
   2  [button]  Login  
   3  [button]  Who am I  
   4  [input:text]  Search products  
@@ -54,28 +54,28 @@ collected 7 visible element(s) on https://127.0.0.1:37101/
   6  [div@button]  Role Button  
   7  [span]  Onclick span  
 fzf selected hint 1
-click hint=1 <a> "Next page" action_id=c427fcc3-b426-4976-ba22-13b3af8923db
-01:18:37.801119 [proxy] #6 GET https://127.0.0.1:37101/next -> 200 (179 bytes, 0s) action=c427fcc3-b426-4976-ba22-13b3af8923db
-collected 2 visible element(s) on https://127.0.0.1:37101/next
-  1  [a]  Back home  https://127.0.0.1:37101/
+click hint=1 <a> "Next page" action_id=e28d10c7-ad37-4c96-9bf6-614d9b4e3f4f
+01:20:25.855507 [proxy] #6 GET https://127.0.0.1:46441/next -> 200 (179 bytes, 0s) action=e28d10c7-ad37-4c96-9bf6-614d9b4e3f4f
+collected 2 visible element(s) on https://127.0.0.1:46441/next
+  1  [a]  Back home  https://127.0.0.1:46441/
   2  [button]  Press me  
 fzf selected hint 2
-click hint=2 <button> "Press me" action_id=6f95aff9-0075-4f21-84c1-7d7c99e413e8
-collected 2 visible element(s) on https://127.0.0.1:37101/next
-  1  [a]  Back home  https://127.0.0.1:37101/
+click hint=2 <button> "Press me" action_id=e434e9f6-e264-45cd-abf8-410921dfec70
+collected 2 visible element(s) on https://127.0.0.1:46441/next
+  1  [a]  Back home  https://127.0.0.1:46441/
   2  [button]  clicked  
 error: fzf: no element matches "search"
 wrote 6 request(s) to /home/runner/work/web-cli/web-cli/scripts/e2e/out-real-headless/audit/requests.http
 wrote 1 request(s) to /home/runner/work/web-cli/web-cli/scripts/e2e/out-real-headless/audit/login-action.http
 wrote 1 request(s) to /home/runner/work/web-cli/web-cli/scripts/e2e/out-real-headless/audit/nav-action.http
 ACTION ID                             KIND   HINT  ELEMENT              REQUESTS  PAGE
-1632a2fb-ec3d-43f5-9953-33563edd5418  click  2     <button> "Login"     1         https://127.0.0.1:37101/
-762c1f0a-ea6e-454c-8db5-c492327960f5  click  3     <button> "Who am I"  2         https://127.0.0.1:37101/
-c427fcc3-b426-4976-ba22-13b3af8923db  click  1     <a> "Next page"      1         https://127.0.0.1:37101/
-6f95aff9-0075-4f21-84c1-7d7c99e413e8  click  2     <button> "Press me"  0         https://127.0.0.1:37101/next
+a9c34ead-9818-43df-b44c-caa235eb9200  click  2     <button> "Login"     1         https://127.0.0.1:46441/
+e01ce679-e92f-4b35-99a6-8a24d05823f3  click  3     <button> "Who am I"  2         https://127.0.0.1:46441/
+e28d10c7-ad37-4c96-9bf6-614d9b4e3f4f  click  1     <a> "Next page"      1         https://127.0.0.1:46441/
+e434e9f6-e264-45cd-abf8-410921dfec70  click  2     <button> "Press me"  0         https://127.0.0.1:46441/next
 socket:   /home/runner/work/web-cli/web-cli/scripts/e2e/out-real-headless/ipc.sock
 sessions: 1
-  #1 origin=chrome-extension://aghlljmggamhjpkcngogikkiohnaaiha/ nm-host pid=4578 since 2026-09-24T01:18:36Z
-proxy:    http://127.0.0.1:33867
+  #1 origin=chrome-extension://aghlljmggamhjpkcngogikkiohnaaiha/ nm-host pid=4632 since 2026-09-24T01:20:24Z
+proxy:    http://127.0.0.1:35631
 captured: 6 request(s), 4 action(s), 3 rule(s)
-01:18:39.045332 [ipc] session #1 disconnected
+01:20:27.096813 [ipc] session #1 disconnected
