@@ -35,8 +35,11 @@ jobs:
       - name: System packages (fzf, xvfb)
         run: |
           sudo apt-get update -q
-          sudo apt-get install -y -q fzf xvfb
-          fzf --version
+          sudo apt-get install -y -q xvfb
+          # same fzf as the local runs (upstream release, not the older distro build)
+          go install github.com/junegunn/fzf@latest
+          echo "$(go env GOPATH)/bin" >> "$GITHUB_PATH"
+          "$(go env GOPATH)/bin/fzf" --version
 
       - name: Download and verify CloakBrowser
         run: |

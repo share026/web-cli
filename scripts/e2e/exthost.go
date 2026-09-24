@@ -586,7 +586,7 @@ func (h *extHost) sendToContent(ctx context.Context, msg json.RawMessage) (any, 
 		if exc != nil {
 			return errors.New(exc.Error())
 		}
-		out = ro.Value
+		out = json.RawMessage(ro.Value)
 		return nil
 	}))
 	h.pageMu.Unlock()
