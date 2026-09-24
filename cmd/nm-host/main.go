@@ -145,9 +145,17 @@ func run(stdin io.Reader, stdout io.Writer, sock, origin string, logger *log.Log
 				return
 			}
 			if len(raw) > ipc.MaxToBrowser {
+				// Chrome would drop the whole port on an oversized frame. Refuse it
+				// and answer the app (which is waiting on this request ID).
 				var m ipc.Message
 				_ = json.Unmarshal(raw, &m)
-				bw.writeError(m.ID, fmt.Sprintf("message of %d bytes exceeds the 1MB native messaging limit", len(raw)))
+				logger.Printf("refusing %s message of %d bytes (native messaging limit %d)", m.Type, len(raw), ipc.MaxToBrowser)
+				reply, _ := ipc.NewMessage(m.ID, ipc.TypeError, nil)
+				reply.Error = fmt.Sprintf("message of %d bytes exceeds the 1MB native messaging limit (host -> browser)", len(raw))
+				if err := conn.Send(reply); err != nil {
+					errc <- fmt.Errorf("write to app: %w", err)
+					return
+				}
 				continue
 			}
 			if err := bw.write(raw); err != nil {

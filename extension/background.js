@@ -57,23 +57,26 @@ async function activeTab() {
   return tab;
 }
 
-// Sends a message to the content script, injecting it first when the tab was
-// opened before the extension was installed (no receiver yet).
-async function toContent(tab, message) {
+// Sends a message to the content script of one frame (default: the top
+// frame), injecting it first when the tab was opened before the extension was
+// installed (no receiver yet). The frame ID is always explicit: content.js
+// runs in every frame, and an untargeted message would be answered by
+// whichever frame replies first.
+async function toContent(tab, message, frameId = 0) {
   let res;
   try {
-    res = await chrome.tabs.sendMessage(tab.id, message);
+    res = await chrome.tabs.sendMessage(tab.id, message, { frameId });
   } catch (e) {
-    log("content script not reachable, injecting:", e && e.message);
-    await chrome.scripting.executeScript({ target: { tabId: tab.id }, files: ["content.js"] });
-    res = await chrome.tabs.sendMessage(tab.id, message);
+    log(`content script of frame ${frameId} not reachable, injecting:`, e && e.message);
+    await chrome.scripting.executeScript({ target: { tabId: tab.id, frameIds: [frameId] }, files: ["content.js"] });
+    res = await chrome.tabs.sendMessage(tab.id, message, { frameId });
   }
   if (!res) throw new Error("empty reply from content script");
   if (res.ok === false) throw new Error(res.error || "content script error");
   return res;
 }
 
-const MUTATING_OPS = new Set(["click", "type", "clear", "select", "check", "press", "submit"]);
+const MUTATING_OPS = new Set(["click", "type", "clear", "select", "check", "press", "submit", "upload"]);
 
 function waitComplete(tabId, timeoutMs) {
   return new Promise((resolve, reject) => {
@@ -180,6 +183,132 @@ async function disarmActionHeader() {
   await chrome.declarativeNetRequest.updateSessionRules({ removeRuleIds: [ACTION_RULE_ID] });
 }
 
+// --- frames -------------------------------------------------------------------
+// Hints are numbered per frame by content.js. collectAll merges the top frame
+// with the visible child frames it reports (recursively, offsetting rects into
+// top-level viewport coordinates) and renumbers them; frameHints maps the
+// global number back to (frameId, local hint) for the following DOM op.
+
+let frameHints = { tabId: -1, map: new Map() };
+const MAX_FRAME_DEPTH = 6;
+
+function intersect(a, b) {
+  if (!a) return b;
+  if (!b) return a;
+  const x = Math.max(a.x, b.x), y = Math.max(a.y, b.y);
+  const w = Math.min(a.x + a.w, b.x + b.w) - x, h = Math.min(a.y + a.h, b.y + b.h) - y;
+  return w > 0 && h > 0 ? { x, y, w, h } : null;
+}
+
+async function collectAll(tab, scope) {
+  const top = await toContent(tab, { type: "collect", scope }, 0);
+  const map = new Map();
+  const elements = [];
+  let n = 0;
+  const add = (els, frameId, off, clip, frameUrl) => {
+    for (const e of els || []) {
+      const rect = { x: e.rect.x + off.x, y: e.rect.y + off.y, w: e.rect.w, h: e.rect.h };
+      if (clip && !intersect(clip, rect)) continue;
+      n++;
+      map.set(n, { frameId, hint: e.hint });
+      elements.push({ ...e, hint: n, rect, frame: frameId ? frameUrl : undefined });
+    }
+  };
+  add(top.elements, 0, { x: 0, y: 0 }, null);
+  const viewportScope = scope !== "page";
+  const queue = (top.frames || []).map((f) => ({ ...f, depth: 1 }));
+  while (queue.length) {
+    const f = queue.shift();
+    if (f.depth > MAX_FRAME_DEPTH || (viewportScope && !f.clip)) continue;
+    let res;
+    try {
+      res = await toContent(tab, { type: "collect", scope }, f.frame_id);
+    } catch (e) {
+      log(`frame ${f.frame_id} not collectable:`, e && e.message);
+      continue;
+    }
+    add(res.elements, f.frame_id, f.box, viewportScope ? f.clip : null, res.url);
+    for (const c of res.frames || []) {
+      const box = { x: f.box.x + c.box.x, y: f.box.y + c.box.y };
+      const clip = viewportScope ? intersect(f.clip, { x: f.box.x + c.clip.x, y: f.box.y + c.clip.y, w: c.clip.w, h: c.clip.h }) : null;
+      queue.push({ frame_id: c.frame_id, box, clip, depth: f.depth + 1 });
+    }
+  }
+  frameHints = { tabId: tab.id, map };
+  return { ok: true, url: top.url, title: top.title, elements };
+}
+
+// All frame IDs of the tab in document order (top first), via content.js so
+// only frames that are actually rendered in the page are included.
+async function allFrames(tab) {
+  const ids = [0];
+  for (let i = 0; i < ids.length && ids.length < 50; i++) {
+    try {
+      const r = await toContent(tab, { type: "dom", op: "frames" }, ids[i]);
+      for (const f of r.frames || []) if (!ids.includes(f.frame_id)) ids.push(f.frame_id);
+    } catch { /* frame gone or not scriptable */ }
+  }
+  return ids;
+}
+
+// Frame that currently has the keyboard focus (follows focused iframes down).
+async function focusedFrame(tab) {
+  let id = 0;
+  for (let depth = 0; depth < MAX_FRAME_DEPTH; depth++) {
+    const r = await toContent(tab, { type: "dom", op: "focus_frame" }, id).catch(() => null);
+    if (!r || r.frame_id === null || r.frame_id === undefined) break;
+    id = r.frame_id;
+  }
+  return id;
+}
+
+// Runs a dom op in the right frame: hints via frameHints, css= targets in the
+// first frame where the selector matches, target-less press/submit in the
+// focused frame, everything else in the top frame.
+async function domInFrames(tab, p) {
+  const msg = { ...p, type: "dom" };
+  const t = p.target;
+  if (t && t.hint !== undefined) {
+    const m = frameHints.tabId === tab.id && frameHints.map.get(Number(t.hint));
+    if (m) return { res: await toContent(tab, { ...msg, target: { hint: m.hint } }, m.frameId), frameId: m.frameId };
+    return { res: await toContent(tab, msg, 0), frameId: 0 };
+  }
+  if ((t && t.css) || (p.op === "exists" && p.text !== undefined)) {
+    let first;
+    for (const id of await allFrames(tab)) {
+      try {
+        const res = await toContent(tab, msg, id);
+        if (p.op !== "exists" || res.found) return { res, frameId: id };
+        first = first || { res, frameId: id };
+      } catch (e) {
+        if (!/not found: css=/.test(String(e && e.message))) throw e;
+        first = first || { err: e };
+      }
+    }
+    if (first.err) throw first.err;
+    return first;
+  }
+  if (!t && (p.op === "press" || p.op === "submit")) {
+    const id = await focusedFrame(tab);
+    return { res: await toContent(tab, msg, id), frameId: id };
+  }
+  return { res: await toContent(tab, msg, 0), frameId: 0 };
+}
+
+// --- file uploads ------------------------------------------------------------
+// The host may send at most 1 MB per native message, so files arrive as
+// base64 chunks (each a multiple of 3 raw bytes, so the base64 parts simply
+// concatenate) and are assembled here until the 'upload' dom op uses them.
+
+const uploads = new Map(); // upload_id -> { files: [{name, mime, last_modified, parts: []}], at }
+const UPLOAD_TTL_MS = 10 * 60 * 1000;
+
+function uploadFiles(id) {
+  const u = uploads.get(id);
+  if (!u) throw new Error(`upload ${id} is unknown or expired; run the upload command again`);
+  return u.files.map((f) => ({ name: f.name, mime: f.mime, last_modified: f.last_modified, data: f.parts.join("") }));
+}
+
 const handlers = {
   async ping() {
     return ["pong", { from: "extension" }];
@@ -187,7 +316,25 @@ const handlers = {
 
   async collect({ scope } = {}) {
     const tab = await activeTab();
-    return ["elements", await toContent(tab, { type: "collect", scope })];
+    return ["elements", await collectAll(tab, scope)];
+  },
+
+  async upload_chunk({ upload_id: id, file, name, mime, last_modified: lastModified, index, data }) {
+    const now = Date.now();
+    for (const [k, v] of uploads) if (now - v.at > UPLOAD_TTL_MS) uploads.delete(k);
+    let u = uploads.get(id);
+    if (!u) uploads.set(id, (u = { files: [], at: now }));
+    u.at = now;
+    const f = (u.files[file] = u.files[file] || { name, mime, last_modified: lastModified, parts: [] });
+    f.parts[index] = data || "";
+    return ["upload_chunk_result", { upload_id: id, file, index, received: data ? data.length : 0 }];
+  },
+
+  async timing() {
+    const tab = await activeTab();
+    const res = await toContent(tab, { type: "dom", op: "timing" }, 0);
+    delete res.ok;
+    return ["timing_result", res];
   },
 
   // DOM operations in the active tab (click/type/select/check/press/submit/
@@ -198,15 +345,17 @@ const handlers = {
     const mutating = MUTATING_OPS.has(p.op);
     const actionId = mutating ? crypto.randomUUID() : undefined;
     if (mutating && p.tag) await armActionHeader(tab.id, actionId);
-    let res;
+    let res, frameId;
     try {
-      res = await toContent(tab, { ...p, type: "dom" });
+      if (p.op === "upload") p = { ...p, files: uploadFiles(p.upload_id) };
+      ({ res, frameId } = await domInFrames(tab, p));
+      if (p.op === "upload") uploads.delete(p.upload_id); // kept until success: the app retries while the target is missing
     } catch (e) {
       if (mutating && p.tag) await disarmActionHeader();
       throw e;
     }
     delete res.ok;
-    return ["dom_result", { ...res, op: p.op, action_id: actionId }];
+    return ["dom_result", { ...res, op: p.op, action_id: actionId, frame_id: frameId || undefined }];
   },
 
   // open / back / forward / reload in the active tab (or a new tab), waiting
@@ -306,7 +455,8 @@ const handlers = {
     if (tag) await armActionHeader(tab.id, actionId);
     let res;
     try {
-      res = await toContent(tab, { type: "click", hint });
+      const m = frameHints.tabId === tab.id && frameHints.map.get(Number(hint));
+      res = m ? await toContent(tab, { type: "click", hint: m.hint }, m.frameId) : await toContent(tab, { type: "click", hint });
     } catch (e) {
       if (tag) await disarmActionHeader();
       throw e;

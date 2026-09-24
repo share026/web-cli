@@ -20,7 +20,10 @@ type Element struct {
 	Href string `json:"href,omitempty"`
 	Name string `json:"name,omitempty"`
 	ID   string `json:"id,omitempty"`
-	Rect struct {
+	// Frame is the URL of the iframe document the element lives in (empty
+	// for the top-level page).
+	Frame string `json:"frame,omitempty"`
+	Rect  struct {
 		X, Y, W, H float64
 	} `json:"rect"`
 }
@@ -46,7 +49,11 @@ func (e Element) kind() string {
 // returns the full line so the hint can be parsed back.
 func (e Element) fzfLine() string {
 	clean := func(s string) string { return strings.Join(strings.Fields(s), " ") }
-	return fmt.Sprintf("%d\t[%s]\t%s\t%s", e.Hint, e.kind(), clean(e.Text), e.Href)
+	line := fmt.Sprintf("%d\t[%s]\t%s\t%s", e.Hint, e.kind(), clean(e.Text), e.Href)
+	if e.Frame != "" {
+		line += "\t(frame " + e.Frame + ")"
+	}
+	return line
 }
 
 var errFzfCancelled = errors.New("selection cancelled")

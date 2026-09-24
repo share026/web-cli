@@ -45,6 +45,8 @@ type DOMResult struct {
 	Session  map[string]string `json:"session"`
 	Set      int               `json:"set"`
 	ScrollY  float64           `json:"scroll_y"`
+	Files    []string          `json:"files"`
+	FrameID  int               `json:"frame_id"`
 }
 
 func (r DOMResult) element() string {
@@ -52,7 +54,11 @@ func (r DOMResult) element() string {
 	if r.Type != "" {
 		k += ":" + r.Type
 	}
-	return fmt.Sprintf("<%s> %q", k, r.Text)
+	s := fmt.Sprintf("<%s> %q", k, r.Text)
+	if r.FrameID != 0 {
+		s += fmt.Sprintf(" in frame %d (%s)", r.FrameID, r.URL)
+	}
+	return s
 }
 
 // browserCommands are handled by execBrowser (quoted arguments, $VAR).
@@ -64,7 +70,7 @@ var browserCommands = map[string]bool{
 	"newtab": true, "back": true, "forward": true, "reload": true, "tabs": true,
 	"tab": true, "closetab": true, "url": true, "eval": true, "js": true,
 	"screenshot": true, "storage": true, "show": true, "body": true,
-	"record": true, "run": true,
+	"record": true, "run": true, "upload": true, "timing": true,
 }
 
 // recordable commands are written to an active recording after they succeed.
@@ -73,6 +79,7 @@ var recordable = map[string]bool{
 	"uncheck": true, "press": true, "submit": true, "focus": true, "scroll": true,
 	"waitfor": true, "sleep": true, "open": true, "goto": true, "newtab": true,
 	"back": true, "forward": true, "reload": true, "eval": true, "js": true,
+	"upload": true,
 }
 
 func (a *App) execBrowser(line string) error {
@@ -255,6 +262,29 @@ func (a *App) browserCmd(ctx context.Context, line string, args []string, rec *r
 			return err
 		}
 		fmt.Printf("submitted form %s action_id=%s\n", r.Selector, r.ActionID)
+
+	case "upload":
+		if len(args) < 3 {
+			return usage("upload <target> <file> [file...]")
+		}
+		r, err := a.cmdUpload(ctx, args[1], args[2:])
+		if err != nil {
+			return err
+		}
+		rec.replaceTarget(1, r.Selector)
+		verb := "uploaded"
+		if r.Kind == "drop" {
+			verb = "dropped"
+		}
+		fmt.Printf("%s %d file(s) (%d bytes: %s) into %s selector=%s action_id=%s\n",
+			verb, len(r.Files), r.Length, strings.Join(r.Files, ", "), r.element(), r.Selector, r.ActionID)
+
+	case "timing":
+		file := ""
+		if len(args) > 1 {
+			file = args[1]
+		}
+		return a.cmdTiming(ctx, file)
 
 	case "scroll":
 		if len(args) != 2 {
@@ -822,6 +852,9 @@ func (a *App) cmdShow(idArg string) error {
 			fmt.Println("--- response body")
 			fmt.Println(bodyPreview(ex.RespBody, ex.RespHeader.Get("Content-Type"), ex.RespHeader.Get("Content-Encoding")))
 		}
+	}
+	if ex.Status == 101 {
+		fmt.Printf("--- websocket: %d frame(s); 'ws %d' lists them\n", ex.WSFrameCount, ex.ID)
 	}
 	if ex.Truncated {
 		fmt.Println("(body truncated by the proxy's size limit)")

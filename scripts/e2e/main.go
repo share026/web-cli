@@ -471,6 +471,7 @@ func main() {
 	// ===== Automation: forms, navigation, page content, recording ================
 	if real {
 		h.automationChecks(browserCtx, s, auditDir)
+		h.phase6Checks(browserCtx, s, auditDir)
 	}
 
 	h.writeReport()

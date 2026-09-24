@@ -52,6 +52,45 @@ type Exchange struct {
 	Blocked    bool          `json:"blocked,omitempty"`
 	Intercepts []string      `json:"intercepts,omitempty"` // human readable notes of applied rules
 	Error      string        `json:"error,omitempty"`
+	// WebSocket: frames seen after a 101 upgrade (capped at MaxWSFrames;
+	// WSFrameCount keeps counting past the cap).
+	WSFrames     []WSFrame `json:"-"`
+	WSFrameCount int       `json:"ws_frames,omitempty"`
+}
+
+// MaxWSFrames caps how many WebSocket frames are retained per connection.
+const MaxWSFrames = 2000
+
+// WSFrame is one WebSocket message (fragments reassembled, permessage-deflate
+// already inflated) or control frame seen on an upgraded connection.
+type WSFrame struct {
+	Time       time.Time `json:"time"`
+	Dir        string    `json:"dir"`    // "send" (client→server) or "recv" (server→client)
+	Opcode     string    `json:"opcode"` // text, binary, close, ping, pong
+	Len        int       `json:"len"`    // payload length after decompression
+	Compressed bool      `json:"compressed,omitempty"`
+	Truncated  bool      `json:"truncated,omitempty"`
+	Data       []byte    `json:"-"`
+	Note       string    `json:"note,omitempty"` // e.g. close code or decode error
+}
+
+// AddWSFrame appends a frame to an upgraded exchange and mirrors it to the
+// JSONL log.
+func (s *Store) AddWSFrame(ex *Exchange, f WSFrame) {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	ex.WSFrameCount++
+	if len(ex.WSFrames) < MaxWSFrames {
+		ex.WSFrames = append(ex.WSFrames, f)
+	}
+	if s.jsonl != nil {
+		_ = json.NewEncoder(s.jsonl).Encode(struct {
+			Record     string `json:"record"`
+			ExchangeID int64  `json:"exchange_id"`
+			WSFrame
+			Data *Body `json:"data,omitempty"`
+		}{"ws_frame", ex.ID, f, EncodeBody(f.Data, nil)})
+	}
 }
 
 // Store is an in-memory, concurrency-safe audit log, optionally mirrored to a
@@ -163,7 +202,9 @@ func (s *Store) Exchanges(filter func(*Exchange) bool) []Exchange {
 	out := make([]Exchange, 0, len(s.exchanges))
 	for _, ex := range s.exchanges {
 		if filter == nil || filter(ex) {
-			out = append(out, *ex)
+			cp := *ex
+			cp.WSFrames = append([]WSFrame(nil), ex.WSFrames...)
+			out = append(out, cp)
 		}
 	}
 	return out

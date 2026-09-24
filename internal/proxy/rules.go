@@ -19,6 +19,7 @@ const (
 	ActSetRespHeader = "set-resp-header" // set response header Name=Value before returning to client
 	ActDelRespHeader = "del-resp-header" // remove response header Name
 	ActReplaceBody   = "replace-body"    // replace the response body with Value
+	ActThrottle      = "throttle"        // add Latency before forwarding and cap bodies at Kbps
 )
 
 // Rule is an interception rule. All non-empty matchers must match.
@@ -32,12 +33,21 @@ type Rule struct {
 	Value  string `json:"value,omitempty"`  // header value / replacement body
 	Status int    `json:"status,omitempty"` // for block
 
+	// throttle: extra round-trip latency and bandwidth cap (kilobits/s) — the
+	// proxy-side equivalent of DevTools network throttling.
+	LatencyMS int `json:"latency_ms,omitempty"`
+	Kbps      int `json:"kbps,omitempty"`
+
 	hostRe, urlRe *regexp.Regexp
 }
 
 func (r *Rule) compile() error {
 	switch r.Action {
 	case ActBlock, ActReplaceBody:
+	case ActThrottle:
+		if r.LatencyMS <= 0 && r.Kbps <= 0 {
+			return fmt.Errorf("rule throttle requires latency= and/or kbps=")
+		}
 	case ActSetReqHeader, ActSetRespHeader, ActDelReqHeader, ActDelRespHeader:
 		if r.Name == "" {
 			return fmt.Errorf("rule %s requires name=", r.Action)
@@ -92,6 +102,12 @@ func (r *Rule) String() string {
 	if r.Status != 0 {
 		parts = append(parts, "status="+strconv.Itoa(r.Status))
 	}
+	if r.LatencyMS != 0 {
+		parts = append(parts, fmt.Sprintf("latency=%dms", r.LatencyMS))
+	}
+	if r.Kbps != 0 {
+		parts = append(parts, "kbps="+strconv.Itoa(r.Kbps))
+	}
 	return fmt.Sprintf("#%d %s", r.ID, strings.Join(parts, " "))
 }
 
@@ -99,6 +115,7 @@ func (r *Rule) String() string {
 //
 //	block host=^ads\.example\.com$ status=451
 //	set-req-header url=/api/ name=X-Debug value="1"
+//	throttle host=example\.com latency=400ms kbps=1600
 func ParseRule(line string) (Rule, error) {
 	toks, err := splitArgs(line)
 	if err != nil {
@@ -127,6 +144,16 @@ func ParseRule(line string) (Rule, error) {
 		case "status":
 			if r.Status, err = strconv.Atoi(v); err != nil {
 				return Rule{}, fmt.Errorf("status: %w", err)
+			}
+		case "latency":
+			d, err := parseMillis(v)
+			if err != nil {
+				return Rule{}, fmt.Errorf("latency: %w", err)
+			}
+			r.LatencyMS = d
+		case "kbps":
+			if r.Kbps, err = strconv.Atoi(v); err != nil || r.Kbps < 0 {
+				return Rule{}, fmt.Errorf("kbps: expected a positive integer, got %q", v)
 			}
 		default:
 			return Rule{}, fmt.Errorf("unknown rule key %q", k)

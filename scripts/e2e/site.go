@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"html"
+	"io"
 	"net/http"
 	"net/http/httptest"
 	"net/url"
@@ -99,6 +100,10 @@ type seenRequest struct {
 
 type site struct {
 	*httptest.Server
+	// XO is a second origin (same host, other port) serving the same pages,
+	// used as a cross-origin iframe.
+	XO   *httptest.Server
+	p6   phase6
 	mu   sync.Mutex
 	seen []seenRequest
 }
@@ -158,26 +163,33 @@ func newSite() *site {
 	mux.HandleFunc("/blocked", func(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprint(w, "this must never be served: the proxy blocks it")
 	})
-	s.Server = httptest.NewTLSServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		// record the body without consuming it for the handler
+	s.p6.register(mux, func() string { return s.XO.URL })
+	handler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		// record (the start of) the body without consuming it for the handler
 		var body strings.Builder
 		if r.Body != nil {
 			buf := make([]byte, 4096)
-			n, _ := r.Body.Read(buf)
+			n, _ := io.ReadFull(r.Body, buf)
 			body.Write(buf[:n])
-			r.Body = readCloser{strings.NewReader(body.String())}
+			r.Body = struct {
+				io.Reader
+				io.Closer
+			}{io.MultiReader(strings.NewReader(body.String()), r.Body), r.Body}
 		}
 		s.mu.Lock()
 		s.seen = append(s.seen, seenRequest{Method: r.Method, Path: r.URL.Path, Header: r.Header.Clone(), Body: body.String()})
 		s.mu.Unlock()
 		mux.ServeHTTP(w, r)
-	}))
+	})
+	s.Server = httptest.NewTLSServer(handler)
+	s.XO = httptest.NewTLSServer(handler) // same test certificate, so -upstream-ca covers both
 	return s
 }
 
-type readCloser struct{ *strings.Reader }
-
-func (readCloser) Close() error { return nil }
+func (s *site) Close() {
+	s.Server.Close()
+	s.XO.Close()
+}
 
 func (s *site) requests(path string) []seenRequest {
 	s.mu.Lock()

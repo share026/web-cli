@@ -46,6 +46,8 @@ const requestTimeout = 15 * time.Second
 
 const helpText = `Targets (<target>): a hint number from 'list'/'hints', css=<selector>, or any text
 naming the element (label, placeholder, button text, ...; matched with fzf).
+Elements inside iframes (also cross-origin) and open shadow roots are included;
+css= selectors are tried in every frame and shadow root.
 Quote arguments with spaces ("Sign in"); $VAR / ${VAR} expand environment variables.
 
 browser session
@@ -72,6 +74,8 @@ elements and input
                                  ArrowDown, PageDown, ... or a single character
   submit [target]                submit the form of the target / focused element
   focus <target> | scroll <down|up|top|bottom|target>
+  upload <target> <file>...      set the files of an <input type=file> (also hidden ones via
+                                 css=, or their label/button) or drop them on a drop zone
   waitfor <target|text=..|url=regexp|title=..> [timeout]
   sleep <duration> | timeout [duration]   (element wait, default 10s)
 
@@ -81,6 +85,8 @@ page content
   source [file]                  rendered DOM of the page (after JavaScript)
   eval <javascript>              evaluate in the page like the DevTools console
   screenshot [file]              PNG of the visible area
+  timing [file.json]             load timing: dns/connect/tls/ttfb, DOMContentLoaded, load,
+                                 FCP/LCP and the slowest resources (Navigation/Resource Timing)
   storage dump [file] | storage import <file>    localStorage + sessionStorage
   cookies dump [file] [url] | cookies import <file>
 
@@ -88,6 +94,8 @@ network (MITM proxy)
   log [n]                        last n captured requests (default 20)
   show <id>                      headers and bodies of one request/response
   body <id> [file]               response body (decompressed), e.g. the served HTML
+  ws [id] [n]                    WebSocket connections / their last n messages (both
+                                 directions, fragments joined, permessage-deflate inflated)
   actions                        DOM actions and how many requests each caused
   export [file] [action=<id>] [host=<regexp>]
                                  captured requests as a .http file (kulala.nvim / REST Client)
@@ -96,6 +104,8 @@ network (MITM proxy)
                                    rule add set-req-header url=/api/ name=X-Debug value=1
                                    rule add set-resp-header host=example name=X-Audited value=yes
                                    rule add replace-body url=/config.json value="{}"
+                                   rule add throttle host=example latency=400ms kbps=1600
+                                     (extra latency per request, bandwidth cap in kbit/s)
   rule list | rule del <id> | rule load <file.json>
   ca                             CA certificate path and SPKI hash
 
@@ -159,6 +169,8 @@ func (a *App) exec(line string) (quit bool, err error) {
 		for _, ex := range exs {
 			fmt.Println(summary(ex))
 		}
+	case "ws", "websocket":
+		return false, a.cmdWS(args[1:])
 	case "export":
 		return false, a.cmdExport(args[1:])
 	case "cookies":

@@ -187,6 +187,17 @@ func (p *Proxy) onRequest(req *http.Request, ctx *goproxy.ProxyCtx) (*http.Reque
 			break
 		}
 	}
+	if resp == nil {
+		if th := throttleFor(p.opt.Rules.Matching(req)); th.latency > 0 || th.kbps > 0 {
+			ex.Intercepts = append(ex.Intercepts, th.note)
+			// Latency is applied once per request before it goes upstream; the
+			// bandwidth cap applies to the request and response bodies.
+			time.Sleep(th.latency)
+			if th.kbps > 0 && req.Body != nil && req.Body != http.NoBody {
+				req.Body = &throttledBody{rc: req.Body, bps: th.kbps * 1000 / 8}
+			}
+		}
+	}
 	// Record the request exactly as it is forwarded (after rules, without the audit header).
 	ex.ReqHeader = req.Header.Clone()
 	p.opt.Store.Begin(ex)
@@ -240,9 +251,31 @@ func (p *Proxy) onResponse(resp *http.Response, ctx *goproxy.ProxyCtx) *http.Res
 		e.Intercepts = append(e.Intercepts, notes...)
 	})
 
+	// WebSocket upgrade: goproxy needs resp.Body to stay an io.ReadWriter, so
+	// tap it instead of wrapping it in captureBody. The exchange is finished
+	// when the connection ends.
+	if resp.StatusCode == http.StatusSwitchingProtocols {
+		if rw, ok := resp.Body.(io.ReadWriteCloser); ok {
+			resp.Body = newWSTap(rw, resp.Header,
+				func(f audit.WSFrame) { p.opt.Store.AddWSFrame(ex, f) },
+				func(err error) {
+					p.opt.Store.Finish(ex, func(e *audit.Exchange) {
+						e.Duration = time.Since(e.Start)
+						if err != nil && e.Error == "" {
+							e.Error = "websocket: " + err.Error()
+						}
+					})
+				})
+			return resp
+		}
+	}
+
 	if resp.Body == nil || resp.Body == http.NoBody {
 		p.opt.Store.Finish(ex, func(e *audit.Exchange) { e.Duration = time.Since(e.Start) })
 		return resp
+	}
+	if th := throttleFor(p.opt.Rules.Matching(ctx.Req)); th.kbps > 0 {
+		resp.Body = &throttledBody{rc: resp.Body, bps: th.kbps * 1000 / 8}
 	}
 	// Tee the body as it streams to the client; finish the record at EOF/Close.
 	resp.Body = &captureBody{rc: resp.Body, max: p.opt.MaxBody, done: func(b []byte, truncated bool, err error) {

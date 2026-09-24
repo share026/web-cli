@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
   "name": "web-cli bridge",
-  "version": "0.2.0",
-  "description": "Bridges the page to the web-cli terminal app: visible-element hints, clicks, form input, navigation, eval, screenshots, storage, cookies, recording and audit action IDs.",
+  "version": "0.3.0",
+  "description": "Bridges the page to the web-cli terminal app: visible-element hints (incl. iframes and shadow DOM), clicks, form input, file upload, navigation, eval, screenshots, timing, storage, cookies, recording and audit action IDs.",
   "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAq3Daqj4FkMNV6U+GjPBnO55opYdhqSu8ksuLehbS3BVOpCcV1RUZ3GvuplxoyrApS19GBjdZBsAlNS067eHDAhqI8zLWxZWs03jb1SrKoy5VgFT98waAArhq2ecyxtlZH8EMZ6nkVnwDqJ6tqjnhcpWbvuFYLoIYzNiJwgdWDyh3tqeoYkcWJSZaszlswF5NbD/m5TyEoMGGztrVusNpm0BxIL8K3hpU8G6Myev+ZX4guIM/p5fSNISA/T3e8ZbxvbkeLIZoHqFmOaBjuzRGKq6D0R97NuFVf5cjHA6g/2BQ6Mqmbdbd2G+zPVGKbAigOGauwX6dN/a2uz5L0MMFawIDAQAB",
   "minimum_chrome_version": "116",
   "permissions": ["nativeMessaging", "tabs", "scripting", "cookies", "declarativeNetRequest", "storage", "debugger"],
@@ -13,7 +13,8 @@
       "matches": ["<all_urls>"],
       "js": ["content.js"],
       "run_at": "document_idle",
-      "all_frames": false
+      "all_frames": true,
+      "match_origin_as_fallback": true
     }
   ]
 }

@@ -40,6 +40,10 @@ const (
 	TypeRecord           = "record" // start/stop recording real user input
 	TypeRecordResult     = "record_result"
 	TypeRecordEvent      = "record_event" // ext -> app: one recorded user action (no reply)
+	TypeUploadChunk      = "upload_chunk" // app -> ext: part of a file for 'upload' (<=512 KB base64)
+	TypeUploadResult     = "upload_chunk_result"
+	TypeTiming           = "timing" // navigation/paint/resource timing of the active tab
+	TypeTimingResult     = "timing_result"
 )
 
 // Message is the envelope used on every hop (extension <-> nm-host <-> app).

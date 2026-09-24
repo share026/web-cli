@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"io"
 	"os"
 	"os/exec"
@@ -85,6 +86,40 @@ func TestBridgeLikeChrome(t *testing.T) {
 	r, err := hub.Request(ctx, ipc.TypeCollect, nil)
 	if err != nil || r.Type != "elements" {
 		t.Fatalf("collect via bridge: %+v %v", r, err)
+	}
+
+	// A >1 MB message must never reach Chrome (it would drop the port): the
+	// host answers the app with an error for that request ID instead, and the
+	// bridge keeps working.
+	events := make(chan ipc.Message, 1)
+	hub.OnEvent = func(_ *ipc.Session, m ipc.Message) { events <- m }
+	big, _ := ipc.NewMessage("big1", ipc.TypeDOM, map[string]string{"data": strings.Repeat("A", ipc.MaxToBrowser)})
+	if err := s.Send(big); err != nil {
+		t.Fatal(err)
+	}
+	select {
+	case m := <-events:
+		if m.ID != "big1" || m.Type != ipc.TypeError || !strings.Contains(m.Error, "1MB native messaging limit") {
+			t.Fatalf("oversized reply: %+v", m)
+		}
+	case <-time.After(3 * time.Second):
+		t.Fatal("no error reply for the oversized message")
+	}
+	if _, err := hub.Request(ctx, ipc.TypeCollect, map[string]string{"data": strings.Repeat("A", ipc.MaxToBrowser)}); !errors.Is(err, ipc.ErrTooLarge) {
+		t.Fatalf("hub must refuse oversized requests locally, got %v", err)
+	}
+	go func() {
+		raw, err := ipc.ReadNativeMessage(stdout)
+		if err != nil {
+			return
+		}
+		var req ipc.Message
+		json.Unmarshal(raw, &req)
+		reply, _ := json.Marshal(ipc.Message{ID: req.ID, Type: "pong"})
+		ipc.WriteNativeMessage(stdin, reply)
+	}()
+	if _, err := hub.Request(ctx, ipc.TypePing, nil); err != nil {
+		t.Fatalf("bridge broken after refusing a large message: %v", err)
 	}
 
 	// Chrome closing the port (stdin EOF) terminates the host cleanly.

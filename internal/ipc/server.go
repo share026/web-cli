@@ -252,6 +252,11 @@ func (h *Hub) RequestOn(ctx context.Context, s *Session, typ string, payload any
 	if err != nil {
 		return Message{}, err
 	}
+	// Chrome accepts at most 1 MB per native message from the host; larger
+	// data (file uploads) must be chunked by the caller.
+	if size := len(m.Payload) + len(m.ID) + len(typ) + 64; size > MaxToBrowser {
+		return Message{}, fmt.Errorf("%s request of ~%d bytes exceeds the 1MB native messaging limit: %w", typ, size, ErrTooLarge)
+	}
 	ch := make(chan Message, 1)
 	h.mu.Lock()
 	h.pending[m.ID] = ch

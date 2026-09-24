@@ -18,6 +18,49 @@
 
   let hints = new Map();
 
+  // --- open shadow roots ----------------------------------------------------
+  // Web components keep their controls in shadow trees that querySelector
+  // does not enter. Collection and css= targets search every open shadow
+  // root too (closed roots are unreachable by design).
+
+  function shadowRoots(root = document, out = []) {
+    for (const el of root.querySelectorAll("*")) {
+      if (el.shadowRoot) {
+        out.push(el.shadowRoot);
+        shadowRoots(el.shadowRoot, out);
+      }
+    }
+    return out;
+  }
+
+  function deepQueryAll(sel) {
+    const out = Array.from(document.querySelectorAll(sel));
+    for (const r of shadowRoots()) out.push(...r.querySelectorAll(sel));
+    return out;
+  }
+
+  function deepQuery(sel) {
+    const el = document.querySelector(sel);
+    if (el) return el;
+    for (const r of shadowRoots()) {
+      const e = r.querySelector(sel);
+      if (e) return e;
+    }
+    return null;
+  }
+
+  // contains() across shadow boundaries (hit may be inside el's shadow tree).
+  function composedContains(el, node) {
+    for (let n = node; n; n = n.parentNode || n.host) if (n === el) return true;
+    return false;
+  }
+
+  function deepActiveElement() {
+    let a = document.activeElement;
+    while (a && a.shadowRoot && a.shadowRoot.activeElement) a = a.shadowRoot.activeElement;
+    return a;
+  }
+
   // --- visibility (Vimium C style) ---------------------------------------
 
   function viewport() {
@@ -81,7 +124,7 @@
     for (const [x, y] of points) {
       const hit = deepElementFromPoint(x, y);
       if (!hit) continue;
-      if (hit === el || el.contains(hit)) return true;
+      if (hit === el || composedContains(el, hit)) return true;
       if (hit instanceof HTMLLabelElement && hit.control === el) return true;
     }
     return false;
@@ -109,7 +152,9 @@
   function labelText(el) {
     const ids = el.getAttribute("aria-labelledby");
     if (ids) {
-      const t = ids.split(/\s+/).map((id) => document.getElementById(id)).filter(Boolean)
+      const root = el.getRootNode();
+      const byId = (id) => (root.getElementById ? root.getElementById(id) : document.getElementById(id));
+      const t = ids.split(/\s+/).map(byId).filter(Boolean)
         .map((n) => n.innerText).join(" ");
       if (t.trim()) return t;
     }
@@ -128,7 +173,10 @@
   // reload (ids / name / test ids first, nth-of-type path as a fallback).
   function selectorFor(el) {
     const esc = CSS.escape;
-    const unique = (sel) => { try { return document.querySelectorAll(sel).length === 1; } catch { return false; } };
+    // Inside a shadow tree the selector is relative to its shadow root; css=
+    // targets search shadow roots, so it resolves the same way on replay.
+    const root = el.getRootNode();
+    const unique = (sel) => { try { return root.querySelectorAll(sel).length === 1; } catch { return false; } };
     const tag = el.tagName.toLowerCase();
     if (el.id && !/^\d|\d{5,}/.test(el.id) && unique("#" + esc(el.id))) return "#" + esc(el.id);
     for (const attr of ["name", "data-testid", "data-test", "data-qa", "aria-label", "placeholder"]) {
@@ -199,12 +247,35 @@
     return { left: b.left, top: b.top, right: b.right, bottom: b.bottom };
   }
 
+  // Child frames for the background to descend into: frame ID
+  // (chrome.runtime.getFrameId), the content-box origin in this frame's
+  // viewport, and the visible part of the frame (for viewport scope).
+  function childFrames(scope) {
+    if (typeof chrome.runtime.getFrameId !== "function") return [];
+    const out = [];
+    for (const f of deepQueryAll("iframe, frame")) {
+      const r = scope === "page" ? pageRect(f) : isHintable(f);
+      if (!r) continue;
+      let id;
+      try { id = chrome.runtime.getFrameId(f); } catch { continue; }
+      if (typeof id !== "number" || id < 0) continue;
+      const b = f.getBoundingClientRect();
+      const cs = getComputedStyle(f);
+      out.push({
+        frame_id: id,
+        box: { x: b.left + f.clientLeft + parseFloat(cs.paddingLeft || 0), y: b.top + f.clientTop + parseFloat(cs.paddingTop || 0) },
+        clip: { x: r.left, y: r.top, w: r.right - r.left, h: r.bottom - r.top },
+      });
+    }
+    return out;
+  }
+
   function collect(scope) {
-    for (const old of document.querySelectorAll(`[${HINT_ATTR}]`)) old.removeAttribute(HINT_ATTR);
+    for (const old of deepQueryAll(`[${HINT_ATTR}]`)) old.removeAttribute(HINT_ATTR);
     hints = new Map();
     const elements = [];
     let n = 0;
-    for (const el of document.querySelectorAll(SELECTOR)) {
+    for (const el of deepQueryAll(SELECTOR)) {
       const r = scope === "page" ? pageRect(el) : isHintable(el);
       if (!r) continue;
       n++;
@@ -216,7 +287,20 @@
         rect: { x: r.left, y: r.top, w: r.right - r.left, h: r.bottom - r.top },
       });
     }
-    return { ok: true, url: location.href, title: document.title, elements };
+    // Styled upload buttons: the real <input type=file> is usually hidden and
+    // only its <label> is visible - list the label so 'upload "Choose file" ...'
+    // (and clicking it) can target it by text.
+    for (const label of deepQueryAll("label")) {
+      const c = label.control;
+      if (!(c instanceof HTMLInputElement) || c.type !== "file" || c.hasAttribute(HINT_ATTR) || c.disabled) continue;
+      const r = scope === "page" ? pageRect(label) : isHintable(label);
+      if (!r) continue;
+      n++;
+      label.setAttribute(HINT_ATTR, String(n));
+      hints.set(n, label);
+      elements.push({ hint: n, ...describe(label), type: "file", rect: { x: r.left, y: r.top, w: r.right - r.left, h: r.bottom - r.top } });
+    }
+    return { ok: true, url: location.href, title: document.title, elements, frames: childFrames(scope) };
   }
 
   function isFocusTarget(el) {
@@ -274,7 +358,7 @@
       el = hints.get(Number(target.hint)) || document.querySelector(`[${HINT_ATTR}="${Number(target.hint)}"]`);
       if (!el || !el.isConnected) throw new Error(`hint ${target.hint} is stale; run 'list' again`);
     } else if (target.css) {
-      el = document.querySelector(target.css);
+      el = deepQuery(target.css);
       if (!el) throw new Error(`not found: css=${target.css}`);
     }
     return el;
@@ -348,9 +432,9 @@
   }
 
   function focusables() {
-    return Array.from(document.querySelectorAll(
+    return deepQueryAll(
       "a[href], button, input, select, textarea, [tabindex], [contenteditable=true]",
-    )).filter((e) => !e.disabled && e.tabIndex >= 0 && pageRect(e) && !(e instanceof HTMLInputElement && e.type === "hidden"));
+    ).filter((e) => !e.disabled && e.tabIndex >= 0 && pageRect(e) && !(e instanceof HTMLInputElement && e.type === "hidden"));
   }
 
   function defaultButton(form) {
@@ -369,7 +453,7 @@
   // press: key events on the target (or the focused element) plus the default
   // action a real key would have, since synthetic events have none.
   function press(el, key) {
-    el = el || document.activeElement || document.body;
+    el = el || deepActiveElement() || document.body;
     const down = keyEvent(el, "keydown", key);
     if (key.length === 1 || key === "Enter") keyEvent(el, "keypress", key);
     let did = "";
@@ -415,6 +499,88 @@
   // Ops that change the page reply first and act on the next task, because
   // they may navigate and tear down this document (and the reply channel).
   function later(fn) { setTimeout(fn, 0); }
+
+  // --- file upload ------------------------------------------------------------
+  // A page cannot open the OS file chooser programmatically, but an
+  // <input type=file>'s FileList can be replaced with a DataTransfer's list;
+  // frameworks then see the same input/change events as after a real choice.
+  // Non-input targets (drop zones) receive dragenter/dragover/drop instead.
+
+  function b64Bytes(b64) {
+    const bin = atob(b64);
+    const out = new Uint8Array(bin.length);
+    for (let i = 0; i < bin.length; i++) out[i] = bin.charCodeAt(i);
+    return out;
+  }
+
+  function upload(el, specs) {
+    const files = specs.map((f) => new File([b64Bytes(f.data || "")], f.name,
+      { type: f.mime || "application/octet-stream", lastModified: f.last_modified || Date.now() }));
+    const dt = new DataTransfer();
+    for (const f of files) dt.items.add(f);
+    const names = files.map((f) => f.name);
+    const bytes = files.reduce((n, f) => n + f.size, 0);
+    // A label or wrapper of a (often hidden) file input: use the input.
+    let input = el instanceof HTMLInputElement && el.type === "file" ? el : null;
+    if (!input && el instanceof HTMLLabelElement && el.control instanceof HTMLInputElement && el.control.type === "file") input = el.control;
+    if (!input && el.querySelector) input = el.querySelector("input[type=file]");
+    if (input) {
+      if (!input.multiple && files.length > 1) throw new Error("this file input accepts a single file (no 'multiple' attribute)");
+      input.files = dt.files;
+      input.dispatchEvent(new Event("input", { bubbles: true, composed: true }));
+      input.dispatchEvent(new Event("change", { bubbles: true }));
+      return result(input, { kind: "upload", files: names, length: bytes });
+    }
+    const r = el.getBoundingClientRect();
+    const init = { bubbles: true, cancelable: true, composed: true, dataTransfer: dt, clientX: r.left + r.width / 2, clientY: r.top + r.height / 2 };
+    for (const type of ["dragenter", "dragover", "drop"]) el.dispatchEvent(new DragEvent(type, init));
+    return result(el, { kind: "drop", files: names, length: bytes });
+  }
+
+  // --- load timing (Navigation/Paint/Resource Timing APIs) --------------------
+
+  function timing() {
+    const nav = performance.getEntriesByType("navigation")[0];
+    const ms = (v) => (typeof v === "number" && v > 0 ? Math.round(v * 10) / 10 : 0);
+    const out = { ok: true, url: location.href, title: document.title };
+    if (nav) {
+      out.navigation = {
+        type: nav.type, protocol: nav.nextHopProtocol,
+        redirect: ms(nav.redirectEnd - nav.redirectStart),
+        dns: ms(nav.domainLookupEnd - nav.domainLookupStart),
+        connect: ms(nav.connectEnd - nav.connectStart),
+        tls: nav.secureConnectionStart > 0 ? ms(nav.connectEnd - nav.secureConnectionStart) : 0,
+        ttfb: ms(nav.responseStart - nav.startTime),
+        response: ms(nav.responseEnd - nav.responseStart),
+        dom_interactive: ms(nav.domInteractive), dom_content_loaded: ms(nav.domContentLoadedEventEnd),
+        load: ms(nav.loadEventEnd), transfer_size: nav.transferSize, decoded_size: nav.decodedBodySize,
+      };
+    }
+    for (const p of performance.getEntriesByType("paint")) {
+      if (p.name === "first-paint") out.first_paint = ms(p.startTime);
+      if (p.name === "first-contentful-paint") out.fcp = ms(p.startTime);
+    }
+    // LCP is only exposed to observers; buffered entries are delivered on observe.
+    return new Promise((resolve) => {
+      let lcp = 0;
+      try {
+        const po = new PerformanceObserver((l) => { for (const e of l.getEntries()) lcp = Math.max(lcp, e.startTime); });
+        po.observe({ type: "largest-contentful-paint", buffered: true });
+        setTimeout(() => { po.disconnect(); finish(); }, 50);
+      } catch { finish(); }
+      function finish() {
+        if (lcp) out.lcp = ms(lcp);
+        const res = performance.getEntriesByType("resource");
+        out.resources = {
+          count: res.length,
+          transfer_size: res.reduce((n, r) => n + (r.transferSize || 0), 0),
+          slowest: res.slice().sort((a, b) => b.duration - a.duration).slice(0, 8)
+            .map((r) => ({ url: r.name, type: r.initiatorType, duration: ms(r.duration), transfer_size: r.transferSize || 0 })),
+        };
+        resolve(out);
+      }
+    });
+  }
 
   function dom(msg) {
     const t = msg.target;
@@ -462,13 +628,13 @@
       case "press": {
         const el = resolve(t);
         const key = String(msg.key || "Enter");
-        const target = el || document.activeElement || document.body;
+        const target = el || deepActiveElement() || document.body;
         const r = result(target, { kind: "press", key });
         later(() => press(target, key));
         return r;
       }
       case "submit": {
-        const el = resolve(t) || document.activeElement;
+        const el = resolve(t) || deepActiveElement();
         const form = el && (el instanceof HTMLFormElement ? el : el.form || el.closest("form"));
         if (!form) throw new Error("no form found for the target / focused element");
         const r = result(form, { kind: "submit" });
@@ -492,11 +658,26 @@
       case "exists": {
         let found = false;
         if (msg.text !== undefined) found = (document.body && document.body.innerText || "").includes(msg.text);
-        else if (t && t.css) found = !!document.querySelector(t.css);
+        else if (t && t.css) found = !!deepQuery(t.css);
         return { ok: true, found, url: location.href, title: document.title };
       }
       case "info":
         return { ok: true, url: location.href, title: document.title, ready_state: document.readyState };
+      case "upload":
+        return upload(need(t), msg.files || []);
+      case "focus_frame": {
+        // Which child frame holds the focus (for press/submit without a target)?
+        const a = deepActiveElement();
+        let id = null;
+        if (a && (a instanceof HTMLIFrameElement || a.tagName === "FRAME") && chrome.runtime.getFrameId) {
+          try { id = chrome.runtime.getFrameId(a); } catch { id = null; }
+        }
+        return { ok: true, frame_id: typeof id === "number" && id >= 0 ? id : null };
+      }
+      case "frames":
+        return { ok: true, url: location.href, frames: childFrames("page") };
+      case "timing":
+        return timing();
       case "storage_get":
         return { ok: true, origin: location.origin, local: storageDump(localStorage), session: storageDump(sessionStorage) };
       case "storage_set": {
@@ -537,28 +718,30 @@
 
   function onRecClick(e) {
     if (!rec || !e.isTrusted) return;
-    const el = e.target instanceof Element && e.target.closest(SELECTOR);
+    // e.target is retargeted to the shadow host; the real node is first in the composed path
+    const origin = (e.composedPath && e.composedPath()[0]) || e.target;
+    const el = origin instanceof Element && origin.closest(SELECTOR);
     if (!el || el instanceof HTMLSelectElement || isTextField(el)) return;
     if (el instanceof HTMLInputElement && ["checkbox", "radio"].includes(el.type)) {
       emit(el.checked ? "check" : "uncheck", el);
       return;
     }
     // flush a text field whose change event has not fired yet
-    const a = document.activeElement;
+    const a = deepActiveElement();
     if (a && a !== el && isTextField(a) && !a.isContentEditable) recordValue(a);
     emit("click", el);
   }
 
   function onRecChange(e) {
     if (!rec || !e.isTrusted) return;
-    const el = e.target;
+    const el = (e.composedPath && e.composedPath()[0]) || e.target;
     if (el instanceof HTMLSelectElement) emit("select", el, { value: el.selectedOptions[0] ? el.selectedOptions[0].text.trim() : el.value });
     else if (isTextField(el) && !el.isContentEditable) recordValue(el);
   }
 
   function onRecKey(e) {
     if (!rec || !e.isTrusted || e.key !== "Enter") return;
-    const el = e.target;
+    const el = (e.composedPath && e.composedPath()[0]) || e.target;
     if (el instanceof HTMLInputElement && FOCUS_INPUT_TYPES.has(el.type)) {
       recordValue(el);
       emit("press", el, { key: "Enter" });
@@ -585,9 +768,15 @@
         case "click":
           sendResponse(click(msg.hint));
           break;
-        case "dom":
-          sendResponse(dom(msg));
+        case "dom": {
+          const r = dom(msg);
+          if (r && typeof r.then === "function") {
+            r.then(sendResponse, (e) => sendResponse({ ok: false, error: String((e && e.message) || e) }));
+            return true; // reply asynchronously
+          }
+          sendResponse(r);
           break;
+        }
         case "record_state":
           setRecording(msg.state);
           sendResponse({ ok: true });
