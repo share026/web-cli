@@ -115,7 +115,34 @@ docs/               本書, PROGRESS.md, evidence/（テスト実行ログ）
 | `click` | app → 拡張 | `{"hint":2,"tag":true}`（`tag`: プロキシ稼働中ならアクション ID ヘッダを付与） | `click_result` `{"action_id":"<UUID>","kind":"click"\|"focus","hint","tag","text","url"}` |
 | `cookies_get` | app → 拡張 | `{"url"?: "https://…"}`（省略時アクティブタブ） | `cookies` `{"url","cookies":[chrome.cookies.Cookie…]}` |
 | `cookies_set` | app → 拡張 | `{"cookies":[chrome.cookies.SetDetails…]}` | `cookies_set_result` `{"set":1,"errors":[]}` |
+| `dom` | app → 拡張 | `{"op", "target"?: {"hint":n}\|{"css":"…"}, "tag", …}`。op: `click` `focus` `type{text}` `clear` `select{value}` `check{on}` `press{key}` `submit` `scroll{to}` `text` `html` `exists{text}` `info` `storage_get` `storage_set{local,session}` | `dom_result` `{op, action_id?（変更系のみ）, kind, tag, type, text, selector, url, title, value, html, local, session, …}` |
+| `collect` | app → 拡張 | `{"scope":"page"}` でビューポート外も対象（名前による要素指定の解決用） | `elements`（同上） |
+| `navigate` | app → 拡張 | `{"action":"open"\|"back"\|"forward"\|"reload","url"?,"new_tab"?,"tag"}` | `nav_result` `{action, action_id, tab_id, url, title}`（読み込み完了後） |
+| `tabs` | app → 拡張 | `{"op":"list"\|"select"\|"close","id"?}` | `tabs_result` `{"tabs":[{id,window_id,active,url,title}]}` |
+| `eval` | app → 拡張 | `{"code":"…"}` | `eval_result` `{type, value, via:"main-world"\|"debugger"}` |
+| `screenshot` | app → 拡張 | なし | `screenshot_result` `{url, title, png_base64}` |
+| `record` | app → 拡張 | `{"on":bool,"secrets":bool}` | `record_result` `{on, secrets, url, title}` |
+| `record_event` | 拡張 → app | `{op:"click"\|"type"\|"select"\|"check"\|"uncheck"\|"press", selector, tag, type, text, url, value?, secret, key?}` | なし（app が記録ファイルへ書く） |
 | `error` | どちらでも | — | `{"id":"<要求 id>","type":"error","error":"…"}` |
+
+### 3.4.1 ページ操作の実装メモ
+
+- **入力**: `type` / `select` は、要素の prototype が持つ value セッターで値を設定し、`input` / `change` イベントを発火する。React / Vue などのフレームワークが監視している値の変更として扱われる。content script は隔離された実行環境（isolated world）で動くため、ページ側の JS に上書きされない。
+- **キー**: 合成したキーイベントでは、ブラウザ本来の動作（Enter でフォーム送信など）が起きない。そのため `press` はイベント発火に加えて、本来の動作を明示的に実行する。
+  - Enter: 入力欄なら `form.requestSubmit(既定の送信ボタン)`、ボタンやリンクならクリック
+  - Tab: フォーカスを次の要素へ移す
+  - Space: チェックボックスやボタンをクリック
+- **要素指定**:
+  - 名前で指定した場合: `collect{scope:"page"}` の一覧から `fzf --filter` で最良一致を選ぶ。ラベルは `<label for>`、要素を囲む `<label>`、`aria-labelledby` から取得する。
+  - 見つからない場合: 要素が現れるまで最大 10 秒待つ（`timeout` で変更可）。
+- **記録**: `isTrusted` のイベント（人の操作）だけを記録する。web-cli 自身の合成イベントは二重に記録しない。
+  - セレクタ: id → name / data-testid / aria-label / placeholder → nth-of-type のパス、の順で一意になるものを使う。
+  - パスワード: 値は保存せず `$WEBCLI_PASSWORD` と書く。
+- **back / forward**:
+  - `chrome.tabs.goBack` はブラウザの戻るボタンと同じく、ユーザー操作のなかったページを飛ばす（Chrome の history manipulation intervention）。自動操作で開いたページはすべて該当するため、数ページ前まで戻ってしまう。
+  - そのため、ページ内の `history.back()` / `history.forward()` で 1 つずつ移動する。
+- **eval**: まずページの MAIN world で間接 eval を実行する。CSP で eval が禁止されているページでは、`chrome.debugger` の `Runtime.evaluate` にフォールバックする。
+- **本文**: プロキシが記録した本文は gzip / deflate / br / zstd を展開して表示する（`show` / `body`）。
 
 ### 3.5 シーケンス
 
@@ -241,4 +268,4 @@ web-cli> cookies dump     # audit-out/cookies.json
 - `--user-data-dir` を指定した場合、Linux の Chromium はホスト定義を `<user-data-dir>/NativeMessagingHosts/` から探す（`scripts/install-host.sh <user-data-dir>`）。
 - Chromium 137 以降でコマンドラインから拡張機能を読み込む場合は `--disable-features=DisableLoadExtensionCommandLineSwitch` が必要。
 - ブラウザは自分の stderr を nm-host に引き継ぐ。stderr が読み手のいないパイプでも nm-host が落ちないよう、SIGPIPE を無視している。ログは `WEBCLI_NMHOST_LOG` に確実に残る。
-- 動作確認済み: CloakBrowser 146.0.7680.177（Chromium 146）、real E2E 32/32（`docs/evidence/ci/`）。
+- 動作確認済み: CloakBrowser 146.0.7680.177（Chromium 146）、real E2E 57/57（画面あり・`--headless` とも、`docs/evidence/ci/`）。

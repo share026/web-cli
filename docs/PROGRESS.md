@@ -9,6 +9,7 @@
 | 2 | Vimium C 方式 DOM 収集 & fzf (TTY) 連携 | ✅ 完了 | fzf 実バイナリ 2件（filter / PTY 対話）+ E2E 10項目 |
 | 3 | Go 100% ローカル MITM プロキシ | ✅ 完了 | httptest+実 curl 4件 + github.com 実通信デモ + E2E 8項目 |
 | 4 | コンテキスト紐付け・.http・Cookie | ✅ 完了 | ユニット 3件 + E2E 11項目（curl で .http 再生を含む） |
+| 5 | 実用機能: フォーム入力・遷移・ページ内容・eval・記録/再生（仕様書外の追加） | ✅ 完了 | ユニット 5件 + 実ブラウザ E2E 25項目 |
 
 **総合結果: `scripts/test-all.sh` → `ALL CHECKS PASSED`（ローカル + GitHub Actions 上の実ブラウザ CloakBrowser）**
 
@@ -19,8 +20,8 @@
 | ブラウザ | **CloakBrowser** `chromium-v146.0.7680.177.5`（Chromium 146.0.7680.177、公式 Release の `cloakbrowser-linux-x64.tar.gz`、GitHub API の digest `sha256 4a12bcde…670e` と `sha256sum -c` で一致確認） |
 | 実行場所 | `.github/workflows/e2e-cloakbrowser.yml`（ubuntu-latest + Xvfb、headed）。サンドボックスからは配布元（cloakbrowser.dev / GitHub のアセット CDN）に到達できないため、GitHub のランナーでダウンロード・検証・テストし、エビデンスをブランチへ自動コミットする方式にした |
 | 方式 | `-mode real`: Chromium 自身が `--load-extension=extension/` で拡張機能を読み込み、MV3 service worker が `chrome.runtime.connectNative` で `install-host.sh` 登録済みの **本物の `bin/nm-host` をブラウザが起動**。chrome.* の代替・CDP エミュレーションは一切なし |
-| ヘッドレス | **`--headless` でも real 32/32 PASS**（`evidence/ci/e2e-report-real-headless.md`）。ランナーには X サーバがないため（画面ありで起動すると "Missing X server" になることも確認済み）、画面なしで拡張機能の読み込みから nm-host 起動まで動いている。なお headless shell（`chrome-headless-shell`）は拡張機能非対応のため emulated モード専用 |
-| 結果 | **E2E real 32/32 PASS**、emulated 31/31 PASS、Go テスト全 PASS（`-race`）、PTY fzf PASS、curl プロキシデモ PASS |
+| ヘッドレス | **`--headless` でも real 57/57 PASS**（`evidence/ci/e2e-report-real-headless.md`）。ランナーには X サーバがないため（画面ありで起動すると "Missing X server" になることも確認済み）、画面なしで拡張機能の読み込みから nm-host 起動まで動いている。なお headless shell（`chrome-headless-shell`）は拡張機能非対応のため emulated モード専用 |
+| 結果 | **E2E real 57/57 PASS**（画面あり・ヘッドレスとも）、emulated 31/31 PASS、Go テスト全 PASS（`-race`）、PTY fzf PASS、curl プロキシデモ PASS |
 | エビデンス | [`evidence/ci/`](evidence/ci/)（`environment.txt` に run URL・コミット・ブラウザ版・digest、`e2e-report-real.md` 判定表、`e2e-sw-console-real.log` = service worker の console、`e2e-nm-host-real.log`、`sample-requests-real.http`、`sample-cookies-real.json` ほか） |
 
 実ブラウザで確認できたもの（`evidence/ci/e2e-report-real.md` より）: ping→pong（app→拡張の往復 約1.2ms）、Vimium C 方式の可視判定で期待 7 要素ちょうど、fzf 選択→クリック、クリック前に生成した UUID が declarativeNetRequest で `X-Audit-Action-Id` として付与され、プロキシで紐付け後に除去されて上流には届かないこと、`chrome.cookies.getAll/set` による HttpOnly/Secure Cookie のダンプ・インポート、ルールによるヘッダ注入・451 遮断、main_frame 遷移への action 付与、遷移後の content script 再注入、`.http` の出力と curl 再生。
@@ -199,11 +200,44 @@ d6c02512-d255-4cb5-8b18-898a1eed730b  click  2     <button> "Login"     1       
 
 ---
 
+## Phase 5: 実用機能（フォーム入力・ページ遷移・ページ内容・記録と再生）
+
+仕様書どおりの Phase 2 は「クリック」だけだったため、ログインフォームを埋めることすらできなかった。ユーザーの指摘を受けて、DevTools で日常的に使う操作を追加した。
+
+| 分類 | コマンド |
+|---|---|
+| 入力 | `type`（`$VAR` / `-` で画面に出さずに入力、値は出力しない）、`clear`、`select`、`check` / `uncheck`、`press <key>`（Enter でフォーム送信など、本来の動作も実行）、`submit`、`focus`、`scroll` |
+| 要素指定 | `list [all] [query]` の番号、`css=`、ラベルやボタンの文字（`fzf --filter`）。要素が現れるまで自動で待つ（`timeout`）。`waitfor text=/url=/title=/css=` |
+| ページ遷移・タブ | `open`、`back` / `forward` / `reload`、`url`、`tabs` / `tab` / `newtab` / `closetab` |
+| ページ内容 | `text`、`html`、`source`（JavaScript 実行後の DOM）、`eval`（CSP で禁止されたページは chrome.debugger で実行）、`screenshot`、`storage dump/import` |
+| 通信 | `show <id>`（ヘッダと本文）、`body <id> [file]`（サーバが返した本文。gzip / deflate / br / zstd を展開） |
+| 記録・再生 | `record start/stop`: ブラウザでの人の操作（isTrusted のイベント）と web-cli コマンドをスクリプト化する。パスワードは `$WEBCLI_PASSWORD` として書き出す。再生は `run <file>` / `bin/app -f <file>` |
+
+**実ブラウザ E2E（CloakBrowser、画面あり・ヘッドレスとも 25/25、`evidence/ci/e2e-report-real*.md` の Automation 行）**:
+- ラベル名で指定したメール欄とパスワード欄（`$E2E_PASSWORD`）への入力、国の選択、チェックボックス、Enter で送信
+- サーバが受け取ったフォームが完全一致: `email=alice%40example.com&password=…&country=jp&remember=on`
+- POST と 303 リダイレクトが Enter の action ID に紐付くこと
+- `show` で送信本文と `Location` が見えること
+- `body` はサーバが返した HTML（`static`）、`source` は JavaScript 実行後の DOM（`rendered by js`）で、両者が違うこと
+- `eval` の戻り値が JSON であること、CSP で eval が禁止されたページでは debugger 経由で `42` が返ること
+- `storage dump`（theme=dark）と PNG のスクリーンショット
+- back / forward / reload、newtab / tabs / closetab
+- **人の操作を CDP の Input イベント（trusted）で再現して記録**し、生成されたスクリプト（[`evidence/ci/sample-recording-real.webcli`](evidence/ci/sample-recording-real.webcli)）を `run` で再生すると、サーバに 2 回目のログインが届くこと（パスワードは環境変数から）
+- パスワードの値が web-cli の出力に出ないこと
+
+実ブラウザで見つかり、修正した問題:
+
+| # | 事象 | 原因 | 対応 |
+|---|---|---|---|
+| 12 | `back` で about:blank まで戻る | `chrome.tabs.goBack` は戻るボタンと同じく、ユーザー操作のなかった履歴を飛ばす（Chrome の history manipulation intervention） | ページ内の `history.back()` で 1 つずつ移動し、`tabs.goBack` はスクリプトを実行できないページ用に残す |
+| 13 | emulated モードで background.js が起動しない | 追加した `chrome.runtime.onMessage` がエミュレーションの代替 API に存在しない | `onMessage?.` でガード |
+| 14 | `waitfor text=Welcome alice@…` が失敗 | 空白の後ろをタイムアウトとして解釈していた | 末尾が時間として解釈できるときだけタイムアウトとして扱う |
+
 ## E2E 方式について（透明性のための記載）
 
 `scripts/e2e` は 2 モードを持つ。
 
-- **real**（`-mode real`、実ブラウザ）: 通常の Chromium ビルド（CI では CloakBrowser 146）が `--load-extension` で `extension/` を読み込み、`--user-data-dir/NativeMessagingHosts/com.share026.webcli.json` から `bin/nm-host` を**ブラウザ自身が起動**する。本番と同一経路で、エミュレーションなし。結果 32/32（`evidence/ci/e2e-report-real.md`）。
+- **real**（`-mode real`、実ブラウザ）: 通常の Chromium ビルド（CI では CloakBrowser 146）が `--load-extension` で `extension/` を読み込み、`--user-data-dir/NativeMessagingHosts/com.share026.webcli.json` から `bin/nm-host` を**ブラウザ自身が起動**する。本番と同一経路で、エミュレーションなし。結果 57/57（`evidence/ci/e2e-report-real.md`、Phase 5 の 25 項目を含む）。
 - **emulated**（`-mode emulated`、既定）: headless shell（拡張機能非対応）向け。
   - **本物のまま使うもの**: Blink（DOM・レイアウト・`elementFromPoint`・イベント）、HTTPS 通信とプロキシ、出荷するファイルそのままの `background.js` / `content.js`（content.js は CDP の isolated world で実行）、ホスト定義 JSON の検証、Chrome と同じ方式での `bin/nm-host` 起動、`bin/app`、`fzf`、goproxy。
   - **CDP で代替したもの**: chrome.* API のみ（`scripts/e2e/exthost.go`）。
@@ -244,7 +278,7 @@ go test -race ./...                                # ユニット/統合
 scripts/test-tty.sh                                # PTY 上の対話 fzf
 scripts/proxy-demo.sh [https://example.com/]       # curl -x による実サイト MITM
 CHROME_PATH=/path/to/chromium go run ./scripts/e2e # E2E emulated（31 項目）
-CHROME_PATH=/path/to/chrome xvfb-run go run ./scripts/e2e -mode real -headed  # 実ブラウザ（32 項目）
+CHROME_PATH=/path/to/chrome xvfb-run go run ./scripts/e2e -mode real -headed  # 実ブラウザ（57 項目）
 gh workflow run e2e-cloakbrowser --ref <branch>    # CloakBrowser で全検証 → docs/evidence/ci/
 CHROME_PATH=/path/to/chromium scripts/test-all.sh  # 上記すべて + docs/evidence/ 更新
 ```

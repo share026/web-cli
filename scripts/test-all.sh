@@ -46,6 +46,8 @@ if [[ -n "${CHROME_PATH:-}" ]]; then
     cp "$out/sw-console.log" "$ev/e2e-sw-console-$mode.log" 2>/dev/null
     cp "$out/audit/requests.http" "$ev/sample-requests-$mode.http" 2>/dev/null
     cp "$out/audit/cookies.json" "$ev/sample-cookies-$mode.json" 2>/dev/null
+    cp "$out/audit/login.webcli" "$ev/sample-recording-$mode.webcli" 2>/dev/null
+    cp "$out/audit/storage.json" "$ev/sample-storage-$mode.json" 2>/dev/null
   done
 else
   echo "CHROME_PATH not set: skipping e2e" | tee "$ev/e2e.log"
