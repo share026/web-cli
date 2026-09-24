@@ -10,6 +10,7 @@
 | 3 | Go 100% ローカル MITM プロキシ | ✅ 完了 | httptest+実 curl 4件 + github.com 実通信デモ + E2E 8項目 |
 | 4 | コンテキスト紐付け・.http・Cookie | ✅ 完了 | ユニット 3件 + E2E 11項目（curl で .http 再生を含む） |
 | 5 | 実用機能: フォーム入力・遷移・ページ内容・eval・記録/再生（仕様書外の追加） | ✅ 完了 | ユニット 5件 + 実ブラウザ E2E 25項目 |
+| 6 | iframe・Shadow DOM・ファイル添付・WebSocket・通信制限・読み込み時間（仕様書外の追加） | ✅ 完了 | ユニット 5件 + 実ブラウザ E2E 15項目 |
 
 **総合結果: `scripts/test-all.sh` → `ALL CHECKS PASSED`（ローカル + GitHub Actions 上の実ブラウザ CloakBrowser）**
 
@@ -20,8 +21,8 @@
 | ブラウザ | **CloakBrowser** `chromium-v146.0.7680.177.5`（Chromium 146.0.7680.177、公式 Release の `cloakbrowser-linux-x64.tar.gz`、GitHub API の digest `sha256 4a12bcde…670e` と `sha256sum -c` で一致確認） |
 | 実行場所 | `.github/workflows/e2e-cloakbrowser.yml`（ubuntu-latest + Xvfb、headed）。サンドボックスからは配布元（cloakbrowser.dev / GitHub のアセット CDN）に到達できないため、GitHub のランナーでダウンロード・検証・テストし、エビデンスをブランチへ自動コミットする方式にした |
 | 方式 | `-mode real`: Chromium 自身が `--load-extension=extension/` で拡張機能を読み込み、MV3 service worker が `chrome.runtime.connectNative` で `install-host.sh` 登録済みの **本物の `bin/nm-host` をブラウザが起動**。chrome.* の代替・CDP エミュレーションは一切なし |
-| ヘッドレス | **`--headless` でも real 57/57 PASS**（`evidence/ci/e2e-report-real-headless.md`）。ランナーには X サーバがないため（画面ありで起動すると "Missing X server" になることも確認済み）、画面なしで拡張機能の読み込みから nm-host 起動まで動いている。なお headless shell（`chrome-headless-shell`）は拡張機能非対応のため emulated モード専用 |
-| 結果 | **E2E real 57/57 PASS**（画面あり・ヘッドレスとも）、emulated 31/31 PASS、Go テスト全 PASS（`-race`）、PTY fzf PASS、curl プロキシデモ PASS |
+| ヘッドレス | **`--headless` でも real 72/72 PASS**（`evidence/ci/e2e-report-real-headless.md`）。ランナーには X サーバがないため（画面ありで起動すると "Missing X server" になることも確認済み）、画面なしで拡張機能の読み込みから nm-host 起動まで動いている。なお headless shell（`chrome-headless-shell`）は拡張機能非対応のため emulated モード専用 |
+| 結果 | **E2E real 72/72 PASS**（画面あり・ヘッドレスとも）、emulated 31/31 PASS、Go テスト全 PASS（`-race`）、PTY fzf PASS、curl プロキシデモ PASS |
 | エビデンス | [`evidence/ci/`](evidence/ci/)（`environment.txt` に run URL・コミット・ブラウザ版・digest、`e2e-report-real.md` 判定表、`e2e-sw-console-real.log` = service worker の console、`e2e-nm-host-real.log`、`sample-requests-real.http`、`sample-cookies-real.json` ほか） |
 
 実ブラウザで確認できたもの（`evidence/ci/e2e-report-real.md` より）: ping→pong（app→拡張の往復 約1.2ms）、Vimium C 方式の可視判定で期待 7 要素ちょうど、fzf 選択→クリック、クリック前に生成した UUID が declarativeNetRequest で `X-Audit-Action-Id` として付与され、プロキシで紐付け後に除去されて上流には届かないこと、`chrome.cookies.getAll/set` による HttpOnly/Secure Cookie のダンプ・インポート、ルールによるヘッダ注入・451 遮断、main_frame 遷移への action 付与、遷移後の content script 再注入、`.http` の出力と curl 再生。
@@ -233,11 +234,54 @@ d6c02512-d255-4cb5-8b18-898a1eed730b  click  2     <button> "Login"     1       
 | 13 | emulated モードで background.js が起動しない | 追加した `chrome.runtime.onMessage` がエミュレーションの代替 API に存在しない | `onMessage?.` でガード |
 | 14 | `waitfor text=Welcome alice@…` が失敗 | 空白の後ろをタイムアウトとして解釈していた | 末尾が時間として解釈できるときだけタイムアウトとして扱う |
 
+## Phase 6: iframe・Shadow DOM・ファイル添付・WebSocket・通信制限・読み込み時間
+
+Phase 5 の報告で「まだできないこと」として挙げたものを実装した。
+
+| 分類 | 内容 |
+|---|---|
+| iframe | 別オリジンを含む iframe 内の要素を `list` に通し番号で表示（`(frame URL)` 付き）。名前・番号・`css=` で操作でき、対象なしの `press` / `submit` はフォーカスのある iframe で実行する |
+| Shadow DOM | open shadow root 内の要素の収集・`css=`・ラベル解決・フォーカス・記録 |
+| ファイル添付 | `upload <target> <file>...`: `<input type=file>`（非表示でもラベル名で指定できる）に設定する。ドロップ領域には drag&drop のイベントで渡す。Native Messaging の 1 MB 制限を超えるファイルは 384 KB ずつ分割して送る |
+| WebSocket | プロキシ経由の WebSocket を修正し、送受信メッセージを記録（`ws`、`audit.jsonl`）。分割フレームの結合と permessage-deflate の展開に対応 |
+| 通信制限 | `rule add throttle latency=… kbps=…`（DevTools の Network throttling 相当） |
+| 読み込み時間 | `timing`: DNS / 接続 / TLS / TTFB / DOMContentLoaded / load / FCP / LCP と遅いリソース |
+
+**ユニットテスト（`go test -race`）**:
+- `TestWSParserFramingAndDeflate`: RFC どおりに手組みしたフレームで検証する（マスク、分割、ping、コンテキスト引き継ぎありの permessage-deflate 2 通、16 bit 長の 70 KB バイナリ、close コード）。7 バイトずつ細切れに流し込んでも正しく解析されること。
+- `TestWebSocketThroughProxy`: gobwas/ws の実サーバに MITM プロキシ経由で接続し、送受信とフレーム記録を確認する。**修正前のコードでは EOF で失敗する**ことも確認した。
+- `TestThrottleRule`: 50 KB を 800 kbit/s・遅延 300 ms で送受信すると約 1.3 秒かかり、対象外のリクエストは遅くならないこと。
+- `TestParseWSExtensions`、nm-host の `TestBridgeLikeChrome`（1 MB を超えるメッセージは app にエラーが返り、その後も中継が続くこと、Hub は送信前に拒否すること）。
+
+**実ブラウザ E2E（CloakBrowser、画面あり・ヘッドレスとも 15/15、`evidence/ci/e2e-report-real*.md` の Phase 6 行）**:
+- `list` に同一オリジンの iframe、別オリジン（別ポート）の iframe、shadow root 内の要素がすべて出る
+- 同一オリジン iframe で入力とクリック → サーバに `same:Bob` が届く
+- 別オリジン iframe で入力し、対象なしの `press Enter` → フォーカスのある iframe でフォームが送信され、`xo:Carol` が届く
+- `css=#xo-btn` は別オリジン iframe の中から見つかる
+- shadow root 内でラベル名での入力とクリック、`css=` での入力
+- 1.5 MB のランダムなファイルと .txt を、非表示の `<input type=file multiple>` へラベル名で添付する。ページの change イベントが名前・サイズ・MIME を受け取り、multipart 送信でサーバに届いた内容の **sha256 が一致**する
+- ドロップ領域へ添付すると、ページの drop ハンドラが中身（`hello upload`）を読める
+- プロキシ経由の `wss://` で往復でき、`ws <id>` に両方向のメッセージが出る。permessage-deflate は展開済みで、close コード 1000 も表示される
+- `throttle latency=700ms kbps=2000` → `timing` の TTFB が 705 ms。32 KB の本文の受信時間 129 ms は、2000 kbit/s の計算値 128 ms と一致する
+
+実ブラウザで見つかり、修正した問題:
+
+| # | 事象 | 原因 | 対応 |
+|---|---|---|---|
+| 15 | プロキシ経由の WebSocket が切れる（以前から） | 本文記録用のラッパーが 101 応答の `resp.Body` を包み、goproxy が必要とする `io.Writer` を隠していた | 101 応答は `wsTap`（`io.ReadWriteCloser` のまま）に差し替える。修正前 FAIL / 修正後 PASS のテストを追加 |
+| 16 | iframe 内の要素が 1 つも出ない（real 68/72） | `chrome.runtime.getFrameId` は Chrome に存在しない（Firefox のみ） | 親フレームが各 iframe にトークンを `postMessage` で送り、子フレームの content.js が service worker に転送する。service worker は `sender.frameId` からフレーム ID を知る。追加の権限は不要 |
+| 17 | 1 MB を超えるメッセージのエラーが app に届かない | nm-host がエラーをブラウザ側に送っていた（app は同じ ID の返事を待ち続け、タイムアウトになる） | エラーを app に返す。Hub は送信前にも拒否する |
+
+制限事項:
+- closed shadow root は仕様上外から触れない。
+- テストの「別オリジン」は同じホストの別ポートで、オリジンは違うがサイトは同じ（テスト証明書のホスト名が 127.0.0.1 だけのため）。フレームの特定は postMessage と `sender.frameId` によるもので、プロセスが分かれる別サイトの iframe でも同じ経路を通る。
+- `upload` は合計 32 MB まで（ページへ渡す拡張内メッセージの上限のため）。
+
 ## E2E 方式について（透明性のための記載）
 
 `scripts/e2e` は 2 モードを持つ。
 
-- **real**（`-mode real`、実ブラウザ）: 通常の Chromium ビルド（CI では CloakBrowser 146）が `--load-extension` で `extension/` を読み込み、`--user-data-dir/NativeMessagingHosts/com.share026.webcli.json` から `bin/nm-host` を**ブラウザ自身が起動**する。本番と同一経路で、エミュレーションなし。結果 57/57（`evidence/ci/e2e-report-real.md`、Phase 5 の 25 項目を含む）。
+- **real**（`-mode real`、実ブラウザ）: 通常の Chromium ビルド（CI では CloakBrowser 146）が `--load-extension` で `extension/` を読み込み、`--user-data-dir/NativeMessagingHosts/com.share026.webcli.json` から `bin/nm-host` を**ブラウザ自身が起動**する。本番と同一経路で、エミュレーションなし。結果 72/72（`evidence/ci/e2e-report-real.md`、Phase 5 の 25 項目と Phase 6 の 15 項目を含む）。
 - **emulated**（`-mode emulated`、既定）: headless shell（拡張機能非対応）向け。
   - **本物のまま使うもの**: Blink（DOM・レイアウト・`elementFromPoint`・イベント）、HTTPS 通信とプロキシ、出荷するファイルそのままの `background.js` / `content.js`（content.js は CDP の isolated world で実行）、ホスト定義 JSON の検証、Chrome と同じ方式での `bin/nm-host` 起動、`bin/app`、`fzf`、goproxy。
   - **CDP で代替したもの**: chrome.* API のみ（`scripts/e2e/exthost.go`）。
@@ -266,7 +310,7 @@ d6c02512-d255-4cb5-8b18-898a1eed730b  click  2     <button> "Login"     1       
 | 条件 | 結果 |
 |---|---|
 | `go build ./...` がエラー・警告ゼロ | ✅ `evidence/build.log`（`go vet ./...` もクリーン、`gofmt -l` 差分なし） |
-| 外部ライブラリが `go.mod` に記述 | ✅ `github.com/elazarl/goproxy v1.9.1`（本体）、`github.com/chromedp/chromedp v0.16.0` / `cdproto`（E2E ハーネスのみ）、間接依存は `go mod tidy` 済み |
+| 外部ライブラリが `go.mod` に記述 | ✅ `github.com/elazarl/goproxy v1.9.1`（本体）、`github.com/chromedp/chromedp v0.16.0` / `cdproto`（E2E ハーネスのみ）、`github.com/gobwas/ws v1.4.0`（WebSocket のテスト用サーバのみ。プロキシのフレーム解析は標準ライブラリで実装）、間接依存は `go mod tidy` 済み |
 | `docs/ARCHITECTURE.md` に構成図・IPC 仕様 | ✅ |
 | `docs/PROGRESS.md` に全フェーズの実行ログ・エビデンス | ✅ 本書 + `docs/evidence/` |
 
@@ -278,7 +322,7 @@ go test -race ./...                                # ユニット/統合
 scripts/test-tty.sh                                # PTY 上の対話 fzf
 scripts/proxy-demo.sh [https://example.com/]       # curl -x による実サイト MITM
 CHROME_PATH=/path/to/chromium go run ./scripts/e2e # E2E emulated（31 項目）
-CHROME_PATH=/path/to/chrome xvfb-run go run ./scripts/e2e -mode real -headed  # 実ブラウザ（57 項目）
+CHROME_PATH=/path/to/chrome xvfb-run go run ./scripts/e2e -mode real -headed  # 実ブラウザ（72 項目）
 gh workflow run e2e-cloakbrowser --ref <branch>    # CloakBrowser で全検証 → docs/evidence/ci/
 CHROME_PATH=/path/to/chromium scripts/test-all.sh  # 上記すべて + docs/evidence/ 更新
 ```

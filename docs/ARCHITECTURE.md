@@ -115,13 +115,15 @@ docs/               本書, PROGRESS.md, evidence/（テスト実行ログ）
 | `click` | app → 拡張 | `{"hint":2,"tag":true}`（`tag`: プロキシ稼働中ならアクション ID ヘッダを付与） | `click_result` `{"action_id":"<UUID>","kind":"click"\|"focus","hint","tag","text","url"}` |
 | `cookies_get` | app → 拡張 | `{"url"?: "https://…"}`（省略時アクティブタブ） | `cookies` `{"url","cookies":[chrome.cookies.Cookie…]}` |
 | `cookies_set` | app → 拡張 | `{"cookies":[chrome.cookies.SetDetails…]}` | `cookies_set_result` `{"set":1,"errors":[]}` |
-| `dom` | app → 拡張 | `{"op", "target"?: {"hint":n}\|{"css":"…"}, "tag", …}`。op: `click` `focus` `type{text}` `clear` `select{value}` `check{on}` `press{key}` `submit` `scroll{to}` `text` `html` `exists{text}` `info` `storage_get` `storage_set{local,session}` | `dom_result` `{op, action_id?（変更系のみ）, kind, tag, type, text, selector, url, title, value, html, local, session, …}` |
+| `dom` | app → 拡張 | `{"op", "target"?: {"hint":n}\|{"css":"…"}, "tag", …}`。op: `click` `focus` `type{text}` `clear` `select{value}` `check{on}` `press{key}` `submit` `scroll{to}` `upload{upload_id}` `text` `html` `exists{text}` `info` `storage_get` `storage_set{local,session}` | `dom_result` `{op, action_id?（変更系のみ）, kind, tag, type, text, selector, url, title, value, html, local, session, files, frame_id?（iframe 内で実行したとき）, …}` |
 | `collect` | app → 拡張 | `{"scope":"page"}` でビューポート外も対象（名前による要素指定の解決用） | `elements`（同上） |
 | `navigate` | app → 拡張 | `{"action":"open"\|"back"\|"forward"\|"reload","url"?,"new_tab"?,"tag"}` | `nav_result` `{action, action_id, tab_id, url, title}`（読み込み完了後） |
 | `tabs` | app → 拡張 | `{"op":"list"\|"select"\|"close","id"?}` | `tabs_result` `{"tabs":[{id,window_id,active,url,title}]}` |
 | `eval` | app → 拡張 | `{"code":"…"}` | `eval_result` `{type, value, via:"main-world"\|"debugger"}` |
 | `screenshot` | app → 拡張 | なし | `screenshot_result` `{url, title, png_base64}` |
 | `record` | app → 拡張 | `{"on":bool,"secrets":bool}` | `record_result` `{on, secrets, url, title}` |
+| `upload_chunk` | app → 拡張 | `{upload_id, file, name, mime, last_modified, index, data}`（`data` は 384 KB 分の base64 = 512 KB） | `upload_chunk_result` `{upload_id, file, index, received}` |
+| `timing` | app → 拡張 | なし | `timing_result` `{url, title, navigation:{type,protocol,redirect,dns,connect,tls,ttfb,response,dom_interactive,dom_content_loaded,load,transfer_size,decoded_size}, first_paint, fcp, lcp, resources:{count,transfer_size,slowest:[…]}}` |
 | `record_event` | 拡張 → app | `{op:"click"\|"type"\|"select"\|"check"\|"uncheck"\|"press", selector, tag, type, text, url, value?, secret, key?}` | なし（app が記録ファイルへ書く） |
 | `error` | どちらでも | — | `{"id":"<要求 id>","type":"error","error":"…"}` |
 
@@ -143,6 +145,18 @@ docs/               本書, PROGRESS.md, evidence/（テスト実行ログ）
   - そのため、ページ内の `history.back()` / `history.forward()` で 1 つずつ移動する。
 - **eval**: まずページの MAIN world で間接 eval を実行する。CSP で eval が禁止されているページでは、`chrome.debugger` の `Runtime.evaluate` にフォールバックする。
 - **本文**: プロキシが記録した本文は gzip / deflate / br / zstd を展開して表示する（`show` / `body`）。
+- **iframe**:
+  - content.js は全フレームで動く（`all_frames` + `match_origin_as_fallback`）。拡張からの送信は必ず `frameId` を指定する（指定しないと、最初に返事をしたフレームの結果になる）。
+  - Chrome には `<iframe>` 要素からフレーム ID を得る API がない（`runtime.getFrameId` は Firefox のみ）。そこで親フレームが各 iframe にランダムなトークンを `postMessage` で送る（別オリジンでも届く）。子フレームの content.js は `event.source === window.parent` のときだけそれを service worker へ転送し、service worker は `sender.frameId` からフレーム ID を知る。
+  - `collect`: 親フレームが iframe の位置（content box）と見えている範囲を報告する。service worker は見えている iframe だけを再帰的に集め、座標を最上位の画面座標に直し、iframe の外にはみ出した要素を除く。番号は全フレーム通しで振り直し、「通し番号 → (frameId, フレーム内の番号)」の対応を保持する。
+  - `css=`: 最上位から順に全フレームで探す。対象なしの `press` / `submit`: フォーカスを持つ iframe をたどり、そのフレームで実行する。
+- **Shadow DOM**: 要素の収集、`css=`、フォーカス、記録（`composedPath()`）は open shadow root の中まで探す。shadow root 内の要素のセレクタは、その shadow root を起点に作る（再生時も全 shadow root から探すので同じ要素になる）。closed shadow root は仕様上外から触れない。
+- **ファイル添付（`upload`）**:
+  - ページのスクリプトから OS のファイル選択画面は開けない。代わりに `DataTransfer` で作った `FileList` を `input.files` に設定し、`input` / `change` を発火する。
+  - 対象が file input でなければ、ラベルの `control` や子孫の file input を使う。それもなければドロップ領域とみなし、`dragenter` / `dragover` / `drop` を送る。非表示の file input を持つラベルは `list` に `[label:file]` として出る。
+  - Native Messaging はホスト → Chrome が 1 メッセージ 1 MB まで。そのため 384 KB（3 の倍数なので base64 をそのまま連結できる）ずつ `upload_chunk` で送り、service worker で組み立てる。合計の上限は 32 MB。
+  - 1 MB を超えるメッセージは、app の `Hub` が送信前に拒否する。nm-host も Chrome へは送らず、app にエラーを返す（Chrome は超過メッセージを受けるとポートごと切断するため）。
+- **timing**: Navigation Timing（`navigation` エントリ）、Paint Timing、LCP（`PerformanceObserver` の buffered）、Resource Timing。
 
 ### 3.5 シーケンス
 
@@ -198,6 +212,12 @@ page → proxy: X-Audit-Action-Id 付きリクエスト → Exchange.ActionID �
 | `set-req-header` / `del-req-header` | 上流へ送る前にリクエストヘッダを設定/削除 | `name`（set は `value`） |
 | `set-resp-header` / `del-resp-header` | クライアントへ返す前にレスポンスヘッダを設定/削除 | `name` |
 | `replace-body` | レスポンスボディを `value` に置換 | — |
+| `throttle` | 上流へ送る前に `latency`（例 `400ms`）待ち、リクエスト/レスポンスの本文を `kbps`（kbit/s）に制限する。複数一致したら最大の遅延・最小の帯域 | `latency` と `kbps` の少なくとも一方 |
+
+- **WebSocket**: goproxy は 101 応答の `resp.Body` を `io.ReadWriter` として双方向に中継する。以前は本文記録用のラッパーが `io.Writer` を隠していたため、プロキシ経由の WebSocket は切断されていた（テストで再現・修正）。現在は `wsTap` がバイト列を変えずに転送しつつ、方向ごとに RFC 6455 のフレームを逐次解析して監査ストアへ記録する（`ws` コマンド、`audit.jsonl` の `ws_frame` レコード）。
+  - マスク解除、分割フレームの結合、制御フレーム（close のコード）に対応する。
+  - permessage-deflate（RFC 7692）: コンテキスト引き継ぎ（context takeover）は「直前までに展開したデータを辞書にする」ことと同じなので、`flate.NewReaderDict` で展開する。`*_no_context_takeover` の交渉結果も反映する。
+  - 1 接続あたり 2000 メッセージ、1 メッセージあたり 64 KB まで保持する（件数は数え続ける）。
 
 マッチ条件（すべて AND、空は無条件）: `host`（ホスト名への正規表現）、`url`（完全 URL への正規表現）、`method`（完全一致）。
 
@@ -268,4 +288,4 @@ web-cli> cookies dump     # audit-out/cookies.json
 - `--user-data-dir` を指定した場合、Linux の Chromium はホスト定義を `<user-data-dir>/NativeMessagingHosts/` から探す（`scripts/install-host.sh <user-data-dir>`）。
 - Chromium 137 以降でコマンドラインから拡張機能を読み込む場合は `--disable-features=DisableLoadExtensionCommandLineSwitch` が必要。
 - ブラウザは自分の stderr を nm-host に引き継ぐ。stderr が読み手のいないパイプでも nm-host が落ちないよう、SIGPIPE を無視している。ログは `WEBCLI_NMHOST_LOG` に確実に残る。
-- 動作確認済み: CloakBrowser 146.0.7680.177（Chromium 146）、real E2E 57/57（画面あり・`--headless` とも、`docs/evidence/ci/`）。
+- 動作確認済み: CloakBrowser 146.0.7680.177（Chromium 146）、real E2E 72/72（画面あり・`--headless` とも、`docs/evidence/ci/`）。

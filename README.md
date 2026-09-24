@@ -68,6 +68,21 @@ web-cli> record stop
 - パスワード欄は値を保存せず `$WEBCLI_PASSWORD` と書き出します。
 - 再生: `WEBCLI_PASSWORD=... bin/app -f login.webcli`（または REPL で `run login.webcli`）。
 
+### iframe・Shadow DOM・ファイル添付・WebSocket・通信速度の制限
+
+```text
+web-cli> list                                 # iframe 内（別オリジンも）と open shadow root 内の要素も番号付きで出る
+web-cli> type "Card number" 4242…             # iframe 内の入力欄も名前で指定できる
+web-cli> press Enter                          # フォーカスのある iframe で Enter
+web-cli> click css=#pay                       # css= は全 iframe・全 shadow root から探す
+web-cli> upload "Choose file" ./photo.png     # 非表示の <input type=file> もラベル名で指定できる。複数ファイル可
+web-cli> upload css=#dropzone ./a.csv         # ドロップ領域にはドラッグ&ドロップのイベントで渡す
+web-cli> ws                                   # WebSocket 接続の一覧
+web-cli> ws 42                                # 送受信メッセージ（分割フレームは結合、permessage-deflate は展開済み）
+web-cli> rule add throttle host=example latency=400ms kbps=1600   # 遅延と帯域の制限（DevTools の Network throttling 相当）
+web-cli> timing                               # DNS / 接続 / TLS / TTFB / DOMContentLoaded / load / FCP / LCP と遅いリソース
+```
+
 その他:
 - ナビゲーション: `back` / `forward` / `reload` / `tabs` / `newtab` / `closetab`
 - 入力: `clear` / `uncheck` / `submit` / `focus` / `scroll`
@@ -83,11 +98,11 @@ go test -race ./...
 scripts/test-tty.sh                                # 擬似端末上の対話 fzf
 scripts/proxy-demo.sh                              # curl -x による実サイトの MITM デモ
 CHROME_PATH=/path/to/chromium go run ./scripts/e2e # E2E emulated（31 項目, headless shell 可）
-CHROME_PATH=/path/to/chrome go run ./scripts/e2e -mode real -headed  # 実ブラウザ E2E（57 項目）
+CHROME_PATH=/path/to/chrome go run ./scripts/e2e -mode real -headed  # 実ブラウザ E2E（72 項目）
 CHROME_PATH=/path/to/chromium scripts/test-all.sh  # 全部 + docs/evidence/ を更新
 ```
 
 実ブラウザ検証は GitHub Actions（`.github/workflows/e2e-cloakbrowser.yml`）が
 [CloakBrowser](https://github.com/CloakHQ/CloakBrowser) 146 の公式バイナリを取得・digest 検証して
 `scripts/test-all.sh`（emulated + real）を実行し、結果を `docs/evidence/ci/` にコミットします。
-画面なし（`--headless`）でも拡張機能込みで動作します（CI で real 57/57 を確認）。
+画面なし（`--headless`）でも拡張機能込みで動作します（CI で real 72/72 を確認）。
