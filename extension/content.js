@@ -247,22 +247,41 @@
     return { left: b.left, top: b.top, right: b.right, bottom: b.bottom };
   }
 
-  // Child frames for the background to descend into: frame ID
-  // (chrome.runtime.getFrameId), the content-box origin in this frame's
-  // viewport, and the visible part of the frame (for viewport scope).
+  // --- frames ------------------------------------------------------------------
+  // Chrome has no API mapping an <iframe> element to its extension frame ID
+  // (runtime.getFrameId exists only in Firefox). So each iframe element gets a
+  // random token, posted into the frame with postMessage (works cross-origin);
+  // the frame's own content script forwards it to the service worker, which
+  // learns the frame ID from sender.frameId.
+
+  const frameTokens = new WeakMap();
+  const newToken = () => Math.random().toString(36).slice(2) + Date.now().toString(36);
+
+  function frameToken(f) {
+    let t = frameTokens.get(f);
+    if (!t) frameTokens.set(f, (t = newToken()));
+    try { if (f.contentWindow) f.contentWindow.postMessage({ __webcliFrameToken: t }, "*"); } catch { /* detached */ }
+    return t;
+  }
+
+  window.addEventListener("message", (e) => {
+    const t = e.data && e.data.__webcliFrameToken;
+    if (typeof t !== "string" || window === window.top || e.source !== window.parent) return;
+    try { chrome.runtime.sendMessage?.({ type: "frame_token", token: t })?.catch?.(() => {}); } catch { /* extension reloaded */ }
+  });
+
+  // Child frames for the background to descend into: token (see above), the
+  // content-box origin in this frame's viewport, and the visible part of the
+  // frame (for viewport scope).
   function childFrames(scope) {
-    if (typeof chrome.runtime.getFrameId !== "function") return [];
     const out = [];
     for (const f of deepQueryAll("iframe, frame")) {
       const r = scope === "page" ? pageRect(f) : isHintable(f);
       if (!r) continue;
-      let id;
-      try { id = chrome.runtime.getFrameId(f); } catch { continue; }
-      if (typeof id !== "number" || id < 0) continue;
       const b = f.getBoundingClientRect();
       const cs = getComputedStyle(f);
       out.push({
-        frame_id: id,
+        token: frameToken(f),
         box: { x: b.left + f.clientLeft + parseFloat(cs.paddingLeft || 0), y: b.top + f.clientTop + parseFloat(cs.paddingTop || 0) },
         clip: { x: r.left, y: r.top, w: r.right - r.left, h: r.bottom - r.top },
       });
@@ -668,11 +687,8 @@
       case "focus_frame": {
         // Which child frame holds the focus (for press/submit without a target)?
         const a = deepActiveElement();
-        let id = null;
-        if (a && (a instanceof HTMLIFrameElement || a.tagName === "FRAME") && chrome.runtime.getFrameId) {
-          try { id = chrome.runtime.getFrameId(a); } catch { id = null; }
-        }
-        return { ok: true, frame_id: typeof id === "number" && id >= 0 ? id : null };
+        const isFrame = a && (a instanceof HTMLIFrameElement || a.tagName === "FRAME");
+        return { ok: true, token: isFrame ? frameToken(a) : null };
       }
       case "frames":
         return { ok: true, url: location.href, frames: childFrames("page") };

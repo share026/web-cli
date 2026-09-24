@@ -192,6 +192,27 @@ async function disarmActionHeader() {
 let frameHints = { tabId: -1, map: new Map() };
 const MAX_FRAME_DEPTH = 6;
 
+// token -> { tabId, frameId }, filled by frame_token messages from child
+// frames (content.js posts a token into each iframe it reports).
+const tokenFrames = new Map();
+
+async function frameIdFor(tabId, token, waitMs = 700) {
+  const until = Date.now() + waitMs;
+  for (;;) {
+    const m = tokenFrames.get(token);
+    if (m && m.tabId === tabId) return m.frameId;
+    if (Date.now() > until) return null;
+    await new Promise((r) => setTimeout(r, 20));
+  }
+}
+
+// Resolves the tokens of reported child frames in parallel; frames whose
+// content script never answered (not scriptable) are dropped.
+async function withFrameIds(tabId, frames) {
+  const ids = await Promise.all((frames || []).map((f) => frameIdFor(tabId, f.token)));
+  return (frames || []).map((f, i) => ({ ...f, frame_id: ids[i] })).filter((f) => f.frame_id !== null);
+}
+
 function intersect(a, b) {
   if (!a) return b;
   if (!b) return a;
@@ -216,7 +237,7 @@ async function collectAll(tab, scope) {
   };
   add(top.elements, 0, { x: 0, y: 0 }, null);
   const viewportScope = scope !== "page";
-  const queue = (top.frames || []).map((f) => ({ ...f, depth: 1 }));
+  const queue = (await withFrameIds(tab.id, top.frames)).map((f) => ({ ...f, depth: 1 }));
   while (queue.length) {
     const f = queue.shift();
     if (f.depth > MAX_FRAME_DEPTH || (viewportScope && !f.clip)) continue;
@@ -228,7 +249,7 @@ async function collectAll(tab, scope) {
       continue;
     }
     add(res.elements, f.frame_id, f.box, viewportScope ? f.clip : null, res.url);
-    for (const c of res.frames || []) {
+    for (const c of await withFrameIds(tab.id, res.frames)) {
       const box = { x: f.box.x + c.box.x, y: f.box.y + c.box.y };
       const clip = viewportScope ? intersect(f.clip, { x: f.box.x + c.clip.x, y: f.box.y + c.clip.y, w: c.clip.w, h: c.clip.h }) : null;
       queue.push({ frame_id: c.frame_id, box, clip, depth: f.depth + 1 });
@@ -245,7 +266,7 @@ async function allFrames(tab) {
   for (let i = 0; i < ids.length && ids.length < 50; i++) {
     try {
       const r = await toContent(tab, { type: "dom", op: "frames" }, ids[i]);
-      for (const f of r.frames || []) if (!ids.includes(f.frame_id)) ids.push(f.frame_id);
+      for (const f of await withFrameIds(tab.id, r.frames)) if (!ids.includes(f.frame_id)) ids.push(f.frame_id);
     } catch { /* frame gone or not scriptable */ }
   }
   return ids;
@@ -256,8 +277,9 @@ async function focusedFrame(tab) {
   let id = 0;
   for (let depth = 0; depth < MAX_FRAME_DEPTH; depth++) {
     const r = await toContent(tab, { type: "dom", op: "focus_frame" }, id).catch(() => null);
-    if (!r || r.frame_id === null || r.frame_id === undefined) break;
-    id = r.frame_id;
+    const next = r && r.token ? await frameIdFor(tab.id, r.token) : null;
+    if (next === null) break;
+    id = next;
   }
   return id;
 }
@@ -515,6 +537,11 @@ chrome.runtime.onMessage?.addListener((msg, sender, sendResponse) => {
   if (msg && msg.type === "record_state") {
     chrome.storage.session.get("record").then((v) => sendResponse(v.record || { on: false }), () => sendResponse({ on: false }));
     return true;
+  }
+  if (msg && msg.type === "frame_token" && sender.tab && typeof sender.frameId === "number") {
+    tokenFrames.set(msg.token, { tabId: sender.tab.id, frameId: sender.frameId });
+    if (tokenFrames.size > 1000) tokenFrames.delete(tokenFrames.keys().next().value);
+    return false;
   }
   if (msg && msg.type === "record_event") {
     send({ type: "record_event", payload: { ...msg.event, tab_id: sender.tab && sender.tab.id } });
