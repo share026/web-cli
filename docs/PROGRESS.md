@@ -19,6 +19,7 @@
 | ブラウザ | **CloakBrowser** `chromium-v146.0.7680.177.5`（Chromium 146.0.7680.177、公式 Release の `cloakbrowser-linux-x64.tar.gz`、GitHub API の digest `sha256 4a12bcde…670e` と `sha256sum -c` で一致確認） |
 | 実行場所 | `.github/workflows/e2e-cloakbrowser.yml`（ubuntu-latest + Xvfb、headed）。サンドボックスからは配布元（cloakbrowser.dev / GitHub のアセット CDN）に到達できないため、GitHub のランナーでダウンロード・検証・テストし、エビデンスをブランチへ自動コミットする方式にした |
 | 方式 | `-mode real`: Chromium 自身が `--load-extension=extension/` で拡張機能を読み込み、MV3 service worker が `chrome.runtime.connectNative` で `install-host.sh` 登録済みの **本物の `bin/nm-host` をブラウザが起動**。chrome.* の代替・CDP エミュレーションは一切なし |
+| ヘッドレス | **`--headless` でも real 32/32 PASS**（`evidence/ci/e2e-report-real-headless.md`）。ランナーには X サーバがないため（画面ありで起動すると "Missing X server" になることも確認済み）、画面なしで拡張機能の読み込みから nm-host 起動まで動いている。なお headless shell（`chrome-headless-shell`）は拡張機能非対応のため emulated モード専用 |
 | 結果 | **E2E real 32/32 PASS**、emulated 31/31 PASS、Go テスト全 PASS（`-race`）、PTY fzf PASS、curl プロキシデモ PASS |
 | エビデンス | [`evidence/ci/`](evidence/ci/)（`environment.txt` に run URL・コミット・ブラウザ版・digest、`e2e-report-real.md` 判定表、`e2e-sw-console-real.log` = service worker の console、`e2e-nm-host-real.log`、`sample-requests-real.http`、`sample-cookies-real.json` ほか） |
 

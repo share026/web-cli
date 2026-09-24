@@ -58,3 +58,4 @@ CHROME_PATH=/path/to/chromium scripts/test-all.sh  # 全部 + docs/evidence/ を
 実ブラウザ検証は GitHub Actions（`.github/workflows/e2e-cloakbrowser.yml`）が
 [CloakBrowser](https://github.com/CloakHQ/CloakBrowser) 146 の公式バイナリを取得・digest 検証して
 `scripts/test-all.sh`（emulated + real）を実行し、結果を `docs/evidence/ci/` にコミットします。
+画面なし（`--headless`）でも拡張機能込みで動作します（CI で real 32/32 を確認）。
