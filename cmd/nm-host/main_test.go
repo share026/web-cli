@@ -123,3 +123,40 @@ func TestAppNotRunning(t *testing.T) {
 	io.Copy(io.Discard, stdout)
 	cmd.Wait()
 }
+
+// TestSurvivesClosedStderr: Chrome passes its stderr to the host; if nobody
+// reads it any more the host must keep working (found with CloakBrowser under
+// chromedp, where the host was killed by SIGPIPE on its first log line).
+func TestSurvivesClosedStderr(t *testing.T) {
+	bin := buildHost(t)
+	r, w, err := os.Pipe()
+	if err != nil {
+		t.Fatal(err)
+	}
+	r.Close()
+	cmd := exec.Command(bin, "chrome-extension://aghlljmggamhjpkcngogikkiohnaaiha/")
+	cmd.Env = append(os.Environ(), "WEBCLI_SOCKET="+filepath.Join(t.TempDir(), "absent.sock"))
+	cmd.Stderr = w
+	stdin, _ := cmd.StdinPipe()
+	stdout, _ := cmd.StdoutPipe()
+	if err := cmd.Start(); err != nil {
+		t.Fatal(err)
+	}
+	w.Close()
+	ipc.WriteNativeMessage(stdin, []byte(`{"id":"p","type":"ping"}`))
+	raw, err := ipc.ReadNativeMessage(stdout)
+	if err != nil {
+		cmd.Wait()
+		t.Fatalf("no reply (host died: %v): %v", cmd.ProcessState, err)
+	}
+	var m ipc.Message
+	json.Unmarshal(raw, &m)
+	if m.Type != "error" || m.ID != "p" {
+		t.Fatalf("got %s", raw)
+	}
+	stdin.Close()
+	io.Copy(io.Discard, stdout)
+	if err := cmd.Wait(); err != nil && strings.Contains(err.Error(), "broken pipe") {
+		t.Fatalf("host killed by SIGPIPE: %v", err)
+	}
+}

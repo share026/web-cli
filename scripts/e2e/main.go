@@ -269,9 +269,14 @@ func main() {
 			chromedp.Flag("v", "0"),
 			chromedp.Flag("vmodule", "*native_messag*=2,*native_process_launcher*=2,*extension_service*=1"),
 		)
-		if f, err := os.Create(filepath.Join(outAbs, "chrome.log")); err == nil {
-			defer f.Close()
-			opts = append(opts, chromedp.CombinedOutput(f))
+		// Optional (E2E_CHROME_LOG=1): by default Chrome's stderr is left as
+		// chromedp sets it up, which is closed after startup - the case that
+		// used to kill nm-host with SIGPIPE.
+		if os.Getenv("E2E_CHROME_LOG") == "1" {
+			if f, err := os.Create(filepath.Join(outAbs, "chrome.log")); err == nil {
+				defer f.Close()
+				opts = append(opts, chromedp.CombinedOutput(f))
+			}
 		}
 	}
 	mark := h.mark()

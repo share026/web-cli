@@ -21,14 +21,22 @@ import (
 	"log"
 	"net"
 	"os"
+	"os/signal"
 	"strings"
 	"sync"
+	"syscall"
 	"time"
 
 	"github.com/share026/web-cli/internal/ipc"
 )
 
 func main() {
+	// Chrome hands its own stderr to native hosts. When that is a pipe nobody
+	// reads any more (e.g. a browser launched by an automation tool), Go's
+	// default SIGPIPE behaviour for fd 2 would kill the host on its first log
+	// line. Ignoring SIGPIPE turns that into a harmless EPIPE on stderr; a
+	// broken stdout still ends the bridge through the normal write error.
+	signal.Ignore(syscall.SIGPIPE)
 	logger := newLogger()
 	origin := ""
 	for _, a := range os.Args[1:] {
